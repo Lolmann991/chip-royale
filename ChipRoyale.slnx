@@ -1,0 +1,9 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/ChipRoyale.Engine/ChipRoyale.Engine.csproj" />
+    <Project Path="src/ChipRoyale.Web/ChipRoyale.Web.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/ChipRoyale.Engine.Tests/ChipRoyale.Engine.Tests.csproj" />
+  </Folder>
+</Solution>
