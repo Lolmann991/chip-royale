@@ -2,6 +2,7 @@
 @using ChipRoyale.Engine.Cards
 @using ChipRoyale.Engine.Evaluation
 @using ChipRoyale.Engine.Holdem
+@using ChipRoyale.Web.Services
 @implements IAsyncDisposable
 @inject IJSRuntime JS
 
@@ -9,6 +10,7 @@
     <header class="topbar">
         <div class="brand">♠ Chip <span>Royale</span></div>
         <div class="meta">
+            <span class="pill stake">@Settings.Stake.Name@(Settings.IsPractice ? " · zählt nicht" : "")</span>
             <span class="pill">Hand #@table.HandNumber</span>
             <span class="pill">Blinds @table.SmallBlind.ToString("N0")/@table.BigBlind.ToString("N0")</span>
             <span class="pill diff-@Settings.Difficulty">@Roster.DifficultyName(Settings.Difficulty)</span>
@@ -20,8 +22,9 @@
         <div class="tools">
             <button type="button" class="tool @(hints ? "on" : "")" title="Tipps & Gewinnchance" @onclick="ToggleHints">💡 Tipps</button>
             <button type="button" class="tool @(sound ? "on" : "")" title="Sound" @onclick="ToggleSound">@(sound ? "🔊" : "🔇")</button>
+            <button type="button" class="tool @(showRankings ? "on" : "")" title="Hand-Rangliste" @onclick="() => showRankings = !showRankings">🃏 Hände</button>
             <button type="button" class="tool @(showLog ? "on" : "")" title="Verlauf" @onclick="() => showLog = !showLog">📜</button>
-            <button type="button" class="tool" @onclick="() => OnExit.InvokeAsync()">Lobby</button>
+            <button type="button" class="tool" @onclick="ExitAsync">@(Settings.IsPractice ? "Lobby" : "Auszahlen")</button>
         </div>
     </header>
 
@@ -234,13 +237,31 @@
         </aside>
     }
 
+    @if (showRankings)
+    {
+        <HandRankings Current="CurrentCategory" OnClose="() => showRankings = false" />
+    }
+
     @if (gameOver is { } go)
     {
         <div class="overlay">
             <div class="overlay-card @(go ? "" : "lost")">
                 <div class="trophy">@(go ? "🏆" : "💸")</div>
-                <h2>@(go ? "Du räumst den Tisch ab!" : "Pleite!")</h2>
-                <p>@(go ? "Alle Gegner sind raus. Glückwunsch, Champion!" : "Deine Chips sind weg. Neues Spiel, neues Glück!")</p>
+                <h2>@(go ? "Du räumst den Tisch ab!" : "Pleite am Tisch!")</h2>
+                <p>
+                    @if (go)
+                    {
+                        @($"Alle Gegner sind raus. Du hast {Hero.Chips:N0} Chips vor dir – nimm sie mit oder fordere neue Gegner heraus.")
+                    }
+                    else if (Settings.IsPractice)
+                    {
+                        @("Am Übungstisch kostet das nichts. Einfach nochmal!")
+                    }
+                    else
+                    {
+                        @("Dein Buy-in ist weg. In der Lobby kannst du neu einkaufen.")
+                    }
+                </p>
                 <div class="stats">
                     <div><b>@handsPlayed</b><span>Hände</span></div>
                     <div><b>@handsWon</b><span>Gewonnen</span></div>
@@ -248,8 +269,19 @@
                     <div><b>@peakChips.ToString("N0")</b><span>Höchster Stand</span></div>
                 </div>
                 <div class="banner-actions">
-                    <button type="button" class="act next" @onclick="RestartAsync">Nochmal spielen</button>
-                    <button type="button" class="act fold" @onclick="() => OnExit.InvokeAsync()">Lobby</button>
+                    @if (go)
+                    {
+                        <button type="button" class="act next" @onclick="NewOpponentsAsync">Neue Gegner</button>
+                        <button type="button" class="act call" @onclick="ExitAsync">@(Settings.IsPractice ? "Lobby" : "Auszahlen & Lobby")</button>
+                    }
+                    else
+                    {
+                        @if (Settings.IsPractice)
+                        {
+                            <button type="button" class="act next" @onclick="RestartAsync">Nochmal</button>
+                        }
+                        <button type="button" class="act fold" @onclick="ExitAsync">Lobby</button>
+                    }
                 </div>
             </div>
         </div>
@@ -258,7 +290,11 @@
 
 @code {
     [Parameter, EditorRequired] public GameSettings Settings { get; set; } = default!;
-    [Parameter] public EventCallback OnExit { get; set; }
+    /// <summary>Leaving the table; the argument is the hero's stack to cash out.</summary>
+    [Parameter] public EventCallback<int> OnExit { get; set; }
+
+    /// <summary>Stack changes and finished hands, so the bankroll can be saved (not raised at the practice table).</summary>
+    [Parameter] public EventCallback<TableReport> OnReport { get; set; }
 
     // Seat slots around the oval (percent of the table box).
     private static readonly (double X, double Y)[] SlotPos = [(50, 101), (2.5, 66), (17, 7), (50, -1), (83, 7), (97.5, 66)];
@@ -287,6 +323,8 @@
     private bool hints;
     private bool sound = true;
     private bool showLog;
+    private bool showRankings;
+    private bool exiting;
     private double? heroEquity;
     private (int Hand, int Board, int Active) equityKey;
     private int potOverride = -1;
@@ -314,20 +352,24 @@
     private double RaisePercent => legal is null || legal.MaxRaiseTo <= legal.MinRaiseTo ? 100
         : (raiseTo - legal.MinRaiseTo) * 100.0 / (legal.MaxRaiseTo - legal.MinRaiseTo);
 
-    protected override void OnInitialized() => SetupGame();
+    private HandCategory? CurrentCategory => Hero.HoleCards.Count == 2 && table.Board.Count >= 3 && !Hero.HasFolded
+        ? HandEvaluator.EvaluateBest([.. Hero.HoleCards, .. table.Board]).Category
+        : Hero.HoleCards.Count == 2 && Hero.HoleCards[0].Rank == Hero.HoleCards[1].Rank && !Hero.HasFolded ? HandCategory.OnePair : null;
 
-    private void SetupGame()
+    protected override void OnInitialized() => SetupGame(Settings.BuyIn);
+
+    private void SetupGame(int heroStack)
     {
         var bots = Roster.PickBots(Settings.Opponents, random);
         looks = [Roster.Human, .. bots];
-        var players = looks.Select((l, i) => new Player(l.Name, Settings.StartChips, isHuman: i == 0)).ToList();
+        var players = looks.Select((l, i) => new Player(l.Name, i == 0 ? heroStack : BotStack(), isHuman: i == 0)).ToList();
         table = new HoldemTable(players, Settings.SmallBlind, Settings.BigBlind);
         brains = looks.Select((_, i) => i == 0 ? null
             : new BotBrain(new BotProfile(Settings.Difficulty, random.NextDouble(), random.NextDouble()))).ToArray();
         slots = SlotMap[players.Count];
         hints = Settings.Difficulty == Difficulty.Easy;
         handsPlayed = handsWon = biggestPot = 0;
-        peakChips = Settings.StartChips;
+        peakChips = heroStack;
         gameOver = null;
         banner = null;
         log.Clear();
@@ -497,7 +539,10 @@
         if (!heroTurn || table.ActingIndex != 0) return;
         heroTurn = false;
         legal = null;
+        var before = Hero.Chips;
         ApplyAction(0, action);
+        if (Hero.Chips != before && table.Phase != TablePhase.HandComplete)
+            await ReportAsync(null);
         if (table.Phase == TablePhase.HandComplete)
         {
             await HandCompleteAsync();
@@ -574,7 +619,7 @@
         if (heroWon > 0)
         {
             var category = mainHand?.Category ?? HandCategory.HighCard;
-            var bigPot = result.TotalPot >= Settings.StartChips;
+            var bigPot = result.TotalPot >= Settings.BuyIn;
             var level = category >= HandCategory.FullHouse || bigPot ? 3
                 : category >= HandCategory.Straight || result.TotalPot >= table.BigBlind * 15 ? 2 : 1;
             Sfx(level >= 2 ? "bigwin" : "win");
@@ -589,6 +634,9 @@
 
         await Task.WhenAll(fly);
         peakChips = Math.Max(peakChips, Hero.Chips);
+        var cleared = Hero.Chips > 0 && table.Players.Skip(1).All(p => p.Chips == 0);
+        if (Hero.InHand)
+            await ReportAsync(new HandOutcome(heroWon > 0, result.TotalPot, cleared));
 
         if (Hero.Chips == 0)
         {
@@ -628,10 +676,55 @@
     private async Task RestartAsync()
     {
         autoCts?.Cancel();
-        SetupGame();
+        SetupGame(Settings.BuyIn);
         StateHasChanged();
         await Delay(300);
         await NextHandAsync();
+    }
+
+    private async Task NewOpponentsAsync()
+    {
+        autoCts?.Cancel();
+        SetupGame(Hero.Chips);
+        StateHasChanged();
+        await Delay(300);
+        await NextHandAsync();
+    }
+
+    private async Task ExitAsync()
+    {
+        if (exiting) return;
+        var handRunning = table.Phase is TablePhase.WaitingForAction or TablePhase.RoundComplete;
+        if (handRunning && Hero.IsActive && Hero.TotalInvested > 0 && js is not null && !Settings.IsPractice)
+        {
+            bool ok;
+            try
+            {
+                ok = await JS.InvokeAsync<bool>("confirm",
+                    $"Die Hand läuft noch. Wenn du jetzt gehst, sind deine {Hero.TotalInvested:N0} Chips im Pot verloren. Trotzdem gehen?");
+            }
+            catch (Exception ex) when (ex is JSDisconnectedException or TaskCanceledException or JSException) { return; }
+            if (!ok) return;
+        }
+        exiting = true;
+        cts.Cancel();
+        autoCts?.Cancel();
+        await OnExit.InvokeAsync(Hero.Chips);
+    }
+
+    private async Task ReportAsync(HandOutcome? hand)
+    {
+        if (Settings.IsPractice) return;
+        await OnReport.InvokeAsync(new TableReport(Hero.Chips, hand));
+    }
+
+    private int BotStack()
+    {
+        if (Settings.IsPractice) return Settings.BuyIn;
+        var stake = Settings.Stake;
+        var raw = Settings.BuyIn * (0.7 + random.NextDouble() * 0.6);
+        var rounded = (int)Math.Round(raw / stake.BigBlind) * stake.BigBlind;
+        return Math.Clamp(rounded, stake.MinBuyIn, stake.MaxBuyIn);
     }
 
     // ------------------------------------------------------------------ hints

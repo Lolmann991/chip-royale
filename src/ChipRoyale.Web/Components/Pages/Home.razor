@@ -2,21 +2,67 @@
 @layout GameLayout
 @rendermode InteractiveServer
 @using ChipRoyale.Web.Components.Game
+@using ChipRoyale.Web.Services
+@inject PlayerService Player
 
 <PageTitle>Chip Royale</PageTitle>
 
 <div class="game-root @(settings is null ? "" : $"diff-{settings.Difficulty}")">
-    @if (settings is null)
+    @if (!loaded)
     {
-        <Lobby OnStart="s => settings = s" />
+        <div class="loading">♠</div>
+    }
+    else if (settings is null)
+    {
+        <Lobby @key="lobbyKey" OnStart="StartAsync" Notice="@notice" />
     }
     else
     {
-        <PokerTable @key="tableKey" Settings="settings" OnExit="() => { settings = null; tableKey++; }" />
+        <PokerTable @key="tableKey" Settings="settings" OnExit="ExitAsync" OnReport="ReportAsync" />
     }
 </div>
 
 @code {
     private GameSettings? settings;
     private int tableKey;
+    private int lobbyKey;
+    private bool loaded;
+    private string? notice;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await Player.LoadAsync();
+        loaded = true;
+    }
+
+    private async Task StartAsync(GameSettings s)
+    {
+        if (!s.IsPractice)
+            await Player.BuyInAsync(s.Stake, s.BuyIn);
+        Player.DismissNotices();
+        notice = null;
+        tableKey++;
+        settings = s;
+    }
+
+    private async Task ExitAsync(int stack)
+    {
+        var s = settings!;
+        if (!s.IsPractice)
+        {
+            await Player.CashOutAsync(stack);
+            var diff = stack - s.BuyIn;
+            notice = diff switch
+            {
+                > 0 => $"Ausgezahlt: {stack:N0} Chips – das sind {diff:N0} mehr als dein Buy-in! 🎉",
+                < 0 when stack > 0 => $"Ausgezahlt: {stack:N0} Chips ({-diff:N0} weniger als dein Buy-in).",
+                < 0 => null,
+                _ => $"Ausgezahlt: {stack:N0} Chips – genau dein Buy-in.",
+            };
+        }
+        settings = null;
+        lobbyKey++;
+    }
+
+    private Task ReportAsync(TableReport report) => Player.UpdateTableAsync(report.Stack, report.Hand);
 }

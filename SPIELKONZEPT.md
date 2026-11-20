@@ -68,10 +68,10 @@ Browser-Pokerspiel (Blazor Server) gegen KI-Gegner mit Chip-Progression, Pixel-A
 - [x] Texas-Hold'em-Spielablauf (Blinds, Setzrunden, Side-Pots, Showdown)
 - [x] KI-Stufen Einfach / Mittel / Schwer
 - [x] Spieltisch-UI für 6 Plätze (3D-Tisch mit Animationen und Gewinn-Effekten)
-- [ ] Benutzerkonto mit Chip-Stand, Reset bei 0 Chips
-- [ ] Tischstufen mit Buy-in-Grenzen (Min / 20 × Min)
-- [ ] Tutorial: Lektionen, Hand-Rangliste, Live-Tipps, Übungstisch
-- [ ] Rangliste
+- [x] Benutzerkonto mit Chip-Stand, Reset bei 0 Chips (Gäste spielen ohne Speicherung)
+- [x] Tischstufen mit Buy-in-Grenzen (Min / 20 × Min): Kneipe, Casino, High Roller, VIP-Salon
+- [ ] Tutorial: Lektionen (offen) – erledigt: Hand-Rangliste, Live-Tipps, Übungstisch
+- [x] Rangliste (höchster Stand pro Run, aktueller Stand, abgeräumte Tische)
 - [ ] Lokalisierung DE/EN
 
 ### V2

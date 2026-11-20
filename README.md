@@ -14,7 +14,9 @@ tests/ChipRoyale.Engine.Tests xUnit-Tests für die Engine
 
 ## Spielen
 
-- Lobby: Schwierigkeit (Leicht / Mittel / Schwer), 1–5 Gegner und Startkapital wählen.
+- Lobby: Tisch (Übungstisch, Kneipe, Casino, High Roller, VIP-Salon), Buy-in, Schwierigkeit und 1–5 Gegner wählen.
+- Konto: Angemeldete Spieler behalten ihren Chip-Stand (Start 1.000). Buy-in geht vom Konto an den Tisch, „Auszahlen“ bringt den Stapel zurück. Wer pleite ist, startet einen neuen Run mit 1.000 Chips; der Rekord bleibt.
+- Rangliste unter `/rangliste`. Gäste können spielen, werden aber nicht gespeichert.
 - Tastatur: `F` passen, `C` checken/mitgehen, `R` setzen/erhöhen, `A` All-in vorwählen, `↑`/`↓` Einsatz ändern, `Leertaste` nächste Hand.
 - 💡 Tipps zeigen die aktuelle Hand, die Gewinnchance und einen Hinweis (auf „Leicht“ standardmäßig an).
 - Mausbewegung kippt den Tisch leicht; Klick auf die eigenen Karten verdeckt sie.
@@ -24,6 +26,8 @@ tests/ChipRoyale.Engine.Tests xUnit-Tests für die Engine
 ```bash
 dotnet run --project src/ChipRoyale.Web
 ```
+
+Die SQLite-Datenbank (`src/ChipRoyale.Web/Data/app.db`) wird beim Start automatisch angelegt bzw. migriert.
 
 ## Tests
 

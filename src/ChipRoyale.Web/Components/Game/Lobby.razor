@@ -1,24 +1,122 @@
 @using ChipRoyale.Engine.Ai
 @using ChipRoyale.Engine.Cards
+@using ChipRoyale.Engine.Economy
+@using ChipRoyale.Web.Services
+@inject PlayerService Player
 
 <div class="lobby">
     <div class="lobby-hero">
         <div class="hero-cards" aria-hidden="true">
-            <PlayingCard Card="@(new Card(Rank.Ace, Suit.Spades))" Size="lg" Class="hero-card h1" Deal="false" />
-            <PlayingCard Card="@(new Card(Rank.King, Suit.Hearts))" Size="lg" Class="hero-card h2" Deal="false" />
-            <PlayingCard Card="@(new Card(Rank.Queen, Suit.Diamonds))" Size="lg" Class="hero-card h3" Deal="false" />
+            <PlayingCard Card="@(new Card(Rank.Ace, Suit.Spades))" Size="lg" Class="hero-card hc1" Deal="false" />
+            <PlayingCard Card="@(new Card(Rank.King, Suit.Hearts))" Size="lg" Class="hero-card hc2" Deal="false" />
+            <PlayingCard Card="@(new Card(Rank.Queen, Suit.Diamonds))" Size="lg" Class="hero-card hc3" Deal="false" />
         </div>
         <h1 class="logo">Chip <span>Royale</span></h1>
         <p class="tagline">Texas Hold'em · No-Limit · gegen KI-Gegner</p>
+        <div class="hero-links">
+            <a class="tool" href="rangliste">🏆 Rangliste</a>
+            <button type="button" class="tool" @onclick="() => showRankings = true">🃏 Hand-Rangliste</button>
+        </div>
     </div>
 
     <div class="lobby-panel">
+        <div class="profile">
+            <div class="avatar" style="--hue:45">😎</div>
+            <div class="profile-main">
+                @if (editingName)
+                {
+                    <form class="name-edit" @onsubmit="SaveNameAsync" @onsubmit:preventDefault="true">
+                        <input @bind="nameDraft" maxlength="20" aria-label="Spielername" autofocus />
+                        <button type="submit" class="preset">Speichern</button>
+                        <button type="button" class="preset" @onclick="() => { editingName = false; nameError = null; }">Abbrechen</button>
+                    </form>
+                    @if (nameError is not null)
+                    {
+                        <div class="form-error">@nameError</div>
+                    }
+                }
+                else
+                {
+                    <div class="profile-name">
+                        @Player.DisplayName
+                        @if (!Player.IsGuest)
+                        {
+                            <button type="button" class="icon-btn" title="Namen ändern" @onclick="StartRename">✏️</button>
+                        }
+                    </div>
+                }
+                <div class="profile-stats">
+                    <span class="bankroll">● @Player.Bankroll.Chips.ToString("N0") Chips</span>
+                    <span>Run #@Player.Bankroll.Run</span>
+                    <span>Rekord @Player.Bankroll.BestPeak.ToString("N0")</span>
+                </div>
+            </div>
+            <div class="profile-links">
+                @if (Player.IsGuest)
+                {
+                    <a class="preset" href="Account/Login?ReturnUrl=%2F">Anmelden</a>
+                    <a class="preset" href="Account/Register?ReturnUrl=%2F">Registrieren</a>
+                }
+                else
+                {
+                    <a class="preset" href="Account/Manage">Konto</a>
+                }
+            </div>
+        </div>
+        @if (Player.IsGuest)
+        {
+            <p class="note">Als Gast wird nichts gespeichert und du erscheinst nicht in der Rangliste.</p>
+        }
+        @foreach (var notice in Notices)
+        {
+            <p class="note highlight">@notice</p>
+        }
+
+        <section>
+            <h2>Tisch</h2>
+            <div class="stake-grid">
+                @foreach (var s in TableStakes.All)
+                {
+                    var stake = s;
+                    var open = Player.Bankroll.CanSit(stake);
+                    <button type="button" class="choice compact stake-choice @(this.stake == stake ? "selected" : "") @(open ? "" : "locked")"
+                            disabled="@(!open)" @onclick="() => SelectStake(stake)">
+                        <span class="choice-icon">@StakeIcon(stake)</span>
+                        <span class="choice-title">@stake.Name</span>
+                        <span class="choice-text">@(stake.IsPractice ? "kostenlos" : $"Blinds {stake.SmallBlind:N0}/{stake.BigBlind:N0}")</span>
+                        <span class="choice-text">@(stake.IsPractice ? "nichts geht verloren" : open ? $"Buy-in {stake.MinBuyIn:N0}–{stake.MaxBuyIn:N0}" : $"🔒 ab {stake.MinBuyIn:N0}")</span>
+                    </button>
+                }
+            </div>
+        </section>
+
+        <section>
+            <h2>Buy-in</h2>
+            @if (stake.IsPractice)
+            {
+                <p class="note">Du bekommst @stake.MinBuyIn.ToString("N0") Übungschips. Gegner spielen auf „Leicht“, dein Chip-Stand bleibt unberührt.</p>
+            }
+            else
+            {
+                <div class="buyin">
+                    <button type="button" class="preset" @onclick="() => buyIn = stake.MinBuyIn">Min</button>
+                    <input type="range" class="raise-slider" min="@stake.MinBuyIn" max="@MaxBuyIn" step="@stake.BigBlind"
+                           value="@buyIn" @oninput="OnBuyIn" style="--p:@BuyInPercent%" aria-label="Buy-in" />
+                    <button type="button" class="preset" @onclick="() => buyIn = MaxBuyIn">Max</button>
+                    <span class="buyin-value">● @buyIn.ToString("N0")</span>
+                </div>
+                <p class="note">@((buyIn / stake.BigBlind).ToString("N0")) Big Blinds · danach bleiben dir @((Player.Bankroll.Chips - buyIn).ToString("N0")) Chips</p>
+            }
+        </section>
+
         <section>
             <h2>Schwierigkeit</h2>
             <div class="choice-grid three">
                 @foreach (var (d, title, text, icon) in Levels)
                 {
-                    <button type="button" class="choice @(difficulty == d ? "selected" : "")" @onclick="() => difficulty = d">
+                    var locked = stake.IsPractice && d != Difficulty.Easy;
+                    <button type="button" class="choice @(EffectiveDifficulty == d ? "selected" : "") @(locked ? "locked" : "")"
+                            disabled="@locked" @onclick="() => difficulty = d">
                         <span class="choice-icon">@icon</span>
                         <span class="choice-title">@title</span>
                         <span class="choice-text">@text</span>
@@ -40,33 +138,36 @@
             </div>
         </section>
 
-        <section>
-            <h2>Startkapital</h2>
-            <div class="choice-grid four">
-                @foreach (var chips in new[] { 500, 1000, 2000, 5000 })
-                {
-                    var c = chips;
-                    <button type="button" class="choice compact @(startChips == c ? "selected" : "")" @onclick="() => startChips = c">
-                        <ChipStack Amount="@(c / 10)" Class="mini" MaxPerColumn="4" />
-                        <span class="choice-title">@c.ToString("N0")</span>
-                        <span class="choice-text">Blinds @((c / 100).ToString("N0"))/@((c / 50).ToString("N0"))</span>
-                    </button>
-                }
-            </div>
-        </section>
-
+        @if (error is not null)
+        {
+            <p class="form-error">@error</p>
+        }
         <button type="button" class="play-btn" @onclick="Start">
-            <span>Tisch betreten</span>
+            <span>@(stake.IsPractice ? "Übungstisch starten" : $"Für {buyIn:N0} einkaufen")</span>
         </button>
     </div>
 </div>
 
+@if (showRankings)
+{
+    <HandRankings OnClose="() => showRankings = false" />
+}
+
 @code {
     [Parameter] public EventCallback<GameSettings> OnStart { get; set; }
 
+    /// <summary>Extra message, e.g. the result of the last table.</summary>
+    [Parameter] public string? Notice { get; set; }
+
     private Difficulty difficulty = Difficulty.Easy;
     private int opponents = 3;
-    private int startChips = 1000;
+    private TableStake stake = TableStakes.Find("pub")!;
+    private int buyIn;
+    private bool showRankings;
+    private bool editingName;
+    private string nameDraft = "";
+    private string? nameError;
+    private string? error;
 
     private static readonly (Difficulty, string, string, string)[] Levels =
     [
@@ -75,5 +176,83 @@
         (Difficulty.Hard, "Schwer", "Tight-aggressiv, bluffen und lesen dein Spiel.", "🔥"),
     ];
 
-    private Task Start() => OnStart.InvokeAsync(new GameSettings(difficulty, opponents, startChips));
+    private Difficulty EffectiveDifficulty => stake.IsPractice ? Difficulty.Easy : difficulty;
+
+    private int MaxBuyIn => Math.Max(stake.MinBuyIn, Player.Bankroll.MaxBuyInFor(stake));
+
+    private string BuyInPercent => MaxBuyIn <= stake.MinBuyIn ? "100"
+        : ((buyIn - stake.MinBuyIn) * 100.0 / (MaxBuyIn - stake.MinBuyIn)).ToString("0.#", System.Globalization.CultureInfo.InvariantCulture);
+
+    private IEnumerable<string> Notices
+    {
+        get
+        {
+            if (Player.StartedNewRun)
+                yield return $"Pleite! Run #{Player.Bankroll.Run} startet mit {TableStakes.StartingChips:N0} Chips. Dein Rekord bleibt in der Rangliste.";
+            if (Player.ReturnedFromTable > 0)
+                yield return $"Deine {Player.ReturnedFromTable:N0} Chips vom letzten Tisch wurden ausgezahlt.";
+            if (Notice is not null)
+                yield return Notice;
+        }
+    }
+
+    protected override void OnInitialized()
+    {
+        // Start at the most expensive table the player can afford comfortably (at least 5 min buy-ins).
+        var affordable = TableStakes.Real.Where(s => Player.Bankroll.Chips >= s.MinBuyIn * 5).ToList();
+        stake = affordable.Count > 0 ? affordable[^1]
+            : TableStakes.Real.FirstOrDefault(Player.Bankroll.CanSit) ?? TableStakes.Practice;
+        SelectStake(stake);
+    }
+
+    private void SelectStake(TableStake s)
+    {
+        stake = s;
+        error = null;
+        if (s.IsPractice)
+        {
+            buyIn = s.MinBuyIn;
+            return;
+        }
+        var half = Player.Bankroll.Chips / 2 / s.BigBlind * s.BigBlind;
+        buyIn = Math.Clamp(half, s.MinBuyIn, MaxBuyIn);
+    }
+
+    private void OnBuyIn(ChangeEventArgs e)
+    {
+        if (int.TryParse(e.Value?.ToString(), out var v))
+            buyIn = Math.Clamp(v, stake.MinBuyIn, MaxBuyIn);
+    }
+
+    private static string StakeIcon(TableStake s) => s.Id switch
+    {
+        "practice" => "🎓",
+        "pub" => "🍺",
+        "casino" => "🎰",
+        "highroller" => "💎",
+        _ => "👑",
+    };
+
+    private void StartRename()
+    {
+        nameDraft = Player.DisplayName;
+        nameError = null;
+        editingName = true;
+    }
+
+    private async Task SaveNameAsync()
+    {
+        nameError = await Player.RenameAsync(nameDraft);
+        if (nameError is null) editingName = false;
+    }
+
+    private async Task Start()
+    {
+        if (!Player.Bankroll.CanSit(stake))
+        {
+            error = "Für diesen Tisch hast du nicht genug Chips.";
+            return;
+        }
+        await OnStart.InvokeAsync(new GameSettings(EffectiveDifficulty, opponents, stake, buyIn));
+    }
 }

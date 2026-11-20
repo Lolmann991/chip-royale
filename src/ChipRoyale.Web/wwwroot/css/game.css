@@ -65,10 +65,10 @@
 
 .hero-cards {
     position: relative;
-    height: 230px;
+    height: 210px;
     transform-style: preserve-3d;
-    margin-bottom: 2.2rem;
-    font-size: 17px;
+    margin-bottom: 1.6rem;
+    font-size: 22px;
 }
 
 .hero-card {
@@ -78,9 +78,9 @@
     animation: hero-float 6s ease-in-out infinite;
     filter: drop-shadow(0 30px 25px rgba(0, 0, 0, .55));
 }
-.hero-card.h1 { --r: -15deg; --x: -165%; animation-delay: -1s; }
-.hero-card.h2 { --r: 0deg; --x: -50%; top: 0; animation-delay: -3s; }
-.hero-card.h3 { --r: 15deg; --x: 65%; animation-delay: -5s; }
+.hero-card.hc1 { --r: -15deg; --x: -165%; animation-delay: -1s; }
+.hero-card.hc2 { --r: 0deg; --x: -50%; top: 0; animation-delay: -3s; }
+.hero-card.hc3 { --r: 15deg; --x: 65%; animation-delay: -5s; }
 
 @keyframes hero-float {
     0%, 100% { transform: translateX(var(--x)) rotateZ(var(--r)) rotateX(12deg) rotateY(-8deg) translateY(0); }
@@ -97,6 +97,7 @@
     text-shadow: 0 2px 0 #000, 0 12px 30px rgba(0, 0, 0, .6);
 }
 .logo span {
+    text-shadow: none;
     background: linear-gradient(180deg, #fff3c4 0%, var(--gold) 45%, var(--gold-deep) 100%);
     -webkit-background-clip: text;
     background-clip: text;
@@ -114,6 +115,7 @@
     box-shadow: 0 30px 80px rgba(0, 0, 0, .55), inset 0 1px 0 rgba(255, 255, 255, .06);
 }
 .lobby-panel section + section { margin-top: 1.4rem; }
+.lobby-panel > section:first-of-type { margin-top: 1.1rem; }
 .lobby-panel h2 {
     font-size: .78rem;
     text-transform: uppercase;
@@ -1046,3 +1048,143 @@
     box-shadow: 0 -1px 2px rgba(0, 0, 0, .2);
 }
 #blazor-error-ui .dismiss { cursor: pointer; position: absolute; right: .75rem; top: .5rem; }
+
+/* ---------------------------------------------------------------- Lobby: profile, stakes, buy-in */
+
+.loading { display: grid; place-items: center; height: 100%; font-size: 4rem; color: var(--gold); animation: trophy 1.2s ease-in-out infinite; position: relative; z-index: 1; }
+
+.hero-links { display: flex; justify-content: center; gap: .6rem; margin-top: 1.4rem; }
+.hero-links .tool { display: inline-flex; align-items: center; text-decoration: none; }
+
+.lobby { grid-template-columns: minmax(300px, 1fr) minmax(460px, 640px); }
+
+.profile {
+    display: flex;
+    align-items: center;
+    gap: .8rem;
+    padding: .7rem .8rem;
+    margin-bottom: .6rem;
+    border-radius: 14px;
+    background: rgba(255, 255, 255, .04);
+    border: 1px solid rgba(255, 255, 255, .07);
+}
+.profile .avatar { font-size: 1.4rem; width: 3rem; height: 3rem; }
+.profile-main { flex: 1; min-width: 0; }
+.profile-name { font-weight: 800; font-size: 1.1rem; display: flex; align-items: center; gap: .3rem; }
+.profile-stats { display: flex; flex-wrap: wrap; gap: .3rem .9rem; font-size: .82rem; color: var(--ink-dim); }
+.profile-stats .bankroll { color: #ffe7a6; font-weight: 700; }
+.profile-links { display: flex; gap: .4rem; }
+.profile-links a { text-decoration: none; display: inline-flex; align-items: center; }
+.icon-btn { border: none; background: none; cursor: pointer; font-size: .85rem; opacity: .7; padding: .1rem .3rem; }
+.icon-btn:hover { opacity: 1; }
+.name-edit { display: flex; gap: .35rem; }
+.name-edit input {
+    flex: 1;
+    min-width: 0;
+    padding: .35rem .6rem;
+    border-radius: 8px;
+    border: 1px solid rgba(245, 196, 81, .5);
+    background: rgba(0, 0, 0, .35);
+    color: var(--ink);
+    font: inherit;
+    font-weight: 700;
+}
+.form-error { color: #ffaaa3; font-size: .82rem; margin: .4rem 0 0; }
+.note { color: var(--ink-dim); font-size: .82rem; margin: .4rem 0 0; }
+.note.highlight { color: #ffe7a6; background: rgba(245, 196, 81, .1); border-left: 3px solid var(--gold); padding: .45rem .7rem; border-radius: 8px; }
+.note.center { text-align: center; }
+.note a { color: var(--gold); }
+
+.stake-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: .5rem; }
+.stake-choice { padding: .7rem .4rem; gap: .15rem; }
+.stake-choice .choice-title { font-size: .92rem; }
+.stake-choice .choice-text { font-size: .7rem; }
+.choice.locked, .choice:disabled { opacity: .4; cursor: not-allowed; transform: none; }
+
+.buyin { display: flex; align-items: center; gap: .5rem; }
+.buyin .raise-slider { flex: 1; width: auto; }
+.buyin-value { min-width: 6.5rem; text-align: right; font-weight: 800; font-size: 1.1rem; color: #ffe7a6; font-variant-numeric: tabular-nums; }
+
+.pill.stake { color: #ffe7a6; border-color: rgba(245, 196, 81, .35); }
+
+/* ---------------------------------------------------------------- Hand rankings */
+
+.overlay.soft { background: rgba(0, 0, 0, .6); backdrop-filter: blur(4px); position: fixed; z-index: 60; }
+.rankings {
+    width: min(640px, 94vw);
+    max-height: 90vh;
+    overflow-y: auto;
+    padding: 1.4rem 1.6rem;
+    border-radius: 20px;
+    background: linear-gradient(180deg, #1c1b20, #0f0e12);
+    border: 1px solid var(--panel-border);
+    box-shadow: 0 40px 100px rgba(0, 0, 0, .8);
+    animation: pop-in .4s cubic-bezier(.2, 1.4, .4, 1);
+}
+.rankings-head { display: flex; align-items: center; justify-content: space-between; }
+.rankings-head h2 { font-family: Georgia, serif; margin: 0; }
+.rankings-intro { color: var(--ink-dim); font-size: .85rem; margin: .4rem 0 1rem; }
+.rank-list { list-style: none; margin: 0; padding: 0; counter-reset: rank; }
+.rank-row {
+    counter-increment: rank;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: .55rem .6rem;
+    border-radius: 12px;
+    font-size: 15px;
+}
+.rank-row + .rank-row { border-top: 1px solid rgba(255, 255, 255, .05); }
+.rank-row::before { content: counter(rank); width: 1.5rem; color: var(--ink-dim); font-weight: 800; text-align: center; }
+.rank-row.current { background: rgba(245, 196, 81, .12); box-shadow: inset 0 0 0 1px rgba(245, 196, 81, .5); }
+.rank-text { flex: 1; display: flex; flex-direction: column; gap: .1rem; }
+.rank-text span { color: var(--ink-dim); font-size: .8rem; }
+.rank-text em { color: var(--gold); font-size: .78rem; font-style: normal; font-weight: 700; }
+.rank-cards { display: flex; gap: .25rem; font-size: 12px; }
+
+/* ---------------------------------------------------------------- Leaderboard page */
+
+.board-page { position: relative; z-index: 1; height: 100%; overflow-y: auto; padding: 1rem 1.2rem 3rem; }
+.board-head { display: flex; justify-content: space-between; align-items: center; max-width: 760px; margin: 0 auto; }
+.board-head a { text-decoration: none; color: var(--ink); display: inline-block; }
+.board-head a.tool { display: inline-flex; align-items: center; }
+.logo.small { font-size: clamp(2.2rem, 5vw, 3.4rem); text-align: center; margin: 1.2rem 0 1rem; }
+.tabs { display: flex; justify-content: center; gap: .4rem; flex-wrap: wrap; margin-bottom: 1.2rem; }
+.tab {
+    padding: .45rem .9rem;
+    border-radius: 999px;
+    text-decoration: none;
+    color: var(--ink-dim);
+    border: 1px solid rgba(255, 255, 255, .1);
+    background: rgba(255, 255, 255, .04);
+    font-size: .88rem;
+}
+.tab.on { color: #3a2604; background: linear-gradient(180deg, #ffe08a, var(--gold)); border-color: transparent; font-weight: 700; }
+.leaderboard { list-style: none; padding: 0; margin: 0 auto; max-width: 760px; display: flex; flex-direction: column; gap: .4rem; }
+.lb-row {
+    display: grid;
+    grid-template-columns: 3rem 1fr auto;
+    grid-template-areas: "rank name main" "rank sub main";
+    align-items: center;
+    column-gap: .8rem;
+    padding: .65rem 1rem;
+    border-radius: 14px;
+    background: var(--panel);
+    border: 1px solid var(--panel-border);
+    animation: rise .4s ease backwards;
+}
+.lb-row:nth-child(2) { animation-delay: .04s; }
+.lb-row:nth-child(3) { animation-delay: .08s; }
+.lb-rank { grid-area: rank; font-size: 1.3rem; font-weight: 800; text-align: center; color: var(--ink-dim); }
+.lb-name { grid-area: name; font-weight: 700; }
+.lb-sub { grid-area: sub; font-size: .78rem; color: var(--ink-dim); }
+.lb-main { grid-area: main; font-weight: 800; font-size: 1.15rem; color: #ffe7a6; font-variant-numeric: tabular-nums; }
+.lb-row.top1 { border-color: rgba(255, 215, 100, .6); background: linear-gradient(90deg, rgba(245, 196, 81, .18), var(--panel)); }
+.lb-row.top2 { border-color: rgba(220, 220, 230, .35); }
+.lb-row.top3 { border-color: rgba(205, 127, 50, .45); }
+.lb-row.me { box-shadow: 0 0 0 2px var(--ok); }
+
+@media (max-width: 900px) {
+    .stake-grid { grid-template-columns: repeat(3, 1fr); }
+    .profile { flex-wrap: wrap; }
+}

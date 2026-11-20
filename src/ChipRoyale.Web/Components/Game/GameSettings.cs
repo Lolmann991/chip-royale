@@ -1,12 +1,20 @@
 using ChipRoyale.Engine.Ai;
+using ChipRoyale.Engine.Economy;
+using ChipRoyale.Web.Services;
 
 namespace ChipRoyale.Web.Components.Game;
 
-public sealed record GameSettings(Difficulty Difficulty, int Opponents, int StartChips)
+/// <param name="BuyIn">Chips the player brings to the table.</param>
+public sealed record GameSettings(Difficulty Difficulty, int Opponents, TableStake Stake, int BuyIn)
 {
-    public int SmallBlind => Math.Max(1, StartChips / 100);
-    public int BigBlind => SmallBlind * 2;
+    public int SmallBlind => Stake.SmallBlind;
+    public int BigBlind => Stake.BigBlind;
+    public bool IsPractice => Stake.IsPractice;
 }
+
+/// <param name="Stack">The player's chips at the table right now.</param>
+/// <param name="Hand">Set when a hand the player was dealt into has finished.</param>
+public readonly record struct TableReport(int Stack, HandOutcome? Hand);
 
 /// <summary>Look and personality of a seat at the table.</summary>
 public sealed record SeatLook(string Name, string Avatar, int Hue);

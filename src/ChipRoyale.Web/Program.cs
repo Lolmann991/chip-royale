@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using ChipRoyale.Web.Components;
 using ChipRoyale.Web.Components.Account;
 using ChipRoyale.Web.Data;
+using ChipRoyale.Web.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -25,6 +26,10 @@ builder.Services.AddAuthentication(options =>
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlite(connectionString));
+// Interactive components need short-lived contexts (one per operation).
+builder.Services.AddDbContextFactory<ApplicationDbContext>(options =>
+    options.UseSqlite(connectionString), ServiceLifetime.Scoped);
+builder.Services.AddScoped<PlayerService>();
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 builder.Services.AddIdentityCore<ApplicationUser>(options =>
@@ -39,6 +44,12 @@ builder.Services.AddIdentityCore<ApplicationUser>(options =>
 builder.Services.AddSingleton<IEmailSender<ApplicationUser>, IdentityNoOpEmailSender>();
 
 var app = builder.Build();
+
+// Create / update the SQLite database on start.
+using (var scope = app.Services.CreateScope())
+{
+    scope.ServiceProvider.GetRequiredService<ApplicationDbContext>().Database.Migrate();
+}
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
