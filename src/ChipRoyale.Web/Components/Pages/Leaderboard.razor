@@ -6,27 +6,30 @@
 @using Microsoft.EntityFrameworkCore
 @inject IDbContextFactory<ApplicationDbContext> DbFactory
 
-<PageTitle>Rangliste – Chip Royale</PageTitle>
+<PageTitle>@L("Board.PageTitle")</PageTitle>
 
 <div class="game-root">
     <div class="board-page">
         <header class="board-head">
             <a class="brand" href="">♠ Chip <span>Royale</span></a>
-            <a class="tool" href="">← Zum Spiel</a>
+            <span class="head-tools">
+                <LanguageSwitch />
+                <a class="tool" href="">@L("Board.Back")</a>
+            </span>
         </header>
 
-        <h1 class="logo small">Rang<span>liste</span></h1>
+        <h1 class="logo small">@L("Board.Title1")<span>@L("Board.Title2")</span></h1>
 
         <nav class="tabs">
             @foreach (var (key, label) in Tabs)
             {
-                <a class="tab @(Mode == key ? "on" : "")" href="rangliste?sort=@key">@label</a>
+                <a class="tab @(Mode == key ? "on" : "")" href="rangliste?sort=@key">@L(label)</a>
             }
         </nav>
 
         @if (rows.Count == 0)
         {
-            <p class="note center">Noch niemand auf der Liste. Melde dich an und spiel eine Runde – dann stehst du hier ganz oben!</p>
+            <p class="note center">@L("Board.Empty")</p>
         }
         else
         {
@@ -35,7 +38,7 @@
                 {
                     <li class="lb-row @(row.IsMe ? "me" : "") @(row.Rank <= 3 ? $"top{row.Rank}" : "")">
                         <span class="lb-rank">@(row.Rank switch { 1 => "🥇", 2 => "🥈", 3 => "🥉", _ => row.Rank.ToString() })</span>
-                        <span class="lb-name">@row.Name@(row.IsMe ? " (du)" : "")</span>
+                        <span class="lb-name">@row.Name@(row.IsMe ? L("Board.You") : "")</span>
                         <span class="lb-main">● @row.Main.ToString("N0")</span>
                         <span class="lb-sub">@row.Sub</span>
                     </li>
@@ -45,11 +48,11 @@
 
         @if (me is { } m && !rows.Any(r => r.IsMe))
         {
-            <p class="note center">Du: Platz @m.Rank mit @m.Main.ToString("N0") Chips</p>
+            <p class="note center">@L("Board.YourRank", m.Rank, m.Main)</p>
         }
         @if (userId is null)
         {
-            <p class="note center"><a href="Account/Login?ReturnUrl=%2Frangliste">Anmelden</a>, um in der Rangliste zu erscheinen.</p>
+            <p class="note center"><a href="Account/Login?ReturnUrl=%2Frangliste">@L("Board.LoginLink")</a>@L("Board.LoginText")</p>
         }
     </div>
 </div>
@@ -61,9 +64,9 @@
     private const int Take = 50;
     private static readonly (string Key, string Label)[] Tabs =
     [
-        ("rekord", "Höchster Stand (Run)"),
-        ("aktuell", "Aktueller Stand"),
-        ("tische", "Abgeräumte Tische"),
+        ("rekord", "Board.Tab.Record"),
+        ("aktuell", "Board.Tab.Current"),
+        ("tische", "Board.Tab.Tables"),
     ];
 
     private string Mode => Tabs.Any(t => t.Key == Sort) ? Sort! : "rekord";
@@ -110,16 +113,16 @@
         }
     }
 
-    private static string Hands(int n) => n == 1 ? "1 Hand" : $"{n:N0} Hände";
+    private static string Hands(int n) => n == 1 ? L("Board.Hand") : L("Board.Hands", n);
 
     private string Describe(PlayerProfile p)
     {
         var b = p.Bankroll;
         return Mode switch
         {
-            "aktuell" => $"Run #{b.Run} · Rekord {b.BestPeak:N0}",
-            "tische" => $"{b.HandsWon:N0} von {Hands(b.HandsPlayed)} gewonnen",
-            _ => $"Aktuell {b.Total:N0} · {Hands(b.HandsPlayed)}",
+            "aktuell" => L("Board.Sub.Current", b.Run, b.BestPeak),
+            "tische" => L("Board.Sub.Tables", b.HandsWon, Hands(b.HandsPlayed)),
+            _ => L("Board.Sub.Record", b.Total, Hands(b.HandsPlayed)),
         };
     }
 }

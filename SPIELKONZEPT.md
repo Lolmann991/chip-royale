@@ -70,9 +70,9 @@ Browser-Pokerspiel (Blazor Server) gegen KI-Gegner mit Chip-Progression, Pixel-A
 - [x] Spieltisch-UI für 6 Plätze (3D-Tisch mit Animationen und Gewinn-Effekten)
 - [x] Benutzerkonto mit Chip-Stand, Reset bei 0 Chips (Gäste spielen ohne Speicherung)
 - [x] Tischstufen mit Buy-in-Grenzen (Min / 20 × Min): Kneipe, Casino, High Roller, VIP-Salon
-- [ ] Tutorial: Lektionen (offen) – erledigt: Hand-Rangliste, Live-Tipps, Übungstisch
+- [x] Tutorial: 4 Lektionen (Hand-Rangfolge, Setzrunden, Blinds, Positionen) mit Quiz, Hand-Rangliste, Live-Tipps, Übungstisch
 - [x] Rangliste (höchster Stand pro Run, aktueller Stand, abgeräumte Tische)
-- [ ] Lokalisierung DE/EN
+- [x] Lokalisierung DE/EN (Ressourcendateien, Umschalter, Browser-Sprache; Konto-Verwaltungsseiten noch englisch)
 
 ### V2
 - Five Card Draw, Omaha

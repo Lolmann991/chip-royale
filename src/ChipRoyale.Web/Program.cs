@@ -4,7 +4,9 @@ using Microsoft.EntityFrameworkCore;
 using ChipRoyale.Web.Components;
 using ChipRoyale.Web.Components.Account;
 using ChipRoyale.Web.Data;
+using ChipRoyale.Web.Localization;
 using ChipRoyale.Web.Services;
+using Microsoft.AspNetCore.Localization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -30,6 +32,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 builder.Services.AddDbContextFactory<ApplicationDbContext>(options =>
     options.UseSqlite(connectionString), ServiceLifetime.Scoped);
 builder.Services.AddScoped<PlayerService>();
+builder.Services.AddLocalization();
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 builder.Services.AddIdentityCore<ApplicationUser>(options =>
@@ -65,9 +68,28 @@ else
 app.UseStatusCodePagesWithReExecute("/not-found", createScopeForStatusCodePages: true);
 app.UseHttpsRedirection();
 
+// Languages: German (default) and English, chosen by cookie or browser language.
+app.UseRequestLocalization(new RequestLocalizationOptions()
+    .SetDefaultCulture(Loc.DefaultCulture)
+    .AddSupportedCultures(Loc.SupportedCultures)
+    .AddSupportedUICultures(Loc.SupportedCultures));
+
 app.UseAntiforgery();
 
 app.MapStaticAssets();
+
+// Switch language: stores the culture cookie and goes back to the page.
+app.MapGet("/Culture/Set", (string culture, string? redirectUri, HttpContext context) =>
+{
+    if (Loc.SupportedCultures.Contains(culture))
+    {
+        context.Response.Cookies.Append(
+            CookieRequestCultureProvider.DefaultCookieName,
+            CookieRequestCultureProvider.MakeCookieValue(new RequestCulture(culture)),
+            new CookieOptions { MaxAge = TimeSpan.FromDays(365), IsEssential = true, SameSite = SameSiteMode.Lax });
+    }
+    return Results.LocalRedirect(string.IsNullOrEmpty(redirectUri) || !redirectUri.StartsWith('/') ? "/" : redirectUri);
+});
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();
 

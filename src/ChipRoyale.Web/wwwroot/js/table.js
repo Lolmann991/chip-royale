@@ -326,3 +326,18 @@ export function sfx(name) {
         }
     } catch { /* audio is optional */ }
 }
+
+// ------------------------------------------------------------------ tutorial helpers
+
+export function unlockAudio() {
+    try { soundOn = localStorage.getItem("cr-sound") !== "off"; } catch { /* ignore */ }
+    ensureAudio();
+}
+
+export function loadLessons() {
+    try { return JSON.parse(localStorage.getItem("cr-lessons") || "[]"); } catch { return []; }
+}
+
+export function saveLessons(ids) {
+    try { localStorage.setItem("cr-lessons", JSON.stringify(ids)); } catch { /* ignore */ }
+}

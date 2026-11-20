@@ -4,6 +4,7 @@ using ChipRoyale.Engine.Economy;
 using ChipRoyale.Web.Data;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.EntityFrameworkCore;
+using static ChipRoyale.Web.Localization.Loc;
 
 namespace ChipRoyale.Web.Services;
 
@@ -20,7 +21,7 @@ public sealed partial class PlayerService(
 
     public string? UserId { get; private set; }
     public bool IsGuest => UserId is null;
-    public string DisplayName { get; private set; } = "Gast";
+    public string DisplayName { get; private set; } = L("Guest");
     public Bankroll Bankroll { get; private set; } = Bankroll.New();
 
     /// <summary>Set when loading found the player broke and started a new run.</summary>
@@ -45,7 +46,7 @@ public sealed partial class PlayerService(
             profile = new PlayerProfile
             {
                 UserId = UserId,
-                DisplayName = $"Spieler{Random.Shared.Next(1000, 10000)}",
+                DisplayName = L("DefaultName", Random.Shared.Next(1000, 10000)),
                 Bankroll = Bankroll.New(),
             };
             db.Profiles.Add(profile);
@@ -103,16 +104,16 @@ public sealed partial class PlayerService(
     {
         name = name.Trim();
         if (name.Length is < 3 or > PlayerProfile.MaxNameLength)
-            return $"Der Name muss 3 bis {PlayerProfile.MaxNameLength} Zeichen lang sein.";
+            return L("Name.Length", PlayerProfile.MaxNameLength);
         if (!NameRegex().IsMatch(name))
-            return "Erlaubt sind Buchstaben, Ziffern, Leerzeichen, - und _.";
+            return L("Name.Chars");
         if (IsGuest)
-            return "Melde dich an, um einen Namen zu speichern.";
+            return L("Name.Guest");
 
         await using var db = await dbFactory.CreateDbContextAsync();
         var lower = name.ToLower();
         if (await db.Profiles.AnyAsync(p => p.UserId != UserId && p.DisplayName.ToLower() == lower))
-            return "Diesen Namen hat schon jemand.";
+            return L("Name.Taken");
         var profile = await db.Profiles.FirstAsync(p => p.UserId == UserId);
         profile.DisplayName = name;
         profile.UpdatedAt = DateTime.UtcNow;

@@ -10,7 +10,7 @@
     <header class="topbar">
         <div class="brand">♠ Chip <span>Royale</span></div>
         <div class="meta">
-            <span class="pill stake">@Settings.Stake.Name@(Settings.IsPractice ? " · zählt nicht" : "")</span>
+            <span class="pill stake">@Roster.StakeName(Settings.Stake)@(Settings.IsPractice ? L("Table.PracticeSuffix") : "")</span>
             <span class="pill">Hand #@table.HandNumber</span>
             <span class="pill">Blinds @table.SmallBlind.ToString("N0")/@table.BigBlind.ToString("N0")</span>
             <span class="pill diff-@Settings.Difficulty">@Roster.DifficultyName(Settings.Difficulty)</span>
@@ -20,11 +20,11 @@
             }
         </div>
         <div class="tools">
-            <button type="button" class="tool @(hints ? "on" : "")" title="Tipps & Gewinnchance" @onclick="ToggleHints">💡 Tipps</button>
-            <button type="button" class="tool @(sound ? "on" : "")" title="Sound" @onclick="ToggleSound">@(sound ? "🔊" : "🔇")</button>
-            <button type="button" class="tool @(showRankings ? "on" : "")" title="Hand-Rangliste" @onclick="() => showRankings = !showRankings">🃏 Hände</button>
-            <button type="button" class="tool @(showLog ? "on" : "")" title="Verlauf" @onclick="() => showLog = !showLog">📜</button>
-            <button type="button" class="tool" @onclick="ExitAsync">@(Settings.IsPractice ? "Lobby" : "Auszahlen")</button>
+            <button type="button" class="tool @(hints ? "on" : "")" title="@L("Table.Tips.Title")" @onclick="ToggleHints">@L("Table.Tips")</button>
+            <button type="button" class="tool @(sound ? "on" : "")" title="@L("Table.Sound")" @onclick="ToggleSound">@(sound ? "🔊" : "🔇")</button>
+            <button type="button" class="tool @(showRankings ? "on" : "")" title="@L("HandRankings.Title")" @onclick="() => showRankings = !showRankings">@L("Table.Hands")</button>
+            <button type="button" class="tool @(showLog ? "on" : "")" title="@L("Table.Log")" @onclick="() => showLog = !showLog">📜</button>
+            <button type="button" class="tool" @onclick="ExitAsync">@(Settings.IsPractice ? L("Table.Lobby") : L("Table.CashOut"))</button>
         </div>
     </header>
 
@@ -52,7 +52,7 @@
             </div>
             @if (PotAmount > 0)
             {
-                <div class="pot-label" id="pot-label">Pot @PotAmount.ToString("N0")</div>
+                <div class="pot-label" id="pot-label">@L("Table.Pot", PotAmount)</div>
             }
 
             <div class="board">
@@ -146,7 +146,7 @@
                 <h2 class="banner-title">@banner.Title</h2>
                 <p class="banner-sub">@banner.Sub</p>
                 <div class="banner-actions">
-                    <button type="button" class="act next" @onclick="NextHandAsync">Nächste Hand <kbd>Leertaste</kbd></button>
+                    <button type="button" class="act next" @onclick="NextHandAsync">@L("Table.NextHand") <kbd>@L("Table.Key.Space")</kbd></button>
                 </div>
                 @if (autoContinueMs > 0)
                 {
@@ -160,11 +160,11 @@
         <div class="hand-info">
             @if (Hero.InHand && Hero.HoleCards.Count == 2 && !Hero.HasFolded)
             {
-                <div class="hand-name"><small>Deine Hand</small>@HandText.DescribeCurrent(Hero.HoleCards, table.Board)</div>
+                <div class="hand-name"><small>@L("Table.YourHand")</small>@HandText.DescribeCurrent(Hero.HoleCards, table.Board)</div>
                 @if (hints && heroEquity is { } eq && table.Phase != TablePhase.HandComplete)
                 {
                     <div class="equity">
-                        <span>Gewinnchance</span>
+                        <span>@L("Table.WinChance")</span>
                         <div class="equity-bar"><span style="width:@F(eq * 100)%"></span></div>
                         <b>@((eq * 100).ToString("0"))%</b>
                     </div>
@@ -177,7 +177,7 @@
             }
             else if (Hero.HasFolded && table.Phase != TablePhase.HandComplete)
             {
-                <div class="hand-name"><small>Deine Hand</small>Gepasst</div>
+                <div class="hand-name"><small>@L("Table.YourHand")</small>@L("Table.Folded")</div>
             }
         </div>
 
@@ -194,34 +194,34 @@
                         <button type="button" class="preset" @onclick="() => SetRaise(legal.MaxRaiseTo)">All-in</button>
                         <button type="button" class="step" @onclick="() => StepRaise(-1)">−</button>
                         <input type="range" class="raise-slider" min="@legal.MinRaiseTo" max="@legal.MaxRaiseTo" step="@RaiseUnit"
-                               value="@raiseTo" @oninput="OnSlider" style="--p:@F(RaisePercent)%" aria-label="Einsatz" />
+                               value="@raiseTo" @oninput="OnSlider" style="--p:@F(RaisePercent)%" aria-label="@L("Table.Bet.Aria")" />
                         <button type="button" class="step" @onclick="() => StepRaise(1)">+</button>
                     </div>
                 }
                 <div class="buttons">
-                    <button type="button" class="act fold" @onclick="() => HeroActAsync(PlayerAction.Fold())">Passen <kbd>F</kbd></button>
+                    <button type="button" class="act fold" @onclick="() => HeroActAsync(PlayerAction.Fold())">@L("Table.Fold") <kbd>F</kbd></button>
                     <button type="button" class="act call" @onclick="() => HeroActAsync(PlayerAction.Call())">
-                        @(legal.CanCheck ? "Checken" : legal.ToCall >= Hero.Chips ? $"All-in {legal.ToCall:N0}" : $"Mitgehen {legal.ToCall:N0}") <kbd>C</kbd>
+                        @(legal.CanCheck ? L("Table.Check") : legal.ToCall >= Hero.Chips ? L("Table.CallAllIn", legal.ToCall) : L("Table.Call", legal.ToCall)) <kbd>C</kbd>
                     </button>
                     @if (legal.CanRaise)
                     {
                         <button type="button" class="act raise" @onclick="HeroRaiseAsync">
-                            @(raiseTo >= legal.MaxRaiseTo ? $"All-in {raiseTo:N0}" : legal.CurrentBet == 0 ? $"Setzen {raiseTo:N0}" : $"Erhöhen auf {raiseTo:N0}") <kbd>R</kbd>
+                            @(raiseTo >= legal.MaxRaiseTo ? L("Table.CallAllIn", raiseTo) : legal.CurrentBet == 0 ? L("Table.Bet", raiseTo) : L("Table.RaiseTo", raiseTo)) <kbd>R</kbd>
                         </button>
                     }
                 </div>
             }
             else if (table.Phase == TablePhase.HandComplete && gameOver is null && banner is null)
             {
-                <button type="button" class="act next" @onclick="NextHandAsync">Nächste Hand <kbd>Leertaste</kbd></button>
+                <button type="button" class="act next" @onclick="NextHandAsync">@L("Table.NextHand") <kbd>@L("Table.Key.Space")</kbd></button>
             }
             else if (thinkingSeat >= 0)
             {
-                <div class="status">@looks[thinkingSeat].Avatar @looks[thinkingSeat].Name überlegt …</div>
+                <div class="status">@looks[thinkingSeat].Avatar @L("Table.Thinking", looks[thinkingSeat].Name)</div>
             }
             else if (table.IsRunout)
             {
-                <div class="status">Alle sind all-in – die Karten werden aufgedeckt …</div>
+                <div class="status">@L("Table.Runout")</div>
             }
         </div>
     </footer>
@@ -229,7 +229,7 @@
     @if (showLog)
     {
         <aside class="log">
-            <h3>Verlauf</h3>
+            <h3>@L("Table.Log")</h3>
             @foreach (var line in log.AsEnumerable().Reverse())
             {
                 <div class="log-line @line.Kind">@line.Text</div>
@@ -247,40 +247,40 @@
         <div class="overlay">
             <div class="overlay-card @(go ? "" : "lost")">
                 <div class="trophy">@(go ? "🏆" : "💸")</div>
-                <h2>@(go ? "Du räumst den Tisch ab!" : "Pleite am Tisch!")</h2>
+                <h2>@(go ? L("Over.Cleared") : L("Over.Busted"))</h2>
                 <p>
                     @if (go)
                     {
-                        @($"Alle Gegner sind raus. Du hast {Hero.Chips:N0} Chips vor dir – nimm sie mit oder fordere neue Gegner heraus.")
+                        @L("Over.Cleared.Text", Hero.Chips)
                     }
                     else if (Settings.IsPractice)
                     {
-                        @("Am Übungstisch kostet das nichts. Einfach nochmal!")
+                        @L("Over.Busted.Practice")
                     }
                     else
                     {
-                        @("Dein Buy-in ist weg. In der Lobby kannst du neu einkaufen.")
+                        @L("Over.Busted.Text")
                     }
                 </p>
                 <div class="stats">
-                    <div><b>@handsPlayed</b><span>Hände</span></div>
-                    <div><b>@handsWon</b><span>Gewonnen</span></div>
-                    <div><b>@biggestPot.ToString("N0")</b><span>Größter Pot</span></div>
-                    <div><b>@peakChips.ToString("N0")</b><span>Höchster Stand</span></div>
+                    <div><b>@handsPlayed</b><span>@L("Over.Hands")</span></div>
+                    <div><b>@handsWon</b><span>@L("Over.Won")</span></div>
+                    <div><b>@biggestPot.ToString("N0")</b><span>@L("Over.BiggestPot")</span></div>
+                    <div><b>@peakChips.ToString("N0")</b><span>@L("Over.Peak")</span></div>
                 </div>
                 <div class="banner-actions">
                     @if (go)
                     {
-                        <button type="button" class="act next" @onclick="NewOpponentsAsync">Neue Gegner</button>
-                        <button type="button" class="act call" @onclick="ExitAsync">@(Settings.IsPractice ? "Lobby" : "Auszahlen & Lobby")</button>
+                        <button type="button" class="act next" @onclick="NewOpponentsAsync">@L("Over.NewOpponents")</button>
+                        <button type="button" class="act call" @onclick="ExitAsync">@(Settings.IsPractice ? L("Table.Lobby") : L("Over.CashOutLobby"))</button>
                     }
                     else
                     {
                         @if (Settings.IsPractice)
                         {
-                            <button type="button" class="act next" @onclick="RestartAsync">Nochmal</button>
+                            <button type="button" class="act next" @onclick="RestartAsync">@L("Over.Again")</button>
                         }
-                        <button type="button" class="act fold" @onclick="ExitAsync">Lobby</button>
+                        <button type="button" class="act fold" @onclick="ExitAsync">@L("Table.Lobby")</button>
                     }
                 </div>
             </div>
@@ -402,7 +402,7 @@
 
         ResetHandVisuals();
         table.StartHand();
-        log.Add(new LogLine($"Hand #{table.HandNumber}", "hand"));
+        log.Add(new LogLine(L("Table.HandHeader", table.HandNumber), "hand"));
         Sfx("card");
         await UpdateEquityAsync();
         StateHasChanged();
@@ -589,22 +589,22 @@
         var heroWon = result.Winnings.GetValueOrDefault(0);
         var mainWinner = result.Winnings.OrderByDescending(w => w.Value).First().Key;
         var mainHand = result.WasShowdown ? result.Hands[mainWinner] : null;
-        var how = mainHand is null ? "Alle anderen haben gepasst" : $"mit {HandText.Describe(mainHand)}";
+        var how = mainHand is null ? L("Table.EveryoneFolded") : L("Table.WithHand", HandText.Describe(mainHand));
 
         if (heroWon > 0)
         {
             handsWon++;
-            var split = winners.Count > 1 ? " (geteilt)" : "";
-            banner = new Banner($"Du gewinnst {heroWon:N0}!{split}", how, true);
+            var split = winners.Count > 1 ? L("Table.Split") : "";
+            banner = new Banner(L("Table.YouWin", heroWon, split), how, true);
         }
         else
         {
-            var names = string.Join(" & ", winners.Select(w => looks[w].Name));
-            banner = new Banner($"{names} gewinnt {result.Winnings[mainWinner]:N0}", how, false);
+            var names = string.Join(L("Table.And"), winners.Select(w => looks[w].Name));
+            banner = new Banner(L(winners.Count > 1 ? "Table.OthersWin" : "Table.OtherWins", names, result.Winnings[mainWinner]), how, false);
         }
 
         foreach (var w in winners)
-            log.Add(new LogLine($"{looks[w].Name} gewinnt {result.Winnings[w]:N0}" + (result.WasShowdown ? $" – {HandText.Describe(result.Hands[w])}" : ""), "win"));
+            log.Add(new LogLine(L("Table.LogWin", looks[w].Name, result.Winnings[w]) + (result.WasShowdown ? $" – {HandText.Describe(result.Hands[w])}" : ""), "win"));
 
         StateHasChanged();
         await Delay(result.WasShowdown ? 1100 : 450);
@@ -701,7 +701,7 @@
             try
             {
                 ok = await JS.InvokeAsync<bool>("confirm",
-                    $"Die Hand läuft noch. Wenn du jetzt gehst, sind deine {Hero.TotalInvested:N0} Chips im Pot verloren. Trotzdem gehen?");
+                    L("Table.LeaveConfirm", Hero.TotalInvested));
             }
             catch (Exception ex) when (ex is JSDisconnectedException or TaskCanceledException or JSException) { return; }
             if (!ok) return;
@@ -751,10 +751,10 @@
         var opponents = Math.Max(1, table.ActivePlayerCount - 1);
         var strength = equity * (opponents + 1);
         var potOdds = legal is { ToCall: > 0 } l ? l.ToCall / (double)(l.Pot + l.ToCall) : 0;
-        if (strength > 1.5) return ("Starke Hand – setz ordentlich, die Gegner zahlen!", "strong");
-        if (strength > 1.12) return (legal?.ToCall > 0 ? "Solide Hand – mitgehen oder erhöhen lohnt sich." : "Solide Hand – ein Einsatz baut den Pot auf.", "");
-        if (potOdds > 0 && equity < potOdds) return ("Eher schwach – für diesen Preis lieber passen.", "weak");
-        return (legal?.ToCall > 0 ? "Schwache Hand – billig weiterschauen ist okay." : "Schwache Hand – einfach checken.", "weak");
+        if (strength > 1.5) return (L("Tip.Strong"), "strong");
+        if (strength > 1.12) return (L(legal?.ToCall > 0 ? "Tip.SolidCall" : "Tip.SolidBet"), "");
+        if (potOdds > 0 && equity < potOdds) return (L("Tip.TooExpensive"), "weak");
+        return (L(legal?.ToCall > 0 ? "Tip.WeakCall" : "Tip.WeakCheck"), "weak");
     }
 
     private async Task ToggleHints()

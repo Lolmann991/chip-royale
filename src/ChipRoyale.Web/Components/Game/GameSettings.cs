@@ -1,6 +1,7 @@
 using ChipRoyale.Engine.Ai;
 using ChipRoyale.Engine.Economy;
 using ChipRoyale.Web.Services;
+using static ChipRoyale.Web.Localization.Loc;
 
 namespace ChipRoyale.Web.Components.Game;
 
@@ -21,7 +22,7 @@ public sealed record SeatLook(string Name, string Avatar, int Hue);
 
 public static class Roster
 {
-    public static readonly SeatLook Human = new("Du", "😎", 45);
+    public static SeatLook Human => new(L("Seat.You"), "😎", 45);
 
     private static readonly SeatLook[] Bots =
     [
@@ -35,10 +36,7 @@ public static class Roster
     public static IReadOnlyList<SeatLook> PickBots(int count, Random random) =>
         Bots.OrderBy(_ => random.Next()).Take(count).ToArray();
 
-    public static string DifficultyName(Difficulty d) => d switch
-    {
-        Difficulty.Easy => "Leicht",
-        Difficulty.Medium => "Mittel",
-        _ => "Schwer",
-    };
+    public static string DifficultyName(Difficulty d) => L($"Difficulty.{d}");
+
+    public static string StakeName(TableStake s) => L($"Stake.{s.Id}");
 }

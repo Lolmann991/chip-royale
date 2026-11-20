@@ -1,55 +1,67 @@
 @using ChipRoyale.Engine.Cards
 @using ChipRoyale.Engine.Evaluation
 
-<div class="overlay soft" @onclick="() => OnClose.InvokeAsync()">
-    <div class="rankings" @onclick:stopPropagation="true">
-        <div class="rankings-head">
-            <h2>Hand-Rangliste</h2>
-            <button type="button" class="tool" @onclick="() => OnClose.InvokeAsync()" aria-label="Schließen">✕</button>
+@if (Inline)
+{
+    @List
+}
+else
+{
+    <div class="overlay soft" @onclick="() => OnClose.InvokeAsync()">
+        <div class="rankings" @onclick:stopPropagation="true">
+            <div class="rankings-head">
+                <h2>@L("HandRankings.Title")</h2>
+                <button type="button" class="tool" @onclick="() => OnClose.InvokeAsync()" aria-label="@L("Common.Close")">✕</button>
+            </div>
+            <p class="rankings-intro">@L("HandRankings.Intro")</p>
+            @List
         </div>
-        <p class="rankings-intro">Oben schlägt unten. Es zählen immer die besten 5 Karten aus deinen 2 Karten und den 5 Karten in der Mitte.</p>
-        <ol class="rank-list">
-            @foreach (var (category, name, text, cards, used, royal) in Rows)
-            {
-                var current = Current == category && !royal;
-                <li class="rank-row @(current ? "current" : "")">
-                    <div class="rank-text">
-                        <b>@name</b>
-                        <span>@text</span>
-                        @if (current)
-                        {
-                            <em>← das hast du gerade</em>
-                        }
-                    </div>
-                    <div class="rank-cards">
-                        @{ var parsed = Card.ParseMany(cards); }
-                        @for (var i = 0; i < parsed.Count; i++)
-                        {
-                            <PlayingCard Card="parsed[i]" Size="sm" Deal="false" Dim="i >= used" />
-                        }
-                    </div>
-                </li>
-            }
-        </ol>
     </div>
-</div>
+}
 
 @code {
     /// <summary>Category of the player's current hand to highlight, if any.</summary>
     [Parameter] public HandCategory? Current { get; set; }
     [Parameter] public EventCallback OnClose { get; set; }
 
-    private static readonly (HandCategory Category, string Name, string Text, string Cards, int Used, bool Royal)[] Rows =
+    /// <summary>Render only the list (for the tutorial), without the dialog.</summary>
+    [Parameter] public bool Inline { get; set; }
+
+    private static readonly (HandCategory Category, string Key, string Cards, int Used, bool Royal)[] Rows =
     [
-        (HandCategory.StraightFlush, "Royal Flush", "Ass bis Zehn in einer Farbe – die beste Hand überhaupt.", "As Ks Qs Js Ts", 5, true),
-        (HandCategory.StraightFlush, "Straight Flush", "Fünf Karten in Folge und in einer Farbe.", "9h 8h 7h 6h 5h", 5, false),
-        (HandCategory.FourOfAKind, "Vierling", "Vier Karten mit gleichem Wert.", "Kc Kd Kh Ks 3d", 4, false),
-        (HandCategory.FullHouse, "Full House", "Ein Drilling und ein Paar.", "Qc Qd Qs 7h 7c", 5, false),
-        (HandCategory.Flush, "Flush", "Fünf Karten einer Farbe, egal in welcher Reihenfolge.", "Ad Jd 8d 5d 2d", 5, false),
-        (HandCategory.Straight, "Straße", "Fünf Karten in Folge, Farben gemischt. Das Ass zählt auch als 1.", "Tc 9d 8h 7s 6c", 5, false),
-        (HandCategory.ThreeOfAKind, "Drilling", "Drei Karten mit gleichem Wert.", "8c 8d 8s Kh 4c", 3, false),
-        (HandCategory.TwoPair, "Zwei Paare", "Zwei verschiedene Paare.", "Ac Ah 9s 9d 5c", 4, false),
-        (HandCategory.OnePair, "Paar", "Zwei Karten mit gleichem Wert.", "Jc Jh As 7d 3c", 2, false),
-        (HandCategory.HighCard, "Höchste Karte", "Nichts davon – die höchste Karte entscheidet.", "Ac Qd 9h 6s 3c", 1, false),
+        (HandCategory.StraightFlush, "RoyalFlush", "As Ks Qs Js Ts", 5, true),
+        (HandCategory.StraightFlush, "StraightFlush", "9h 8h 7h 6h 5h", 5, false),
+        (HandCategory.FourOfAKind, "FourOfAKind", "Kc Kd Kh Ks 3d", 4, false),
+        (HandCategory.FullHouse, "FullHouse", "Qc Qd Qs 7h 7c", 5, false),
+        (HandCategory.Flush, "Flush", "Ad Jd 8d 5d 2d", 5, false),
+        (HandCategory.Straight, "Straight", "Tc 9d 8h 7s 6c", 5, false),
+        (HandCategory.ThreeOfAKind, "ThreeOfAKind", "8c 8d 8s Kh 4c", 3, false),
+        (HandCategory.TwoPair, "TwoPair", "Ac Ah 9s 9d 5c", 4, false),
+        (HandCategory.OnePair, "OnePair", "Jc Jh As 7d 3c", 2, false),
+        (HandCategory.HighCard, "HighCard", "Ac Qd 9h 6s 3c", 1, false),
     ];
+
+    private RenderFragment List => @<ol class="rank-list">
+        @foreach (var (category, key, cards, used, royal) in Rows)
+        {
+            var current = Current == category && !royal;
+            <li class="rank-row @(current ? "current" : "")">
+                <div class="rank-text">
+                    <b>@L($"Hand.{key}")</b>
+                    <span>@L($"HandRankings.{key}")</span>
+                    @if (current)
+                    {
+                        <em>@L("HandRankings.Current")</em>
+                    }
+                </div>
+                <div class="rank-cards">
+                    @{ var parsed = Card.ParseMany(cards); }
+                    @for (var i = 0; i < parsed.Count; i++)
+                    {
+                        <PlayingCard Card="parsed[i]" Size="sm" Deal="false" Dim="i >= used" />
+                    }
+                </div>
+            </li>
+        }
+    </ol>;
 }

@@ -14,7 +14,7 @@
     }
     else if (settings is null)
     {
-        <Lobby @key="lobbyKey" OnStart="StartAsync" Notice="@notice" />
+        <Lobby @key="lobbyKey" OnStart="StartAsync" Notice="@notice" Practice="@(Practice == "1")" />
     }
     else
     {
@@ -23,6 +23,9 @@
 </div>
 
 @code {
+    /// <summary>?practice=1 preselects the practice table (link from the tutorial).</summary>
+    [SupplyParameterFromQuery(Name = "practice")] public string? Practice { get; set; }
+
     private GameSettings? settings;
     private int tableKey;
     private int lobbyKey;
@@ -54,10 +57,10 @@
             var diff = stack - s.BuyIn;
             notice = diff switch
             {
-                > 0 => $"Ausgezahlt: {stack:N0} Chips – das sind {diff:N0} mehr als dein Buy-in! 🎉",
-                < 0 when stack > 0 => $"Ausgezahlt: {stack:N0} Chips ({-diff:N0} weniger als dein Buy-in).",
+                > 0 => L("Lobby.CashedOutProfit", stack, diff),
+                < 0 when stack > 0 => L("Lobby.CashedOutLoss", stack, -diff),
                 < 0 => null,
-                _ => $"Ausgezahlt: {stack:N0} Chips – genau dein Buy-in.",
+                _ => L("Lobby.CashedOutEven", stack),
             };
         }
         settings = null;
