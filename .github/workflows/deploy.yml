@@ -1,0 +1,74 @@
+name: Deploy to Azure
+
+# Every push to main (and a manual run) tests the app, publishes it and deploys it
+# to Azure App Service. Setup: see "Deployment" in README.md.
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-azure
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+env:
+  AZURE_WEBAPP_NAME: ${{ vars.AZURE_WEBAPP_NAME }}
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "10.0.x"
+
+      - name: Test
+        run: dotnet test --configuration Release
+
+      - name: Publish
+        run: dotnet publish src/ChipRoyale.Web/ChipRoyale.Web.csproj --configuration Release --output ${{ runner.temp }}/publish
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: chip-royale-web
+          path: ${{ runner.temp }}/publish
+          retention-days: 7
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: production
+      url: ${{ steps.deploy.outputs.webapp-url }}
+    steps:
+      - name: Check configuration
+        id: config
+        env:
+          PUBLISH_PROFILE: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
+        run: |
+          if [ -z "$AZURE_WEBAPP_NAME" ] || [ -z "$PUBLISH_PROFILE" ]; then
+            echo "::warning::Deployment skipped: set the variable AZURE_WEBAPP_NAME and the secret AZURE_WEBAPP_PUBLISH_PROFILE (see README, section Deployment)."
+            echo "ready=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "ready=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - uses: actions/download-artifact@v4
+        if: steps.config.outputs.ready == 'true'
+        with:
+          name: chip-royale-web
+          path: publish
+
+      - name: Deploy to Azure App Service
+        id: deploy
+        if: steps.config.outputs.ready == 'true'
+        uses: azure/webapps-deploy@v3
+        with:
+          app-name: ${{ env.AZURE_WEBAPP_NAME }}
+          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
+          package: publish

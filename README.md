@@ -39,3 +39,37 @@ Die SQLite-Datenbank (`src/ChipRoyale.Web/Data/app.db`) wird beim Start automati
 ```bash
 dotnet test
 ```
+
+## Deployment (Azure App Service)
+
+GitHub Pages kann nur statische Seiten ausliefern – Chip Royale braucht einen laufenden .NET-Server
+(Live-Verbindung für den Spieltisch, SQLite-Datenbank). Deshalb baut GitHub Actions bei jedem Push auf
+`main` die App, lässt alle Tests laufen und spielt sie auf **Azure App Service** aus
+(`.github/workflows/deploy.yml`).
+
+### Einmalig einrichten
+
+1. Kostenloses Konto auf [portal.azure.com](https://portal.azure.com) anlegen.
+2. **Ressource erstellen → Web-App**
+   - Name: z. B. `chip-royale-deinname` (die genaue Adresse zeigt Azure nach dem Erstellen an)
+   - Veröffentlichen: **Code** · Runtimestapel: **.NET 10 (LTS)** · Betriebssystem: **Linux**
+   - Region: z. B. Germany West Central · Tarif: **Free F1**
+3. In der Web-App unter **Einstellungen → Konfiguration → Allgemeine Einstellungen**:
+   - **SCM Basic Auth Publishing Credentials**: Ein (sonst lässt sich kein Veröffentlichungsprofil herunterladen)
+   - **Websockets** und **Sitzungsaffinität (ARR-Affinität)**: Ein, falls angezeigt
+4. In der **Übersicht** der Web-App: **Veröffentlichungsprofil herunterladen**.
+5. Auf GitHub im Repo: **Settings → Secrets and variables → Actions**
+   - Reiter *Secrets*: `AZURE_WEBAPP_PUBLISH_PROFILE` = kompletter Inhalt der heruntergeladenen Datei
+   - Reiter *Variables*: `AZURE_WEBAPP_NAME` = Name der Web-App
+6. Fertig: Jeder Push bzw. Merge auf `main` deployt automatisch. Manuell geht es unter
+   **Actions → Deploy to Azure → Run workflow**. Solange Secret oder Variable fehlen, wird das
+   Deployment mit einem Hinweis übersprungen (der Build läuft trotzdem).
+
+### Gut zu wissen
+
+- Datenbank (`app.db`) und Login-Schlüssel liegen auf Azure unter `$HOME/data` und bleiben bei
+  Neustarts und Deployments erhalten.
+- Der Free-Tarif schläft nach ca. 20 Minuten ohne Besucher ein (der erste Aufruf dauert dann einige
+  Sekunden), hat ein CPU-Tageslimit und nur wenige gleichzeitige Verbindungen. Für mehr Spieler: Tarif B1.
+- Anderer Hoster oder Docker: Mit `Storage__DataDirectory=/pfad` als Umgebungsvariable legt die App
+  Datenbank und Schlüssel in diesem Ordner ab.
