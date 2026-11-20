@@ -1,0 +1,457 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <data name="Account.CheckEmail" xml:space="preserve"><value>Please check your email to confirm your account.</value></data>
+  <data name="Account.ConfirmEmail" xml:space="preserve"><value>Confirm email</value></data>
+  <data name="Account.ConfirmFailed" xml:space="preserve"><value>Error confirming your email.</value></data>
+  <data name="Account.ConfirmLink" xml:space="preserve"><value>Click here to confirm your account</value></data>
+  <data name="Account.ConfirmPassword" xml:space="preserve"><value>Confirm password</value></data>
+  <data name="Account.Confirmed" xml:space="preserve"><value>Thank you for confirming your email. You can log in now.</value></data>
+  <data name="Account.Email" xml:space="preserve"><value>Email</value></data>
+  <data name="Account.ErrorPrefix" xml:space="preserve"><value>Error: </value></data>
+  <data name="Account.Login" xml:space="preserve"><value>Log in</value></data>
+  <data name="Account.Login.External" xml:space="preserve"><value>Use another service to log in.</value></data>
+  <data name="Account.Login.Forgot" xml:space="preserve"><value>Forgot your password?</value></data>
+  <data name="Account.Login.Invalid" xml:space="preserve"><value>Error: Invalid login attempt.</value></data>
+  <data name="Account.Login.Local" xml:space="preserve"><value>Use a local account to log in.</value></data>
+  <data name="Account.Login.Passkey" xml:space="preserve"><value>Log in with a passkey</value></data>
+  <data name="Account.Login.RegisterNew" xml:space="preserve"><value>Register as a new user</value></data>
+  <data name="Account.Login.Resend" xml:space="preserve"><value>Resend email confirmation</value></data>
+  <data name="Account.NoEmailSender" xml:space="preserve"><value>This app does not have a real email sender yet. How to configure one:</value></data>
+  <data name="Account.Or" xml:space="preserve"><value>OR</value></data>
+  <data name="Account.Password" xml:space="preserve"><value>Password</value></data>
+  <data name="Account.Register" xml:space="preserve"><value>Register</value></data>
+  <data name="Account.Register.Create" xml:space="preserve"><value>Create a new account.</value></data>
+  <data name="Account.Register.External" xml:space="preserve"><value>Use another service to register.</value></data>
+  <data name="Account.RegisterConfirmation" xml:space="preserve"><value>Register confirmation</value></data>
+  <data name="Account.WouldBeEmailed" xml:space="preserve"><value>Normally this would be emailed:</value></data>
+  <data name="Ach.Unlocked" xml:space="preserve"><value>Achievement unlocked</value></data>
+  <data name="Ach.big-pot.Text" xml:space="preserve"><value>Win a pot of at least 5,000 chips.</value></data>
+  <data name="Ach.big-pot.Title" xml:space="preserve"><value>Big fish</value></data>
+  <data name="Ach.busted.Text" xml:space="preserve"><value>Go broke once. Happens to the best.</value></data>
+  <data name="Ach.busted.Title" xml:space="preserve"><value>Lesson learned</value></data>
+  <data name="Ach.first-win.Text" xml:space="preserve"><value>Win your first pot.</value></data>
+  <data name="Ach.first-win.Title" xml:space="preserve"><value>First pot</value></data>
+  <data name="Ach.full-house.Text" xml:space="preserve"><value>Win a pot with a full house or better.</value></data>
+  <data name="Ach.full-house.Title" xml:space="preserve"><value>Full house</value></data>
+  <data name="Ach.hands-100.Text" xml:space="preserve"><value>Play 100 hands.</value></data>
+  <data name="Ach.hands-100.Title" xml:space="preserve"><value>Regular</value></data>
+  <data name="Ach.hands-500.Text" xml:space="preserve"><value>Play 500 hands.</value></data>
+  <data name="Ach.hands-500.Title" xml:space="preserve"><value>Card shark</value></data>
+  <data name="Ach.quads.Text" xml:space="preserve"><value>Win a pot with four of a kind or better.</value></data>
+  <data name="Ach.quads.Title" xml:space="preserve"><value>Four-leaf clover</value></data>
+  <data name="Ach.rich.Text" xml:space="preserve"><value>Own 10,000 chips in total.</value></data>
+  <data name="Ach.rich.Title" xml:space="preserve"><value>High earner</value></data>
+  <data name="Ach.sng-cash.Text" xml:space="preserve"><value>Finish 1st or 2nd in a Sit &amp; Go.</value></data>
+  <data name="Ach.sng-cash.Title" xml:space="preserve"><value>In the money</value></data>
+  <data name="Ach.sng-win.Text" xml:space="preserve"><value>Win a Sit &amp; Go.</value></data>
+  <data name="Ach.sng-win.Title" xml:space="preserve"><value>Champion</value></data>
+  <data name="Ach.straight-flush.Text" xml:space="preserve"><value>Win a pot with a straight flush.</value></data>
+  <data name="Ach.straight-flush.Title" xml:space="preserve"><value>Rainbow</value></data>
+  <data name="Ach.student.Text" xml:space="preserve"><value>Finish all lessons.</value></data>
+  <data name="Ach.student.Title" xml:space="preserve"><value>Top student</value></data>
+  <data name="Ach.table-cleared.Text" xml:space="preserve"><value>Knock out every opponent at a cash table.</value></data>
+  <data name="Ach.table-cleared.Title" xml:space="preserve"><value>Table swept</value></data>
+  <data name="Action.AllIn" xml:space="preserve"><value>All-in!</value></data>
+  <data name="Action.Call" xml:space="preserve"><value>Calls {0:N0}</value></data>
+  <data name="Action.Check" xml:space="preserve"><value>Checks</value></data>
+  <data name="Action.Fold" xml:space="preserve"><value>Folds</value></data>
+  <data name="Action.Raise" xml:space="preserve"><value>Raises to {0:N0}</value></data>
+  <data name="Board.Back" xml:space="preserve"><value>← Back to the game</value></data>
+  <data name="Board.Empty" xml:space="preserve"><value>Nobody on the list yet. Log in and play a round – then you're right at the top!</value></data>
+  <data name="Board.Hand" xml:space="preserve"><value>1 hand</value></data>
+  <data name="Board.Hands" xml:space="preserve"><value>{0:N0} hands</value></data>
+  <data name="Board.LoginLink" xml:space="preserve"><value>Log in</value></data>
+  <data name="Board.LoginText" xml:space="preserve"><value> to appear on the leaderboard.</value></data>
+  <data name="Board.PageTitle" xml:space="preserve"><value>Leaderboard – Chip Royale</value></data>
+  <data name="Board.Sub.Current" xml:space="preserve"><value>Run #{0} · record {1:N0}</value></data>
+  <data name="Board.Sub.Record" xml:space="preserve"><value>Now {0:N0} · {1}</value></data>
+  <data name="Board.Sub.Tables" xml:space="preserve"><value>won {0:N0} of {1}</value></data>
+  <data name="Board.Sub.Tournaments" xml:space="preserve"><value>{0:N0} tournaments played</value></data>
+  <data name="Board.Tab.Current" xml:space="preserve"><value>Current chips</value></data>
+  <data name="Board.Tab.Record" xml:space="preserve"><value>Best run</value></data>
+  <data name="Board.Tab.Tables" xml:space="preserve"><value>Tables cleaned out</value></data>
+  <data name="Board.Tab.Tournaments" xml:space="preserve"><value>Tournament wins</value></data>
+  <data name="Board.Title1" xml:space="preserve"><value>Leader</value></data>
+  <data name="Board.Title2" xml:space="preserve"><value>board</value></data>
+  <data name="Board.You" xml:space="preserve"><value> (you)</value></data>
+  <data name="Board.YourRank" xml:space="preserve"><value>You: rank {0} with {1:N0}</value></data>
+  <data name="Common.Cancel" xml:space="preserve"><value>Cancel</value></data>
+  <data name="Common.Close" xml:space="preserve"><value>Close</value></data>
+  <data name="Common.Language" xml:space="preserve"><value>Language</value></data>
+  <data name="Common.Save" xml:space="preserve"><value>Save</value></data>
+  <data name="DefaultName" xml:space="preserve"><value>Player{0}</value></data>
+  <data name="Difficulty.Easy" xml:space="preserve"><value>Easy</value></data>
+  <data name="Difficulty.Easy.Text" xml:space="preserve"><value>Generous opponents who pay off good hands. Tips are on.</value></data>
+  <data name="Difficulty.Hard" xml:space="preserve"><value>Hard</value></data>
+  <data name="Difficulty.Hard.Text" xml:space="preserve"><value>Tight-aggressive, bluff and read your play.</value></data>
+  <data name="Difficulty.Medium" xml:space="preserve"><value>Medium</value></data>
+  <data name="Difficulty.Medium.Text" xml:space="preserve"><value>Count pot odds and bluff now and then.</value></data>
+  <data name="Error.Reload" xml:space="preserve"><value>Reload</value></data>
+  <data name="Error.Text" xml:space="preserve"><value>An error has occurred.</value></data>
+  <data name="Guest" xml:space="preserve"><value>Guest</value></data>
+  <data name="Hand.Describe.Flush" xml:space="preserve"><value>Flush, {0} high</value></data>
+  <data name="Hand.Describe.FourOfAKind" xml:space="preserve"><value>Four {0}</value></data>
+  <data name="Hand.Describe.FullHouse" xml:space="preserve"><value>Full house, {0} full of {1}</value></data>
+  <data name="Hand.Describe.HighCard" xml:space="preserve"><value>{0} high</value></data>
+  <data name="Hand.Describe.OnePair" xml:space="preserve"><value>Pair of {0}</value></data>
+  <data name="Hand.Describe.Straight" xml:space="preserve"><value>Straight, {0} high</value></data>
+  <data name="Hand.Describe.StraightFlush" xml:space="preserve"><value>Straight flush, {0} high</value></data>
+  <data name="Hand.Describe.ThreeOfAKind" xml:space="preserve"><value>Three {0}</value></data>
+  <data name="Hand.Describe.TwoPair" xml:space="preserve"><value>Two pair, {0} and {1}</value></data>
+  <data name="Hand.Flush" xml:space="preserve"><value>Flush</value></data>
+  <data name="Hand.FourOfAKind" xml:space="preserve"><value>Four of a kind</value></data>
+  <data name="Hand.FullHouse" xml:space="preserve"><value>Full house</value></data>
+  <data name="Hand.HighCard" xml:space="preserve"><value>High card</value></data>
+  <data name="Hand.OnePair" xml:space="preserve"><value>Pair</value></data>
+  <data name="Hand.Preflop.Offsuit" xml:space="preserve"><value>{0}-{1}</value></data>
+  <data name="Hand.Preflop.Suited" xml:space="preserve"><value>{0}-{1} suited</value></data>
+  <data name="Hand.RoyalFlush" xml:space="preserve"><value>Royal flush</value></data>
+  <data name="Hand.Straight" xml:space="preserve"><value>Straight</value></data>
+  <data name="Hand.StraightFlush" xml:space="preserve"><value>Straight flush</value></data>
+  <data name="Hand.ThreeOfAKind" xml:space="preserve"><value>Three of a kind</value></data>
+  <data name="Hand.TwoPair" xml:space="preserve"><value>Two pair</value></data>
+  <data name="HandRankings.Current" xml:space="preserve"><value>← that's what you have</value></data>
+  <data name="HandRankings.Flush" xml:space="preserve"><value>Five cards of one suit, in any order.</value></data>
+  <data name="HandRankings.FourOfAKind" xml:space="preserve"><value>Four cards of the same rank.</value></data>
+  <data name="HandRankings.FullHouse" xml:space="preserve"><value>Three of a kind plus a pair.</value></data>
+  <data name="HandRankings.HighCard" xml:space="preserve"><value>None of the above – the highest card decides.</value></data>
+  <data name="HandRankings.Intro" xml:space="preserve"><value>Higher beats lower. Your hand is always the best 5 cards out of your 2 cards and the 5 cards in the middle.</value></data>
+  <data name="HandRankings.OnePair" xml:space="preserve"><value>Two cards of the same rank.</value></data>
+  <data name="HandRankings.RoyalFlush" xml:space="preserve"><value>Ace to ten in one suit – the best hand there is.</value></data>
+  <data name="HandRankings.Straight" xml:space="preserve"><value>Five cards in a row, mixed suits. The ace also counts as 1.</value></data>
+  <data name="HandRankings.StraightFlush" xml:space="preserve"><value>Five cards in a row, all the same suit.</value></data>
+  <data name="HandRankings.ThreeOfAKind" xml:space="preserve"><value>Three cards of the same rank.</value></data>
+  <data name="HandRankings.Title" xml:space="preserve"><value>Hand rankings</value></data>
+  <data name="HandRankings.TwoPair" xml:space="preserve"><value>Two different pairs.</value></data>
+  <data name="Item.av-alien" xml:space="preserve"><value>Alien</value></data>
+  <data name="Item.av-cowboy" xml:space="preserve"><value>Cowboy</value></data>
+  <data name="Item.av-default" xml:space="preserve"><value>Sunglasses</value></data>
+  <data name="Item.av-king" xml:space="preserve"><value>Prince</value></data>
+  <data name="Item.av-pixel" xml:space="preserve"><value>Pixel smiley</value></data>
+  <data name="Item.av-robot" xml:space="preserve"><value>Robot</value></data>
+  <data name="Item.av-unicorn" xml:space="preserve"><value>Unicorn</value></data>
+  <data name="Item.av-wizard" xml:space="preserve"><value>Wizard</value></data>
+  <data name="Item.cb-classic" xml:space="preserve"><value>Classic red</value></data>
+  <data name="Item.cb-emerald" xml:space="preserve"><value>Emerald</value></data>
+  <data name="Item.cb-midnight" xml:space="preserve"><value>Midnight &amp; gold</value></data>
+  <data name="Item.cb-pixel-crown" xml:space="preserve"><value>Pixel crowns</value></data>
+  <data name="Item.cb-pixel-heart" xml:space="preserve"><value>Pixel hearts</value></data>
+  <data name="Item.cb-royal" xml:space="preserve"><value>Royal blue</value></data>
+  <data name="Item.chips-classic" xml:space="preserve"><value>Classic</value></data>
+  <data name="Item.chips-gold" xml:space="preserve"><value>Gold rim</value></data>
+  <data name="Item.chips-neon" xml:space="preserve"><value>Neon</value></data>
+  <data name="Item.chips-pixel" xml:space="preserve"><value>Pixel chips</value></data>
+  <data name="Item.felt-default" xml:space="preserve"><value>Casino green</value></data>
+  <data name="Item.felt-midnight" xml:space="preserve"><value>Midnight</value></data>
+  <data name="Item.felt-ocean" xml:space="preserve"><value>Ocean</value></data>
+  <data name="Item.felt-pixel" xml:space="preserve"><value>Pixel meadow</value></data>
+  <data name="Item.felt-purple" xml:space="preserve"><value>Royal purple</value></data>
+  <data name="Learn.Back" xml:space="preserve"><value>Back</value></data>
+  <data name="Learn.BestHand" xml:space="preserve"><value>Best hand: {0}</value></data>
+  <data name="Learn.Board" xml:space="preserve"><value>Community cards</value></data>
+  <data name="Learn.ClickSeat" xml:space="preserve"><value>Click a seat at the table.</value></data>
+  <data name="Learn.Compare.A" xml:space="preserve"><value>Hand A wins</value></data>
+  <data name="Learn.Compare.B" xml:space="preserve"><value>Hand B wins</value></data>
+  <data name="Learn.Compare.Result" xml:space="preserve"><value>Hand A: {0} · Hand B: {1}</value></data>
+  <data name="Learn.Compare.Split" xml:space="preserve"><value>Tie (split pot)</value></data>
+  <data name="Learn.Complete.All" xml:space="preserve"><value>You've finished all lessons. Time for the practice table!</value></data>
+  <data name="Learn.Complete.Text" xml:space="preserve"><value>Great! Continue with the next lesson – or try it right away at the practice table.</value></data>
+  <data name="Learn.Complete.Title" xml:space="preserve"><value>Lesson complete! 🎉</value></data>
+  <data name="Learn.Done" xml:space="preserve"><value>✓ done</value></data>
+  <data name="Learn.Finish" xml:space="preserve"><value>Finish lesson</value></data>
+  <data name="Learn.HandA" xml:space="preserve"><value>Hand A</value></data>
+  <data name="Learn.HandB" xml:space="preserve"><value>Hand B</value></data>
+  <data name="Learn.Intro" xml:space="preserve"><value>Four short lessons with real cards – then you're ready for the practice table.</value></data>
+  <data name="Learn.Next" xml:space="preserve"><value>Next</value></data>
+  <data name="Learn.NextLesson" xml:space="preserve"><value>Next lesson: {0}</value></data>
+  <data name="Learn.NoBoard" xml:space="preserve"><value>no cards in the middle yet</value></data>
+  <data name="Learn.Overview" xml:space="preserve"><value>← Overview</value></data>
+  <data name="Learn.PageTitle" xml:space="preserve"><value>Learn – Chip Royale</value></data>
+  <data name="Learn.Practice.Go" xml:space="preserve"><value>Go to the practice table</value></data>
+  <data name="Learn.Practice.Text" xml:space="preserve"><value>Play against very easy opponents – without risking real chips.</value></data>
+  <data name="Learn.Practice.Title" xml:space="preserve"><value>Practice table</value></data>
+  <data name="Learn.Repeat" xml:space="preserve"><value>Repeat</value></data>
+  <data name="Learn.Right" xml:space="preserve"><value>Correct!</value></data>
+  <data name="Learn.Start" xml:space="preserve"><value>Start</value></data>
+  <data name="Learn.StepOf" xml:space="preserve"><value>Step {0} of {1}</value></data>
+  <data name="Learn.Steps" xml:space="preserve"><value>{0} steps</value></data>
+  <data name="Learn.Title1" xml:space="preserve"><value>Learn </value></data>
+  <data name="Learn.Title2" xml:space="preserve"><value>poker</value></data>
+  <data name="Learn.Wrong" xml:space="preserve"><value>Not quite – try again.</value></data>
+  <data name="Learn.YourCards" xml:space="preserve"><value>Your cards</value></data>
+  <data name="Learn.blinds.Summary" xml:space="preserve"><value>Forced bets, who pays them and who acts first.</value></data>
+  <data name="Learn.blinds.Title" xml:space="preserve"><value>Blinds &amp; dealer button</value></data>
+  <data name="Learn.blinds.s1" xml:space="preserve"><value>So every hand is worth something, there are two forced bets – the blinds.
+D is the dealer button. To its left the small blind (SB) pays a small bet, the next player the big blind (BB) – usually twice as much.</value></data>
+  <data name="Learn.blinds.s2" xml:space="preserve"><value>After every hand the button moves one seat to the left. That way everyone pays the blinds in turn.</value></data>
+  <data name="Learn.blinds.s3" xml:space="preserve"><value>The button is here. Click the player who pays the big blind.</value></data>
+  <data name="Learn.blinds.s3.Explain" xml:space="preserve"><value>The big blind sits two seats to the left of the button.</value></data>
+  <data name="Learn.blinds.s4" xml:space="preserve"><value>Blinds 10/20. How much do you have to pay at least before the flop to play?</value></data>
+  <data name="Learn.blinds.s4.0" xml:space="preserve"><value>10</value></data>
+  <data name="Learn.blinds.s4.1" xml:space="preserve"><value>20</value></data>
+  <data name="Learn.blinds.s4.2" xml:space="preserve"><value>40</value></data>
+  <data name="Learn.blinds.s4.Explain" xml:space="preserve"><value>To play you have to pay at least the big blind – 20 here.</value></data>
+  <data name="Learn.blinds.s5" xml:space="preserve"><value>Before the flop the player to the left of the big blind starts. The blinds act last – they've already put something in.
+The numbers show the order.</value></data>
+  <data name="Learn.blinds.s6" xml:space="preserve"><value>Who has to act first before the flop here?</value></data>
+  <data name="Learn.blinds.s6.Explain" xml:space="preserve"><value>The seat directly left of the big blind – “under the gun” – starts before the flop. Here that's you!</value></data>
+  <data name="Learn.blinds.s7" xml:space="preserve"><value>Special case heads-up (only two players): the button pays the small blind. It acts first before the flop and last after it.</value></data>
+  <data name="Learn.positions.Summary" xml:space="preserve"><value>Why acting last is an advantage.</value></data>
+  <data name="Learn.positions.Title" xml:space="preserve"><value>Positions</value></data>
+  <data name="Learn.positions.s1" xml:space="preserve"><value>After the flop the first player left of the button always starts. The button acts last.
+Acting last is a big advantage: you see what everyone else does before you decide.</value></data>
+  <data name="Learn.positions.s2" xml:space="preserve"><value>That's why seats are grouped into positions:
+Early – right after the blinds. You need strong hands here.
+Late – just before and on the button. You can play more hands here.
+Blinds – first to act after the flop, a tough spot.</value></data>
+  <data name="Learn.positions.s3" xml:space="preserve"><value>Who acts last after the flop?</value></data>
+  <data name="Learn.positions.s3.Explain" xml:space="preserve"><value>The button – where the D is.</value></data>
+  <data name="Learn.positions.s4" xml:space="preserve"><value>And who acts first after the flop if everyone is still in?</value></data>
+  <data name="Learn.positions.s4.Explain" xml:space="preserve"><value>The small blind to the left of the button starts after the flop.</value></data>
+  <data name="Learn.positions.s5" xml:space="preserve"><value>You're in early position with 7♣ 2♦ – the weakest starting hand. What's usually right?</value></data>
+  <data name="Learn.positions.s5.0" xml:space="preserve"><value>Fold</value></data>
+  <data name="Learn.positions.s5.1" xml:space="preserve"><value>Call</value></data>
+  <data name="Learn.positions.s5.2" xml:space="preserve"><value>Raise</value></data>
+  <data name="Learn.positions.s5.Explain" xml:space="preserve"><value>With weak cards in early position, better fold – many players after you can still raise.</value></data>
+  <data name="Learn.positions.s6" xml:space="preserve"><value>You're on the button and everyone before you folded. You have A♥ K♥. What's a good idea?</value></data>
+  <data name="Learn.positions.s6.0" xml:space="preserve"><value>Raise</value></data>
+  <data name="Learn.positions.s6.1" xml:space="preserve"><value>Fold</value></data>
+  <data name="Learn.positions.s6.2" xml:space="preserve"><value>Just call</value></data>
+  <data name="Learn.positions.s6.Explain" xml:space="preserve"><value>Strong hand and the best position: raise! That builds the pot and puts you in control.</value></data>
+  <data name="Learn.positions.s7" xml:space="preserve"><value>Done – you now know the basics!
+At the practice table you can try everything risk-free. The tips show your chance of winning.</value></data>
+  <data name="Learn.ranking.Summary" xml:space="preserve"><value>Which hand beats which? With exercises to compare.</value></data>
+  <data name="Learn.ranking.Title" xml:space="preserve"><value>Hand rankings</value></data>
+  <data name="Learn.ranking.s1" xml:space="preserve"><value>In Texas Hold'em you get 2 cards of your own. Up to 5 community cards lie in the middle and belong to everyone.
+Your hand is always the best 5 cards out of those 7. The glowing cards show your best hand.</value></data>
+  <data name="Learn.ranking.s2" xml:space="preserve"><value>These are all the hands – from strongest to weakest. The rarer a hand, the more it's worth.
+No need to memorise them right away: in the game you'll always find the list under “🃏 Hands”.</value></data>
+  <data name="Learn.ranking.s3" xml:space="preserve"><value>Who wins? Think about the best 5 cards each player can make with the cards in the middle.</value></data>
+  <data name="Learn.ranking.s4" xml:space="preserve"><value>Straight against flush – which is worth more?</value></data>
+  <data name="Learn.ranking.s5" xml:space="preserve"><value>Both have a pair of aces. What decides now?</value></data>
+  <data name="Learn.ranking.s5.Explain" xml:space="preserve"><value>With the same hand the highest side card – the “kicker” – decides: king beats queen.</value></data>
+  <data name="Learn.ranking.s6" xml:space="preserve"><value>And here? Look closely at the middle.</value></data>
+  <data name="Learn.ranking.s6.Explain" xml:space="preserve"><value>The best hand is entirely in the middle: an ace-high straight. Both play it – the pot is split.</value></data>
+  <data name="Learn.ranking.s7" xml:space="preserve"><value>Last question: which is stronger?</value></data>
+  <data name="Learn.ranking.s7.0" xml:space="preserve"><value>Full house</value></data>
+  <data name="Learn.ranking.s7.1" xml:space="preserve"><value>Flush</value></data>
+  <data name="Learn.ranking.s7.2" xml:space="preserve"><value>Both equally strong</value></data>
+  <data name="Learn.ranking.s7.Explain" xml:space="preserve"><value>A full house beats a flush – it's rarer.</value></data>
+  <data name="Learn.rounds.Summary" xml:space="preserve"><value>Preflop, flop, turn, river – and what you can do in each round.</value></data>
+  <data name="Learn.rounds.Title" xml:space="preserve"><value>Betting rounds</value></data>
+  <data name="Learn.rounds.s1" xml:space="preserve"><value>A hand has up to four betting rounds. Before each round new cards come to the middle.
+Preflop: you only see your 2 cards. The first betting round starts.</value></data>
+  <data name="Learn.rounds.s2" xml:space="preserve"><value>Flop: three community cards at once. Second betting round.
+You only need an eight or a king for a straight.</value></data>
+  <data name="Learn.rounds.s3" xml:space="preserve"><value>Turn: the fourth card. Third betting round.
+The eight arrives – straight!</value></data>
+  <data name="Learn.rounds.s4" xml:space="preserve"><value>River: the fifth and last card. Last betting round.
+Showdown: whoever is still in shows their cards. The best hand wins the pot.</value></data>
+  <data name="Learn.rounds.s5" xml:space="preserve"><value>In every betting round you have these options:
+Check – bet nothing (only if nobody has bet yet).
+Bet – put chips into the pot.
+Call – pay an opponent's bet.
+Raise – bet more than the opponent.
+Fold – give up. Your chips in the pot are gone.</value></data>
+  <data name="Learn.rounds.s6" xml:space="preserve"><value>Nobody has bet in this round yet. What can you NOT do?</value></data>
+  <data name="Learn.rounds.s6.0" xml:space="preserve"><value>Check</value></data>
+  <data name="Learn.rounds.s6.1" xml:space="preserve"><value>Bet</value></data>
+  <data name="Learn.rounds.s6.2" xml:space="preserve"><value>Call</value></data>
+  <data name="Learn.rounds.s6.Explain" xml:space="preserve"><value>You can only call when someone has bet before. Without a bet you can check or bet.</value></data>
+  <data name="Learn.rounds.s7" xml:space="preserve"><value>An opponent bets 40 and you fold. What happens to your chips already in the pot?</value></data>
+  <data name="Learn.rounds.s7.0" xml:space="preserve"><value>They're gone</value></data>
+  <data name="Learn.rounds.s7.1" xml:space="preserve"><value>You get them back</value></data>
+  <data name="Learn.rounds.s7.2" xml:space="preserve"><value>You still have to pay 40</value></data>
+  <data name="Learn.rounds.s7.Explain" xml:space="preserve"><value>What's in the pot belongs to the pot. Folding costs nothing extra – but you can't win the hand any more.</value></data>
+  <data name="Learn.rounds.s8" xml:space="preserve"><value>We play no-limit. How much can you bet at most?</value></data>
+  <data name="Learn.rounds.s8.0" xml:space="preserve"><value>The big blind</value></data>
+  <data name="Learn.rounds.s8.1" xml:space="preserve"><value>As much as is in the pot</value></data>
+  <data name="Learn.rounds.s8.2" xml:space="preserve"><value>All your chips (all-in)</value></data>
+  <data name="Learn.rounds.s8.Explain" xml:space="preserve"><value>No-limit means you can bet everything at any time. But from each opponent you win at most as much as you put in yourself.</value></data>
+  <data name="Lobby.Account" xml:space="preserve"><value>Account</value></data>
+  <data name="Lobby.Blinds" xml:space="preserve"><value>Blinds {0:N0}/{1:N0}</value></data>
+  <data name="Lobby.BuyInButton" xml:space="preserve"><value>Buy in for {0:N0}</value></data>
+  <data name="Lobby.BuyInNote" xml:space="preserve"><value>{0:N0} big blinds · you keep {1:N0} chips</value></data>
+  <data name="Lobby.BuyInRange" xml:space="preserve"><value>Buy-in {0:N0}–{1:N0}</value></data>
+  <data name="Lobby.CashedOutEven" xml:space="preserve"><value>Cashed out: {0:N0} chips – exactly your buy-in.</value></data>
+  <data name="Lobby.CashedOutLoss" xml:space="preserve"><value>Cashed out: {0:N0} chips ({1:N0} less than your buy-in).</value></data>
+  <data name="Lobby.CashedOutProfit" xml:space="preserve"><value>Cashed out: {0:N0} chips – that's {1:N0} more than your buy-in! 🎉</value></data>
+  <data name="Lobby.Chips" xml:space="preserve"><value>{0:N0} chips</value></data>
+  <data name="Lobby.Difficulty" xml:space="preserve"><value>Difficulty</value></data>
+  <data name="Lobby.Free" xml:space="preserve"><value>free</value></data>
+  <data name="Lobby.GuestNote" xml:space="preserve"><value>As a guest nothing is saved and you won't appear on the leaderboard.</value></data>
+  <data name="Lobby.HandRankings" xml:space="preserve"><value>🃏 Hand rankings</value></data>
+  <data name="Lobby.HeadsUp" xml:space="preserve"><value>{0} opponent (heads-up)</value></data>
+  <data name="Lobby.Leaderboard" xml:space="preserve"><value>🏆 Leaderboard</value></data>
+  <data name="Lobby.Learn" xml:space="preserve"><value>🎓 Learn</value></data>
+  <data name="Lobby.LockedFrom" xml:space="preserve"><value>🔒 from {0:N0}</value></data>
+  <data name="Lobby.Login" xml:space="preserve"><value>Log in</value></data>
+  <data name="Lobby.Mode.Cash" xml:space="preserve"><value>💵 Cash game</value></data>
+  <data name="Lobby.Mode.Sng" xml:space="preserve"><value>🏆 Sit &amp; Go</value></data>
+  <data name="Lobby.NameAria" xml:space="preserve"><value>Player name</value></data>
+  <data name="Lobby.NewRun" xml:space="preserve"><value>Busted! Run #{0} starts with {1:N0} chips. Your record stays on the leaderboard.</value></data>
+  <data name="Lobby.NotEnough" xml:space="preserve"><value>You don't have enough chips for this table.</value></data>
+  <data name="Lobby.NothingLost" xml:space="preserve"><value>nothing to lose</value></data>
+  <data name="Lobby.Opponents" xml:space="preserve"><value>Opponents</value></data>
+  <data name="Lobby.OpponentsCount" xml:space="preserve"><value>{0} opponents</value></data>
+  <data name="Lobby.PracticeNote" xml:space="preserve"><value>You get {0:N0} practice chips. Opponents play on “Easy”, your chip count stays untouched.</value></data>
+  <data name="Lobby.Record" xml:space="preserve"><value>Record {0:N0}</value></data>
+  <data name="Lobby.Register" xml:space="preserve"><value>Register</value></data>
+  <data name="Lobby.Rename" xml:space="preserve"><value>Change name</value></data>
+  <data name="Lobby.Returned" xml:space="preserve"><value>Your {0:N0} chips from the last table were cashed out.</value></data>
+  <data name="Lobby.Run" xml:space="preserve"><value>Run #{0}</value></data>
+  <data name="Lobby.Shop" xml:space="preserve"><value>🛍️ Shop</value></data>
+  <data name="Lobby.StartPractice" xml:space="preserve"><value>Start practice table</value></data>
+  <data name="Lobby.Table" xml:space="preserve"><value>Table</value></data>
+  <data name="Lobby.Tagline" xml:space="preserve"><value>Texas Hold'em · No-Limit · against AI opponents</value></data>
+  <data name="Mini.Blinds" xml:space="preserve"><value>Blinds</value></data>
+  <data name="Mini.Early" xml:space="preserve"><value>Early</value></data>
+  <data name="Mini.Late" xml:space="preserve"><value>Late</value></data>
+  <data name="Mini.Middle" xml:space="preserve"><value>Middle</value></data>
+  <data name="Mini.Seat" xml:space="preserve"><value>Seat {0}</value></data>
+  <data name="Mini.You" xml:space="preserve"><value>You</value></data>
+  <data name="Name.Chars" xml:space="preserve"><value>Allowed are letters, digits, spaces, - and _.</value></data>
+  <data name="Name.Guest" xml:space="preserve"><value>Log in to save a name.</value></data>
+  <data name="Name.Length" xml:space="preserve"><value>The name must be 3 to {0} characters long.</value></data>
+  <data name="Name.Taken" xml:space="preserve"><value>That name is already taken.</value></data>
+  <data name="Nav.BackToGame" xml:space="preserve"><value>♠ Back to the game</value></data>
+  <data name="Nav.Leaderboard" xml:space="preserve"><value>Leaderboard</value></data>
+  <data name="Nav.Learn" xml:space="preserve"><value>Learn</value></data>
+  <data name="Nav.Play" xml:space="preserve"><value>Play</value></data>
+  <data name="Over.Again" xml:space="preserve"><value>Again</value></data>
+  <data name="Over.BiggestPot" xml:space="preserve"><value>Biggest pot</value></data>
+  <data name="Over.Busted" xml:space="preserve"><value>Busted!</value></data>
+  <data name="Over.Busted.Practice" xml:space="preserve"><value>At the practice table this costs nothing. Just try again!</value></data>
+  <data name="Over.Busted.Text" xml:space="preserve"><value>Your buy-in is gone. You can buy in again in the lobby.</value></data>
+  <data name="Over.CashOutLobby" xml:space="preserve"><value>Cash out &amp; lobby</value></data>
+  <data name="Over.Cleared" xml:space="preserve"><value>You cleaned out the table!</value></data>
+  <data name="Over.Cleared.Text" xml:space="preserve"><value>All opponents are out. You have {0:N0} chips in front of you – take them or challenge new opponents.</value></data>
+  <data name="Over.Hands" xml:space="preserve"><value>Hands</value></data>
+  <data name="Over.NewOpponents" xml:space="preserve"><value>New opponents</value></data>
+  <data name="Over.Peak" xml:space="preserve"><value>Peak stack</value></data>
+  <data name="Over.Won" xml:space="preserve"><value>Won</value></data>
+  <data name="Rank.Ace" xml:space="preserve"><value>Ace</value></data>
+  <data name="Rank.Ace.Plural" xml:space="preserve"><value>Aces</value></data>
+  <data name="Rank.Ace.Symbol" xml:space="preserve"><value>A</value></data>
+  <data name="Rank.Eight" xml:space="preserve"><value>Eight</value></data>
+  <data name="Rank.Eight.Plural" xml:space="preserve"><value>Eights</value></data>
+  <data name="Rank.Five" xml:space="preserve"><value>Five</value></data>
+  <data name="Rank.Five.Plural" xml:space="preserve"><value>Fives</value></data>
+  <data name="Rank.Four" xml:space="preserve"><value>Four</value></data>
+  <data name="Rank.Four.Plural" xml:space="preserve"><value>Fours</value></data>
+  <data name="Rank.Jack" xml:space="preserve"><value>Jack</value></data>
+  <data name="Rank.Jack.Plural" xml:space="preserve"><value>Jacks</value></data>
+  <data name="Rank.Jack.Symbol" xml:space="preserve"><value>J</value></data>
+  <data name="Rank.King" xml:space="preserve"><value>King</value></data>
+  <data name="Rank.King.Plural" xml:space="preserve"><value>Kings</value></data>
+  <data name="Rank.King.Symbol" xml:space="preserve"><value>K</value></data>
+  <data name="Rank.Nine" xml:space="preserve"><value>Nine</value></data>
+  <data name="Rank.Nine.Plural" xml:space="preserve"><value>Nines</value></data>
+  <data name="Rank.Queen" xml:space="preserve"><value>Queen</value></data>
+  <data name="Rank.Queen.Plural" xml:space="preserve"><value>Queens</value></data>
+  <data name="Rank.Queen.Symbol" xml:space="preserve"><value>Q</value></data>
+  <data name="Rank.Seven" xml:space="preserve"><value>Seven</value></data>
+  <data name="Rank.Seven.Plural" xml:space="preserve"><value>Sevens</value></data>
+  <data name="Rank.Six" xml:space="preserve"><value>Six</value></data>
+  <data name="Rank.Six.Plural" xml:space="preserve"><value>Sixes</value></data>
+  <data name="Rank.Ten" xml:space="preserve"><value>Ten</value></data>
+  <data name="Rank.Ten.Plural" xml:space="preserve"><value>Tens</value></data>
+  <data name="Rank.Three" xml:space="preserve"><value>Three</value></data>
+  <data name="Rank.Three.Plural" xml:space="preserve"><value>Threes</value></data>
+  <data name="Rank.Two" xml:space="preserve"><value>Two</value></data>
+  <data name="Rank.Two.Plural" xml:space="preserve"><value>Twos</value></data>
+  <data name="Seat.You" xml:space="preserve"><value>You</value></data>
+  <data name="Shop.Bought" xml:space="preserve"><value>Bought and equipped: {0}</value></data>
+  <data name="Shop.Buy" xml:space="preserve"><value>Buy · {0} 👑</value></data>
+  <data name="Shop.Chips" xml:space="preserve"><value>chips</value></data>
+  <data name="Shop.Crowns" xml:space="preserve"><value>crowns</value></data>
+  <data name="Shop.Equip" xml:space="preserve"><value>Equip</value></data>
+  <data name="Shop.Equipped" xml:space="preserve"><value>Equipped</value></data>
+  <data name="Shop.Exchange" xml:space="preserve"><value>Exchange chips for crowns</value></data>
+  <data name="Shop.Exchange.Button" xml:space="preserve"><value>Exchange</value></data>
+  <data name="Shop.Exchange.Confirm" xml:space="preserve"><value>Exchange {0:N0} chips for {1:N0} 👑? This can't be undone.</value></data>
+  <data name="Shop.Exchange.None" xml:space="preserve"><value>You can only exchange chips above your starting {0:N0}. Win a few pots first!</value></data>
+  <data name="Shop.Exchange.Rules" xml:space="preserve"><value>{0} chips = 1 crown · only chips above {1:N0} · crowns can't be exchanged back and survive going broke.</value></data>
+  <data name="Shop.Exchange.Yes" xml:space="preserve"><value>Yes, exchange</value></data>
+  <data name="Shop.Exchanged" xml:space="preserve"><value>Exchanged: {0:N0} chips → {1:N0} 👑</value></data>
+  <data name="Shop.GuestNote" xml:space="preserve"><value>As a guest, purchases and crowns are lost when you reload. Log in to keep them.</value></data>
+  <data name="Shop.PageTitle" xml:space="preserve"><value>Shop – Chip Royale</value></data>
+  <data name="Shop.Tab.Achievements" xml:space="preserve"><value>🏅 Achievements</value></data>
+  <data name="Shop.Tab.Avatar" xml:space="preserve"><value>😎 Avatars</value></data>
+  <data name="Shop.Tab.CardBack" xml:space="preserve"><value>🂠 Card backs</value></data>
+  <data name="Shop.Tab.Chips" xml:space="preserve"><value>🪙 Chips</value></data>
+  <data name="Shop.Tab.Felt" xml:space="preserve"><value>🟩 Felt</value></data>
+  <data name="Shop.Title1" xml:space="preserve"><value>Style </value></data>
+  <data name="Shop.Title2" xml:space="preserve"><value>shop</value></data>
+  <data name="Sng.BuyIn" xml:space="preserve"><value>Buy-in {0:N0}</value></data>
+  <data name="Sng.InTheMoney" xml:space="preserve"><value>Place {0} – in the money!</value></data>
+  <data name="Sng.KnockedOut" xml:space="preserve"><value>{0} is knocked out ({1}. place)</value></data>
+  <data name="Sng.LeaveConfirm" xml:space="preserve"><value>Leave the tournament? You finish in your current place; your buy-in of {0:N0} is spent.</value></data>
+  <data name="Sng.Level" xml:space="preserve"><value>Level {0} · {1:N0}/{2:N0}</value></data>
+  <data name="Sng.LevelUp" xml:space="preserve"><value>Blinds go up: {0:N0}/{1:N0}</value></data>
+  <data name="Sng.NoPrize" xml:space="preserve"><value>No prize this time – the {0:N0} buy-in is gone. Next time!</value></data>
+  <data name="Sng.Notice.Out" xml:space="preserve"><value>Sit &amp; Go: knocked out in place {0}.</value></data>
+  <data name="Sng.Notice.Prize" xml:space="preserve"><value>Sit &amp; Go: place {0}, {1:N0} chips prize (profit {2:N0}).</value></data>
+  <data name="Sng.Out" xml:space="preserve"><value>Knocked out in place {0}</value></data>
+  <data name="Sng.Place" xml:space="preserve"><value>Place</value></data>
+  <data name="Sng.PlayersLeft" xml:space="preserve"><value>{0}/{1} players</value></data>
+  <data name="Sng.Prize" xml:space="preserve"><value>You win {0:N0} chips in prize money.</value></data>
+  <data name="Sng.RiseAfterThis" xml:space="preserve"><value>Blinds rise after this hand</value></data>
+  <data name="Sng.RiseIn" xml:space="preserve"><value>Blinds rise in {0} hands</value></data>
+  <data name="Sng.Rules" xml:space="preserve"><value>{0} players, each starts with {1:N0} tournament chips. Blinds rise every {2} hands. Places 1 and 2 win prize money.</value></data>
+  <data name="Sng.Start" xml:space="preserve"><value>Start tournament ({0:N0})</value></data>
+  <data name="Sng.Tier.bronze" xml:space="preserve"><value>Bronze</value></data>
+  <data name="Sng.Tier.gold" xml:space="preserve"><value>Gold</value></data>
+  <data name="Sng.Tier.silver" xml:space="preserve"><value>Silver</value></data>
+  <data name="Sng.Title" xml:space="preserve"><value>Tournament</value></data>
+  <data name="Sng.Won" xml:space="preserve"><value>Tournament won! 🏆</value></data>
+  <data name="Stake.casino" xml:space="preserve"><value>Casino</value></data>
+  <data name="Stake.highroller" xml:space="preserve"><value>High roller</value></data>
+  <data name="Stake.practice" xml:space="preserve"><value>Practice table</value></data>
+  <data name="Stake.pub" xml:space="preserve"><value>Pub</value></data>
+  <data name="Stake.sng" xml:space="preserve"><value>Sit &amp; Go</value></data>
+  <data name="Stake.vip" xml:space="preserve"><value>VIP lounge</value></data>
+  <data name="Table.And" xml:space="preserve"><value> &amp; </value></data>
+  <data name="Table.Bet" xml:space="preserve"><value>Bet {0:N0}</value></data>
+  <data name="Table.Bet.Aria" xml:space="preserve"><value>Bet size</value></data>
+  <data name="Table.Call" xml:space="preserve"><value>Call {0:N0}</value></data>
+  <data name="Table.CallAllIn" xml:space="preserve"><value>All-in {0:N0}</value></data>
+  <data name="Table.CashOut" xml:space="preserve"><value>Cash out</value></data>
+  <data name="Table.Check" xml:space="preserve"><value>Check</value></data>
+  <data name="Table.EveryoneFolded" xml:space="preserve"><value>Everyone else folded</value></data>
+  <data name="Table.Fold" xml:space="preserve"><value>Fold</value></data>
+  <data name="Table.Folded" xml:space="preserve"><value>Folded</value></data>
+  <data name="Table.HandHeader" xml:space="preserve"><value>Hand #{0}</value></data>
+  <data name="Table.Hands" xml:space="preserve"><value>🃏 Hands</value></data>
+  <data name="Table.Key.Space" xml:space="preserve"><value>Space</value></data>
+  <data name="Table.LeaveConfirm" xml:space="preserve"><value>The hand is still running. If you leave now, your {0:N0} chips in the pot are lost. Leave anyway?</value></data>
+  <data name="Table.Lobby" xml:space="preserve"><value>Lobby</value></data>
+  <data name="Table.Log" xml:space="preserve"><value>History</value></data>
+  <data name="Table.LogWin" xml:space="preserve"><value>{0} wins {1:N0}</value></data>
+  <data name="Table.NextHand" xml:space="preserve"><value>Next hand</value></data>
+  <data name="Table.OtherWins" xml:space="preserve"><value>{0} wins {1:N0}</value></data>
+  <data name="Table.OthersWin" xml:space="preserve"><value>{0} win {1:N0}</value></data>
+  <data name="Table.Pot" xml:space="preserve"><value>Pot {0:N0}</value></data>
+  <data name="Table.PracticeSuffix" xml:space="preserve"><value> · doesn't count</value></data>
+  <data name="Table.RaiseTo" xml:space="preserve"><value>Raise to {0:N0}</value></data>
+  <data name="Table.Runout" xml:space="preserve"><value>Everyone is all-in – the cards are being revealed …</value></data>
+  <data name="Table.Sound" xml:space="preserve"><value>Sound</value></data>
+  <data name="Table.Split" xml:space="preserve"><value> (split)</value></data>
+  <data name="Table.Thinking" xml:space="preserve"><value>{0} is thinking …</value></data>
+  <data name="Table.Tips" xml:space="preserve"><value>💡 Tips</value></data>
+  <data name="Table.Tips.Title" xml:space="preserve"><value>Tips &amp; win chance</value></data>
+  <data name="Table.WinChance" xml:space="preserve"><value>Win chance</value></data>
+  <data name="Table.WithHand" xml:space="preserve"><value>with {0}</value></data>
+  <data name="Table.YouWin" xml:space="preserve"><value>You win {0:N0}!{1}</value></data>
+  <data name="Table.YourHand" xml:space="preserve"><value>Your hand</value></data>
+  <data name="Tip.SolidBet" xml:space="preserve"><value>Solid hand – a bet builds the pot.</value></data>
+  <data name="Tip.SolidCall" xml:space="preserve"><value>Solid hand – calling or raising pays off.</value></data>
+  <data name="Tip.Strong" xml:space="preserve"><value>Strong hand – bet big, they'll pay you!</value></data>
+  <data name="Tip.TooExpensive" xml:space="preserve"><value>Rather weak – better fold at this price.</value></data>
+  <data name="Tip.WeakCall" xml:space="preserve"><value>Weak hand – seeing more cheaply is okay.</value></data>
+  <data name="Tip.WeakCheck" xml:space="preserve"><value>Weak hand – just check.</value></data>
+</root>

@@ -5,5 +5,6 @@
   </Folder>
   <Folder Name="/tests/">
     <Project Path="tests/ChipRoyale.Engine.Tests/ChipRoyale.Engine.Tests.csproj" />
+    <Project Path="tests/ChipRoyale.Web.Tests/ChipRoyale.Web.Tests.csproj" />
   </Folder>
 </Solution>

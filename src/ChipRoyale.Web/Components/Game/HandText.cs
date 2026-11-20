@@ -1,39 +1,20 @@
 using ChipRoyale.Engine.Cards;
 using ChipRoyale.Engine.Evaluation;
 using ChipRoyale.Engine.Holdem;
+using static ChipRoyale.Web.Localization.Loc;
 
 namespace ChipRoyale.Web.Components.Game;
 
-/// <summary>German texts for cards, hands and actions.</summary>
+/// <summary>Localized texts for cards, hands and actions.</summary>
 public static class HandText
 {
-    private static readonly Dictionary<Rank, (string One, string Many)> Names = new()
-    {
-        [Rank.Two] = ("Zwei", "Zweien"),
-        [Rank.Three] = ("Drei", "Dreien"),
-        [Rank.Four] = ("Vier", "Vieren"),
-        [Rank.Five] = ("Fünf", "Fünfen"),
-        [Rank.Six] = ("Sechs", "Sechsen"),
-        [Rank.Seven] = ("Sieben", "Siebenen"),
-        [Rank.Eight] = ("Acht", "Achten"),
-        [Rank.Nine] = ("Neun", "Neunen"),
-        [Rank.Ten] = ("Zehn", "Zehnen"),
-        [Rank.Jack] = ("Bube", "Buben"),
-        [Rank.Queen] = ("Dame", "Damen"),
-        [Rank.King] = ("König", "Könige"),
-        [Rank.Ace] = ("Ass", "Asse"),
-    };
-
-    public static string One(Rank r) => Names[r].One;
-    public static string Many(Rank r) => Names[r].Many;
+    public static string One(Rank r) => L($"Rank.{r}");
+    public static string Many(Rank r) => L($"Rank.{r}.Plural");
 
     public static string RankSymbol(Rank r) => r switch
     {
         Rank.Ten => "10",
-        Rank.Jack => "B",
-        Rank.Queen => "D",
-        Rank.King => "K",
-        Rank.Ace => "A",
+        >= Rank.Jack => L($"Rank.{r}.Symbol"),
         _ => ((int)r).ToString(),
     };
 
@@ -47,34 +28,23 @@ public static class HandText
 
     public static bool IsRed(Suit s) => s is Suit.Hearts or Suit.Diamonds;
 
-    public static string Category(HandCategory c) => c switch
-    {
-        HandCategory.HighCard => "Höchste Karte",
-        HandCategory.OnePair => "Paar",
-        HandCategory.TwoPair => "Zwei Paare",
-        HandCategory.ThreeOfAKind => "Drilling",
-        HandCategory.Straight => "Straße",
-        HandCategory.Flush => "Flush",
-        HandCategory.FullHouse => "Full House",
-        HandCategory.FourOfAKind => "Vierling",
-        _ => "Straight Flush",
-    };
+    public static string Category(HandCategory c) => L($"Hand.{c}");
 
     public static string Describe(HandValue v)
     {
         var k = v.Kickers;
         return v.Category switch
         {
-            HandCategory.HighCard => $"{One(k[0])} hoch",
-            HandCategory.OnePair => $"Paar {Many(k[0])}",
-            HandCategory.TwoPair => $"Zwei Paare, {Many(k[0])} und {Many(k[1])}",
-            HandCategory.ThreeOfAKind => $"Drilling {Many(k[0])}",
-            HandCategory.Straight => $"Straße bis {One(k[0])}",
-            HandCategory.Flush => $"Flush, {One(k[0])} hoch",
-            HandCategory.FullHouse => $"Full House, {Many(k[0])} über {Many(k[1])}",
-            HandCategory.FourOfAKind => $"Vierling {Many(k[0])}",
-            _ when k[0] == Rank.Ace => "Royal Flush",
-            _ => $"Straight Flush bis {One(k[0])}",
+            HandCategory.HighCard => L("Hand.Describe.HighCard", One(k[0])),
+            HandCategory.OnePair => L("Hand.Describe.OnePair", Many(k[0])),
+            HandCategory.TwoPair => L("Hand.Describe.TwoPair", Many(k[0]), Many(k[1])),
+            HandCategory.ThreeOfAKind => L("Hand.Describe.ThreeOfAKind", Many(k[0])),
+            HandCategory.Straight => L("Hand.Describe.Straight", One(k[0])),
+            HandCategory.Flush => L("Hand.Describe.Flush", One(k[0])),
+            HandCategory.FullHouse => L("Hand.Describe.FullHouse", Many(k[0]), Many(k[1])),
+            HandCategory.FourOfAKind => L("Hand.Describe.FourOfAKind", Many(k[0])),
+            _ when k[0] == Rank.Ace => L("Hand.RoyalFlush"),
+            _ => L("Hand.Describe.StraightFlush", One(k[0])),
         };
     }
 
@@ -86,18 +56,17 @@ public static class HandText
             return Describe(HandEvaluator.EvaluateBest([.. hole, .. board]));
 
         var (a, b) = hole[0].Rank >= hole[1].Rank ? (hole[0], hole[1]) : (hole[1], hole[0]);
-        if (a.Rank == b.Rank) return $"Paar {Many(a.Rank)}";
-        var suited = a.Suit == b.Suit ? ", gleiche Farbe" : "";
-        return $"{One(a.Rank)}-{One(b.Rank)}{suited}";
+        if (a.Rank == b.Rank) return L("Hand.Describe.OnePair", Many(a.Rank));
+        return L(a.Suit == b.Suit ? "Hand.Preflop.Suited" : "Hand.Preflop.Offsuit", One(a.Rank), One(b.Rank));
     }
 
     public static string Action(PlayerAction a) => a.Type switch
     {
-        ActionType.Fold => "Passt",
-        ActionType.Check => "Checkt",
-        ActionType.Call => $"Geht mit {a.Amount:N0}",
-        ActionType.Raise => $"Erhöht auf {a.Amount:N0}",
-        _ => "All-in!",
+        ActionType.Fold => L("Action.Fold"),
+        ActionType.Check => L("Action.Check"),
+        ActionType.Call => L("Action.Call", a.Amount),
+        ActionType.Raise => L("Action.Raise", a.Amount),
+        _ => L("Action.AllIn"),
     };
 
     public static string Street(Street s) => s switch

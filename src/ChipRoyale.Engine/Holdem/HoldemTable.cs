@@ -40,8 +40,8 @@ public sealed class HoldemTable
     public IReadOnlyList<Card> Board => _board;
     public IReadOnlyList<ActionLogEntry> Log => _log;
 
-    public int SmallBlind { get; }
-    public int BigBlind { get; }
+    public int SmallBlind { get; private set; }
+    public int BigBlind { get; private set; }
 
     public int HandNumber { get; private set; }
     public TablePhase Phase { get; private set; } = TablePhase.Idle;
@@ -130,6 +130,17 @@ public sealed class HoldemTable
         Phase = TablePhase.WaitingForAction;
         ActingIndex = BigBlindIndex;
         MoveToNextActorOrEndRound();
+    }
+
+    /// <summary>Changes the blinds for the next hand (tournament levels). Not allowed during a hand.</summary>
+    public void SetBlinds(int smallBlind, int bigBlind)
+    {
+        if (Phase is TablePhase.WaitingForAction or TablePhase.RoundComplete)
+            throw new InvalidOperationException("Blinds can only change between hands.");
+        if (smallBlind <= 0 || bigBlind < smallBlind)
+            throw new ArgumentException("Invalid blinds.");
+        SmallBlind = smallBlind;
+        BigBlind = bigBlind;
     }
 
     public LegalActions GetLegalActions()

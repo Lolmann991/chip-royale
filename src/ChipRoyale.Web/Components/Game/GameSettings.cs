@@ -1,19 +1,42 @@
 using ChipRoyale.Engine.Ai;
+using ChipRoyale.Engine.Economy;
+using ChipRoyale.Engine.Tournament;
+using ChipRoyale.Web.Services;
+using static ChipRoyale.Web.Localization.Loc;
 
 namespace ChipRoyale.Web.Components.Game;
 
-public sealed record GameSettings(Difficulty Difficulty, int Opponents, int StartChips)
+/// <param name="BuyIn">Chips the player brings to the table.</param>
+/// <param name="Tournament">Set for a Sit &amp; Go; then <see cref="BuyIn"/> is the tournament buy-in.</param>
+public sealed record GameSettings(Difficulty Difficulty, int Opponents, TableStake Stake, int BuyIn, SitAndGoConfig? Tournament = null)
 {
-    public int SmallBlind => Math.Max(1, StartChips / 100);
-    public int BigBlind => SmallBlind * 2;
+    public int SmallBlind => Stake.SmallBlind;
+    public int BigBlind => Stake.BigBlind;
+    public bool IsPractice => Stake.IsPractice;
+    public bool IsTournament => Tournament is not null;
+
+    public static GameSettings ForSitAndGo(Difficulty difficulty, SitAndGoConfig config) => new(
+        difficulty,
+        config.Players - 1,
+        new TableStake("sng", "Sit & Go", config.Levels[0].SmallBlind, config.Levels[0].BigBlind, config.StartingStack),
+        config.BuyIn,
+        config);
 }
 
+/// <param name="Place">Final place (1 = winner).</param>
+public readonly record struct TournamentResult(int Place, int Prize);
+
+/// <param name="Stack">The player's chips at the table right now.</param>
+/// <param name="Hand">Set when a hand the player was dealt into has finished.</param>
+public readonly record struct TableReport(int Stack, HandOutcome? Hand);
+
 /// <summary>Look and personality of a seat at the table.</summary>
-public sealed record SeatLook(string Name, string Avatar, int Hue);
+/// <param name="AvatarClass">CSS class for avatars drawn without an emoji (pixel art).</param>
+public sealed record SeatLook(string Name, string Avatar, int Hue, string? AvatarClass = null);
 
 public static class Roster
 {
-    public static readonly SeatLook Human = new("Du", "😎", 45);
+    public static SeatLook Human => new(L("Seat.You"), "😎", 45);
 
     private static readonly SeatLook[] Bots =
     [
@@ -27,10 +50,7 @@ public static class Roster
     public static IReadOnlyList<SeatLook> PickBots(int count, Random random) =>
         Bots.OrderBy(_ => random.Next()).Take(count).ToArray();
 
-    public static string DifficultyName(Difficulty d) => d switch
-    {
-        Difficulty.Easy => "Leicht",
-        Difficulty.Medium => "Mittel",
-        _ => "Schwer",
-    };
+    public static string DifficultyName(Difficulty d) => L($"Difficulty.{d}");
+
+    public static string StakeName(TableStake s) => L($"Stake.{s.Id}");
 }

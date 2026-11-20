@@ -1,0 +1,38 @@
+@using ChipRoyale.Engine.Economy
+@using ChipRoyale.Web.Services
+@implements IDisposable
+@inject PlayerService Player
+
+@* Pops up unlocked achievements ("+5 👑") wherever it is placed. *@
+<div class="ach-toasts" aria-live="polite">
+    @foreach (var (achievement, key) in toasts)
+    {
+        <div class="ach-toast" @key="key">
+            <span class="ach-icon">@achievement.Icon</span>
+            <span class="ach-text">
+                <small>@L("Ach.Unlocked")</small>
+                <b>@L($"Ach.{achievement.Id}.Title")</b>
+            </span>
+            <span class="ach-reward">+@achievement.Reward 👑</span>
+        </div>
+    }
+</div>
+
+@code {
+    private readonly List<(Achievement Achievement, int Key)> toasts = [];
+    private int nextKey;
+
+    protected override void OnInitialized() => Player.AchievementsUnlocked += OnUnlocked;
+
+    private void OnUnlocked(IReadOnlyList<Achievement> unlocked) => _ = InvokeAsync(async () =>
+    {
+        var added = unlocked.Select(a => (a, nextKey++)).ToList();
+        toasts.AddRange(added);
+        StateHasChanged();
+        await Task.Delay(6000);
+        toasts.RemoveAll(t => added.Contains(t));
+        StateHasChanged();
+    });
+
+    public void Dispose() => Player.AchievementsUnlocked -= OnUnlocked;
+}

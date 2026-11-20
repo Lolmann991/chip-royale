@@ -1,0 +1,131 @@
+@page "/rangliste"
+@layout GameLayout
+@using System.Linq.Expressions
+@using System.Security.Claims
+@using ChipRoyale.Web.Data
+@using Microsoft.EntityFrameworkCore
+@inject IDbContextFactory<ApplicationDbContext> DbFactory
+
+<PageTitle>@L("Board.PageTitle")</PageTitle>
+
+<div class="game-root">
+    <div class="board-page">
+        <header class="board-head">
+            <a class="brand" href="">♠ Chip <span>Royale</span></a>
+            <span class="head-tools">
+                <LanguageSwitch />
+                <a class="tool" href="">@L("Board.Back")</a>
+            </span>
+        </header>
+
+        <h1 class="logo small">@L("Board.Title1")<span>@L("Board.Title2")</span></h1>
+
+        <nav class="tabs">
+            @foreach (var (key, label) in Tabs)
+            {
+                <a class="tab @(Mode == key ? "on" : "")" href="rangliste?sort=@key">@L(label)</a>
+            }
+        </nav>
+
+        @if (rows.Count == 0)
+        {
+            <p class="note center">@L("Board.Empty")</p>
+        }
+        else
+        {
+            <ol class="leaderboard">
+                @foreach (var row in rows)
+                {
+                    <li class="lb-row @(row.IsMe ? "me" : "") @(row.Rank <= 3 ? $"top{row.Rank}" : "")">
+                        <span class="lb-rank">@(row.Rank switch { 1 => "🥇", 2 => "🥈", 3 => "🥉", _ => row.Rank.ToString() })</span>
+                        <span class="lb-name">@row.Name@(row.IsMe ? L("Board.You") : "")</span>
+                        <span class="lb-main">@(Mode is "tische" or "turniere" ? "🏆 " : "● ")@row.Main.ToString("N0")</span>
+                        <span class="lb-sub">@row.Sub</span>
+                    </li>
+                }
+            </ol>
+        }
+
+        @if (me is { } m && !rows.Any(r => r.IsMe))
+        {
+            <p class="note center">@L("Board.YourRank", m.Rank, m.Main)</p>
+        }
+        @if (userId is null)
+        {
+            <p class="note center"><a href="Account/Login?ReturnUrl=%2Frangliste">@L("Board.LoginLink")</a>@L("Board.LoginText")</p>
+        }
+    </div>
+</div>
+
+@code {
+    [CascadingParameter] private Task<AuthenticationState>? AuthState { get; set; }
+    [SupplyParameterFromQuery(Name = "sort")] public string? Sort { get; set; }
+
+    private const int Take = 50;
+    private static readonly (string Key, string Label)[] Tabs =
+    [
+        ("rekord", "Board.Tab.Record"),
+        ("aktuell", "Board.Tab.Current"),
+        ("tische", "Board.Tab.Tables"),
+        ("turniere", "Board.Tab.Tournaments"),
+    ];
+
+    private string Mode => Tabs.Any(t => t.Key == Sort) ? Sort! : "rekord";
+    private string? userId;
+    private List<Row> rows = [];
+    private Row? me;
+
+    private sealed record Row(int Rank, string Name, int Main, string Sub, bool IsMe);
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (AuthState is not null)
+        {
+            var user = (await AuthState).User;
+            userId = user.Identity?.IsAuthenticated == true ? user.FindFirstValue(ClaimTypes.NameIdentifier) : null;
+        }
+
+        await using var db = await DbFactory.CreateDbContextAsync();
+        Expression<Func<PlayerProfile, int>> key = Mode switch
+        {
+            "aktuell" => p => p.Bankroll.Chips + p.Bankroll.TableChips,
+            "tische" => p => p.Bankroll.TablesCleared,
+            "turniere" => p => p.Bankroll.TournamentsWon,
+            _ => p => p.Bankroll.BestPeak,
+        };
+        var value = key.Compile();
+
+        var top = await db.Profiles.AsNoTracking()
+            .OrderByDescending(key)
+            .ThenByDescending(p => p.Bankroll.HandsWon)
+            .Take(Take)
+            .ToListAsync();
+        rows = top.Select((p, i) => new Row(i + 1, p.DisplayName, value(p), Describe(p), p.UserId == userId)).ToList();
+
+        me = null;
+        if (userId is not null && !rows.Any(r => r.IsMe))
+        {
+            var mine = await db.Profiles.AsNoTracking().FirstOrDefaultAsync(p => p.UserId == userId);
+            if (mine is not null)
+            {
+                var myValue = value(mine);
+                var better = await db.Profiles.Select(key).CountAsync(v => v > myValue);
+                me = new Row(better + 1, mine.DisplayName, myValue, Describe(mine), true);
+            }
+        }
+    }
+
+    private static string Hands(int n) => n == 1 ? L("Board.Hand") : L("Board.Hands", n);
+
+    private string Describe(PlayerProfile p)
+    {
+        var b = p.Bankroll;
+        return Mode switch
+        {
+            "aktuell" => L("Board.Sub.Current", b.Run, b.BestPeak),
+            "tische" => L("Board.Sub.Tables", b.HandsWon, Hands(b.HandsPlayed)),
+            "turniere" => L("Board.Sub.Tournaments", b.TournamentsPlayed),
+            _ => L("Board.Sub.Record", b.Total, Hands(b.HandsPlayed)),
+        };
+    }
+}

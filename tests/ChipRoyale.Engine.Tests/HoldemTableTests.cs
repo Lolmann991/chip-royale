@@ -108,6 +108,16 @@ public class HoldemTableTests
         Assert.Equal(40, applied.Amount);
     }
 
+    [Fact]
+    public void Blinds_change_only_between_hands()
+    {
+        var t = NewTable(1000, 1000, 1000);
+        t.SetBlinds(25, 50);
+        t.StartHand();
+        Assert.Equal(75, t.Pot);
+        Assert.Throws<InvalidOperationException>(() => t.SetBlinds(50, 100));
+    }
+
     [Theory]
     [InlineData(Difficulty.Easy)]
     [InlineData(Difficulty.Medium)]

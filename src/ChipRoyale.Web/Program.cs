@@ -4,6 +4,12 @@ using Microsoft.EntityFrameworkCore;
 using ChipRoyale.Web.Components;
 using ChipRoyale.Web.Components.Account;
 using ChipRoyale.Web.Data;
+using ChipRoyale.Web.Localization;
+using ChipRoyale.Web.Services;
+using Microsoft.AspNetCore.DataProtection;
+using Microsoft.AspNetCore.HttpOverrides;
+using Microsoft.AspNetCore.Localization;
+using Microsoft.Data.Sqlite;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -23,13 +29,45 @@ builder.Services.AddAuthentication(options =>
     .AddIdentityCookies();
 
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+
+// Persistent storage for the database and the login cookie keys. On Azure App Service only
+// %HOME% survives restarts and deployments, so data goes to %HOME%/data there.
+var dataDirectory = builder.Configuration["Storage:DataDirectory"];
+if (string.IsNullOrEmpty(dataDirectory) && Environment.GetEnvironmentVariable("WEBSITE_SITE_NAME") is not null
+    && Environment.GetEnvironmentVariable("HOME") is { Length: > 0 } azureHome)
+    dataDirectory = Path.Combine(azureHome, "data");
+if (!string.IsNullOrEmpty(dataDirectory))
+{
+    Directory.CreateDirectory(dataDirectory);
+    connectionString = new SqliteConnectionStringBuilder(connectionString)
+    {
+        DataSource = Path.Combine(dataDirectory, "app.db"),
+    }.ToString();
+    builder.Services.AddDataProtection()
+        .SetApplicationName("ChipRoyale")
+        .PersistKeysToFileSystem(new DirectoryInfo(Path.Combine(dataDirectory, "keys")));
+}
+
+// Behind the hoster's proxy (TLS ends there): trust X-Forwarded-For/-Proto.
+builder.Services.Configure<ForwardedHeadersOptions>(options =>
+{
+    options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+    options.KnownIPNetworks.Clear();
+    options.KnownProxies.Clear();
+});
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlite(connectionString));
+// Interactive components need short-lived contexts (one per operation).
+builder.Services.AddDbContextFactory<ApplicationDbContext>(options =>
+    options.UseSqlite(connectionString), ServiceLifetime.Scoped);
+builder.Services.AddScoped<PlayerService>();
+builder.Services.AddLocalization();
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 builder.Services.AddIdentityCore<ApplicationUser>(options =>
     {
-        options.SignIn.RequireConfirmedAccount = true;
+        // Off until a real email sender exists (see SPIELKONZEPT V3); otherwise nobody could confirm an account.
+        options.SignIn.RequireConfirmedAccount = builder.Configuration.GetValue("Auth:RequireConfirmedAccount", false);
         options.Stores.SchemaVersion = IdentitySchemaVersions.Version3;
     })
     .AddEntityFrameworkStores<ApplicationDbContext>()
@@ -39,6 +77,14 @@ builder.Services.AddIdentityCore<ApplicationUser>(options =>
 builder.Services.AddSingleton<IEmailSender<ApplicationUser>, IdentityNoOpEmailSender>();
 
 var app = builder.Build();
+
+app.UseForwardedHeaders();
+
+// Create / update the SQLite database on start.
+using (var scope = app.Services.CreateScope())
+{
+    scope.ServiceProvider.GetRequiredService<ApplicationDbContext>().Database.Migrate();
+}
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -54,9 +100,28 @@ else
 app.UseStatusCodePagesWithReExecute("/not-found", createScopeForStatusCodePages: true);
 app.UseHttpsRedirection();
 
+// Languages: German (default) and English, chosen by cookie or browser language.
+app.UseRequestLocalization(new RequestLocalizationOptions()
+    .SetDefaultCulture(Loc.DefaultCulture)
+    .AddSupportedCultures(Loc.SupportedCultures)
+    .AddSupportedUICultures(Loc.SupportedCultures));
+
 app.UseAntiforgery();
 
 app.MapStaticAssets();
+
+// Switch language: stores the culture cookie and goes back to the page.
+app.MapGet("/Culture/Set", (string culture, string? redirectUri, HttpContext context) =>
+{
+    if (Loc.SupportedCultures.Contains(culture))
+    {
+        context.Response.Cookies.Append(
+            CookieRequestCultureProvider.DefaultCookieName,
+            CookieRequestCultureProvider.MakeCookieValue(new RequestCulture(culture)),
+            new CookieOptions { MaxAge = TimeSpan.FromDays(365), IsEssential = true, SameSite = SameSiteMode.Lax });
+    }
+    return Results.LocalRedirect(string.IsNullOrEmpty(redirectUri) || !redirectUri.StartsWith('/') ? "/" : redirectUri);
+});
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();
 
