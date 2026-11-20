@@ -1447,3 +1447,16 @@
     .learn-hands { grid-template-columns: 1fr; }
     .step-card { padding: 1rem; }
 }
+
+.seat-badge {
+    position: absolute;
+    right: -.4em;
+    top: -.6em;
+    padding: .1em .45em;
+    border-radius: 999px;
+    font-size: .72em;
+    font-weight: 800;
+    background: #3a3a44;
+    color: #ddd;
+    box-shadow: 0 .2em .4em rgba(0, 0, 0, .4);
+}
