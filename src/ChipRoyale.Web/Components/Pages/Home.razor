@@ -1,7 +1,22 @@
-﻿@page "/"
+@page "/"
+@layout GameLayout
+@rendermode InteractiveServer
+@using ChipRoyale.Web.Components.Game
 
-<PageTitle>Home</PageTitle>
+<PageTitle>Chip Royale</PageTitle>
 
-<h1>Hello, world!</h1>
+<div class="game-root @(settings is null ? "" : $"diff-{settings.Difficulty}")">
+    @if (settings is null)
+    {
+        <Lobby OnStart="s => settings = s" />
+    }
+    else
+    {
+        <PokerTable @key="tableKey" Settings="settings" OnExit="() => { settings = null; tableKey++; }" />
+    }
+</div>
 
-Welcome to your new app.
+@code {
+    private GameSettings? settings;
+    private int tableKey;
+}

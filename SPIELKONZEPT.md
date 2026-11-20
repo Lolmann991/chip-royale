@@ -27,7 +27,7 @@ Browser-Pokerspiel (Blazor Server) gegen KI-Gegner mit Chip-Progression, Pixel-A
 ## 3. KI & Schwierigkeit
 
 - **Intelligenz:** regelbasiert in Stufen
-  - *Einfach:* spielt nach reiner Handstärke
+  - *Einfach:* spendabel – zahlt gute Hände aus, passt selten, blufft kaum (Pots werden groß)
   - *Mittel:* berücksichtigt Pot-Odds und Position
   - *Schwer:* blufft, liest das Spielerverhalten
 - **Glück der KI:** in V1 immer faires Mischen. Ein Glücksfaktor kommt erst mit dem Balancing in einer späteren Version.
@@ -65,9 +65,9 @@ Browser-Pokerspiel (Blazor Server) gegen KI-Gegner mit Chip-Progression, Pixel-A
 ### V1 – Spielbares Poker + Tutorial
 - [x] Projektgerüst
 - [x] Karten, Deck, Hand-Bewertung (Engine)
-- [ ] Texas-Hold'em-Spielablauf (Blinds, Setzrunden, Side-Pots, Showdown)
-- [ ] KI-Stufen Einfach / Mittel / Schwer
-- [ ] Spieltisch-UI (Pixel-Art) für 6 Plätze
+- [x] Texas-Hold'em-Spielablauf (Blinds, Setzrunden, Side-Pots, Showdown)
+- [x] KI-Stufen Einfach / Mittel / Schwer
+- [x] Spieltisch-UI für 6 Plätze (3D-Tisch mit Animationen und Gewinn-Effekten)
 - [ ] Benutzerkonto mit Chip-Stand, Reset bei 0 Chips
 - [ ] Tischstufen mit Buy-in-Grenzen (Min / 20 × Min)
 - [ ] Tutorial: Lektionen, Hand-Rangliste, Live-Tipps, Übungstisch

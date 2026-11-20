@@ -1,0 +1,79 @@
+@using ChipRoyale.Engine.Ai
+@using ChipRoyale.Engine.Cards
+
+<div class="lobby">
+    <div class="lobby-hero">
+        <div class="hero-cards" aria-hidden="true">
+            <PlayingCard Card="@(new Card(Rank.Ace, Suit.Spades))" Size="lg" Class="hero-card h1" Deal="false" />
+            <PlayingCard Card="@(new Card(Rank.King, Suit.Hearts))" Size="lg" Class="hero-card h2" Deal="false" />
+            <PlayingCard Card="@(new Card(Rank.Queen, Suit.Diamonds))" Size="lg" Class="hero-card h3" Deal="false" />
+        </div>
+        <h1 class="logo">Chip <span>Royale</span></h1>
+        <p class="tagline">Texas Hold'em · No-Limit · gegen KI-Gegner</p>
+    </div>
+
+    <div class="lobby-panel">
+        <section>
+            <h2>Schwierigkeit</h2>
+            <div class="choice-grid three">
+                @foreach (var (d, title, text, icon) in Levels)
+                {
+                    <button type="button" class="choice @(difficulty == d ? "selected" : "")" @onclick="() => difficulty = d">
+                        <span class="choice-icon">@icon</span>
+                        <span class="choice-title">@title</span>
+                        <span class="choice-text">@text</span>
+                    </button>
+                }
+            </div>
+        </section>
+
+        <section>
+            <h2>Gegner</h2>
+            <div class="seat-picker">
+                @for (var n = 1; n <= 5; n++)
+                {
+                    var count = n;
+                    <button type="button" class="seat-dot @(opponents >= count ? "on" : "")" @onclick="() => opponents = count"
+                            aria-label="@count Gegner">@count</button>
+                }
+                <span class="seat-picker-label">@opponents @(opponents == 1 ? "Gegner (Heads-up)" : "Gegner")</span>
+            </div>
+        </section>
+
+        <section>
+            <h2>Startkapital</h2>
+            <div class="choice-grid four">
+                @foreach (var chips in new[] { 500, 1000, 2000, 5000 })
+                {
+                    var c = chips;
+                    <button type="button" class="choice compact @(startChips == c ? "selected" : "")" @onclick="() => startChips = c">
+                        <ChipStack Amount="@(c / 10)" Class="mini" MaxPerColumn="4" />
+                        <span class="choice-title">@c.ToString("N0")</span>
+                        <span class="choice-text">Blinds @((c / 100).ToString("N0"))/@((c / 50).ToString("N0"))</span>
+                    </button>
+                }
+            </div>
+        </section>
+
+        <button type="button" class="play-btn" @onclick="Start">
+            <span>Tisch betreten</span>
+        </button>
+    </div>
+</div>
+
+@code {
+    [Parameter] public EventCallback<GameSettings> OnStart { get; set; }
+
+    private Difficulty difficulty = Difficulty.Easy;
+    private int opponents = 3;
+    private int startChips = 1000;
+
+    private static readonly (Difficulty, string, string, string)[] Levels =
+    [
+        (Difficulty.Easy, "Leicht", "Spendable Gegner, die gute Hände auszahlen. Tipps sind an.", "🍀"),
+        (Difficulty.Medium, "Mittel", "Rechnen Pot-Odds und bluffen ab und zu.", "🎯"),
+        (Difficulty.Hard, "Schwer", "Tight-aggressiv, bluffen und lesen dein Spiel.", "🔥"),
+    ];
+
+    private Task Start() => OnStart.InvokeAsync(new GameSettings(difficulty, opponents, startChips));
+}

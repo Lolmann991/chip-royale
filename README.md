@@ -12,6 +12,13 @@ src/ChipRoyale.Engine         Poker-Logik (Karten, Deck, Hand-Bewertung, ...)
 tests/ChipRoyale.Engine.Tests xUnit-Tests für die Engine
 ```
 
+## Spielen
+
+- Lobby: Schwierigkeit (Leicht / Mittel / Schwer), 1–5 Gegner und Startkapital wählen.
+- Tastatur: `F` passen, `C` checken/mitgehen, `R` setzen/erhöhen, `A` All-in vorwählen, `↑`/`↓` Einsatz ändern, `Leertaste` nächste Hand.
+- 💡 Tipps zeigen die aktuelle Hand, die Gewinnchance und einen Hinweis (auf „Leicht“ standardmäßig an).
+- Mausbewegung kippt den Tisch leicht; Klick auf die eigenen Karten verdeckt sie.
+
 ## Starten
 
 ```bash
