@@ -415,7 +415,28 @@ Fold – give up. Your chips in the pot are gone.</value></data>
   <data name="Stake.pub" xml:space="preserve"><value>Pub</value></data>
   <data name="Stake.sng" xml:space="preserve"><value>Sit &amp; Go</value></data>
   <data name="Stake.vip" xml:space="preserve"><value>VIP lounge</value></data>
+  <data name="Stats.ByRiver" xml:space="preserve"><value>Chance by the river for …</value></data>
+  <data name="Stats.HandRank" xml:space="preserve"><value>Hand</value></data>
+  <data name="Stats.Lose" xml:space="preserve"><value>Lose {0}</value></data>
+  <data name="Stats.NotWorth" xml:space="preserve"><value>✗ too pricey</value></data>
+  <data name="Stats.OddsTitle" xml:space="preserve"><value>Green: win · yellow: split · red: lose</value></data>
+  <data name="Stats.Outs" xml:space="preserve"><value>Outs</value></data>
+  <data name="Stats.OutsBest" xml:space="preserve"><value>up to: {0}</value></data>
+  <data name="Stats.OutsTextFlop" xml:space="preserve"><value>{0} cards improve you · {1} by the river</value></data>
+  <data name="Stats.OutsTextTurn" xml:space="preserve"><value>{0} cards improve you · {1} on the river</value></data>
+  <data name="Stats.PotOdds" xml:space="preserve"><value>Pot odds</value></data>
+  <data name="Stats.PotOddsText" xml:space="preserve"><value>pay {0:N0} → you need {1}</value></data>
+  <data name="Stats.RankOf" xml:space="preserve"><value>Rank {0} of {1}</value></data>
+  <data name="Stats.Starting" xml:space="preserve"><value>Starting hand</value></data>
+  <data name="Stats.StartingRank" xml:space="preserve"><value>No. {0} of {1}</value></data>
+  <data name="Stats.Tie" xml:space="preserve"><value>Split {0}</value></data>
+  <data name="Stats.Top" xml:space="preserve"><value>top {0}</value></data>
+  <data name="Stats.VsMany" xml:space="preserve"><value>vs. {0} opponents</value></data>
+  <data name="Stats.VsOne" xml:space="preserve"><value>vs. {0} opponent</value></data>
+  <data name="Stats.Win" xml:space="preserve"><value>Win {0}</value></data>
+  <data name="Stats.Worth" xml:space="preserve"><value>✓ worth it</value></data>
   <data name="Table.And" xml:space="preserve"><value> &amp; </value></data>
+  <data name="Table.AutoPaused" xml:space="preserve"><value>⏸ Paused – continue with space or the button.</value></data>
   <data name="Table.Bet" xml:space="preserve"><value>Bet {0:N0}</value></data>
   <data name="Table.Bet.Aria" xml:space="preserve"><value>Bet size</value></data>
   <data name="Table.Call" xml:space="preserve"><value>Call {0:N0}</value></data>

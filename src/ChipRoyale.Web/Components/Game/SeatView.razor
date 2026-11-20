@@ -2,23 +2,11 @@
 @using ChipRoyale.Engine.Evaluation
 @using ChipRoyale.Engine.Holdem
 
-@* One player at the table: cards, name plate, chips, speech bubble. Stands upright on the rail (billboard). *@
+@* One player's name plate with chips and speech bubble. Stands upright on the rail (billboard); the cards lie on the felt (PokerTable). *@
 
 <div class="seat-anchor" style="left:@X; top:@Y">
     <div class="seat @(Badge is null ? "" : "badged") @(Player.IsHuman ? "hero" : "") @(Acting ? "acting" : "") @(Player.HasFolded ? "folded" : "") @(WonAmount > 0 ? "winner" : "") @(Player.IsEliminated && !Player.InHand ? "eliminated" : "")"
          id="seat-@Index">
-        @if (Player.InHand && Player.HoleCards.Count > 0 && (Player.IsHuman || !Player.HasFolded))
-        {
-            <div class="seat-cards" @onclick="() => OnCardsClick.InvokeAsync()">
-                @for (var c = 0; c < Player.HoleCards.Count; c++)
-                {
-                    var card = Player.HoleCards[c];
-                    <PlayingCard @key="(HandNumber, card)" Card="card" FaceUp="ShowCards"
-                                 Size="@(Player.IsHuman ? "lg" : "sm")" DelayMs="DealDelay(c)"
-                                 Highlight="WinningCards.Contains(card)" Dim="Player.IsHuman && Player.HasFolded" />
-                }
-            </div>
-        }
         <div class="plate">
             <div class="avatar @Look.AvatarClass" style="--hue:@Look.Hue">@Look.Avatar</div>
             <div class="who">
@@ -62,17 +50,11 @@
     [Parameter] public Street Street { get; set; }
     [Parameter] public bool Acting { get; set; }
     [Parameter] public bool Thinking { get; set; }
-    [Parameter] public bool ShowCards { get; set; }
     [Parameter] public bool ShowAction { get; set; } = true;
     [Parameter] public int WonAmount { get; set; }
     [Parameter] public HandValue? ShowdownHand { get; set; }
-    [Parameter] public ISet<Card> WinningCards { get; set; } = new HashSet<Card>();
 
-    /// <summary>Delay of the deal animation for the n-th hole card.</summary>
-    [Parameter] public Func<int, int> DealDelay { get; set; } = _ => 0;
 
     /// <summary>Small extra label on the plate, e.g. a tournament place.</summary>
     [Parameter] public string? Badge { get; set; }
-
-    [Parameter] public EventCallback OnCardsClick { get; set; }
 }

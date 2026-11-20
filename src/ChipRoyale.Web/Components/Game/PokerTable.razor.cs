@@ -55,7 +55,11 @@ public partial class PokerTable
     private bool showLog;
     private bool showRankings;
     private bool exiting;
-    private double? heroEquity;
+    private HandOdds? heroOdds;
+    private int? startingRank;
+    private double? startingTop;
+    private bool sweeping;
+    private bool autoPaused;
     private (int Hand, int Board, int Active) equityKey;
     private int potOverride = -1;
     private HandResult? lastResult;
@@ -129,9 +133,19 @@ public partial class PokerTable
 
     private async Task NextHandAsync()
     {
-        if (gameOver is not null || finishingHand || table.Phase is TablePhase.WaitingForAction or TablePhase.RoundComplete) return;
+        if (sweeping || gameOver is not null || finishingHand || table.Phase is TablePhase.WaitingForAction or TablePhase.RoundComplete) return;
         if (!table.CanStartHand) return;
         autoCts?.Cancel();
+
+        // Gather the old cards back to the deck before dealing again.
+        if (table.HandNumber > 0)
+        {
+            sweeping = true;
+            banner = null;
+            StateHasChanged();
+            await Delay(480);
+            sweeping = false;
+        }
 
         ResetHandVisuals();
         levelNotice = null;
@@ -160,7 +174,10 @@ public partial class PokerTable
         collecting = false;
         peek = false;
         potOverride = -1;
-        heroEquity = null;
+        heroOdds = null;
+        startingRank = null;
+        startingTop = null;
+        autoPaused = false;
         heroTurn = false;
         legal = null;
         autoContinueMs = 0;
@@ -388,7 +405,7 @@ public partial class PokerTable
                 StateHasChanged();
                 return;
             }
-            autoContinueMs = heroWon > 0 ? 6000 : 4000;
+            autoContinueMs = heroWon > 0 ? 13000 : 9000;
             ScheduleAutoContinue(table.HandNumber, autoContinueMs);
         }
         else if (Hero.Chips == 0)
@@ -404,7 +421,7 @@ public partial class PokerTable
         }
         else
         {
-            autoContinueMs = heroWon > 0 ? 6500 : 4500;
+            autoContinueMs = heroWon > 0 ? 14000 : 10000;
             ScheduleAutoContinue(table.HandNumber, autoContinueMs);
         }
         StateHasChanged();
@@ -523,16 +540,19 @@ public partial class PokerTable
     {
         if (!hints || !Hero.IsActive || Hero.HoleCards.Count != 2)
         {
-            if (!Hero.IsActive) heroEquity = null;
+            if (!Hero.IsActive) heroOdds = null;
             return;
         }
         var key = (table.HandNumber, table.Board.Count, table.ActivePlayerCount);
-        if (key == equityKey && heroEquity is not null) return;
+        if (key == equityKey && heroOdds is not null) return;
         equityKey = key;
         var hole = Hero.HoleCards.ToArray();
         var board = table.Board.ToArray();
         var opponents = Math.Max(1, table.ActivePlayerCount - 1);
-        heroEquity = await Task.Run(() => EquityCalculator.Estimate(hole, board, opponents, 2500));
+        (heroOdds, startingRank, startingTop) = await Task.Run(() => (
+            HandStats.Analyze(hole, board, opponents, 3000),
+            (int?)StartingHands.RankOf(hole[0], hole[1]),
+            (double?)StartingHands.TopPercent(hole[0], hole[1])));
     }
 
     private (string Text, string Kind) Tip(double equity)
@@ -594,11 +614,31 @@ public partial class PokerTable
 
     // ------------------------------------------------------------------ layout helpers
 
-    private (double X, double Y) BetPos(int i)
+    // Where things lie on the felt for each seat slot (percent of the table box).
+    private sealed record SlotLayout((double X, double Y) Cards, (double X, double Y) Stack, (double X, double Y) Bet);
+
+    private static readonly SlotLayout[] Layout =
+    [
+        new((50, 78), (64, 84), (50, 66)),   // bottom (you)
+        new((14, 58), (12, 74), (25, 55)),   // left
+        new((25, 20), (13, 27), (32, 31)),   // top left
+        new((50, 13), (37, 12), (60, 23)),   // top
+        new((75, 20), (87, 27), (68, 31)),   // top right
+        new((86, 58), (88, 74), (75, 55)),   // right
+    ];
+
+    // Deck and discard pile on the felt.
+    private const double DeckX = 69, DeckY = 30, MuckX = 78, MuckY = 41;
+
+    private static readonly string[] TrayColors = ["white", "red", "green", "black", "purple", "gold"];
+
+    private (double X, double Y) BetPos(int i) => Layout[slots[i]].Bet;
+
+    private void PauseAutoContinue()
     {
-        var (x, y) = SlotPos[slots[i]];
-        var t = slots[i] == 0 ? 0.36 : slots[i] == 3 ? 0.3 : 0.34;
-        return (x + (50 - x) * t, y + (52 - y) * t + (slots[i] == 0 ? -6 : 4));
+        if (autoPaused || autoContinueMs == 0) return;
+        autoCts?.Cancel();
+        autoPaused = true;
     }
 
     private (double X, double Y) DealerPos(int i)

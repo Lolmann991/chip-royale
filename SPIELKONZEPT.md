@@ -106,6 +106,9 @@ Reihenfolge = Umsetzungsreihenfolge.
 - [ ] Karten zum Tauschen anklicken; KI-Tauschstrategie
 
 **Außerdem in V2**
+- [x] Live-Statistik bei aktiven Tipps: Rang der Hand (1–10), Starthand-Rang (1–169, Top-%), Sieg/Split/Niederlage, Pot-Odds, Outs, Chancen bis zum River
+- [x] Karten liegen auf dem Filz: Austeilen vom Deck, Passen in den Ablagestapel, Aufdecken am Tisch, Einsammeln vor jeder Hand
+- [x] Vollere Chipstapel, Spieler-Stacks und Chip-Ablage auf dem Tisch; Gewinn-Anzeige länger und per Maus pausierbar
 - [ ] KI „Schwer“ nachschärfen (in Simulationen gewinnt ein Spieler der Stufe „Mittel“ noch gegen „Schwer“)
 - [ ] Statistik-Seite (Hände, Siege, größter Pot, Turniere) und Replay der letzten Hand
 - [ ] Tutorial-Fortschritt im Konto speichern; restliche Kontoseiten übersetzen

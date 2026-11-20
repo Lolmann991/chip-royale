@@ -41,7 +41,7 @@
     </header>
 
     <div class="scene" id="scene">
-        <div class="table-3d" id="table3d">
+        <div class="table-3d @(sweeping ? "sweeping" : "")" id="table3d">
             <div class="table-shadow"></div>
             @for (var z = 1; z <= 6; z++)
             {
@@ -60,7 +60,7 @@
             </div>
 
             <div class="pot" id="pot">
-                <ChipStack Amount="PotAmount" MaxColumns="5" MaxPerColumn="10" />
+                <ChipStack Amount="PotAmount" MaxColumns="9" MaxPerColumn="10" />
             </div>
             @if (PotAmount > 0)
             {
@@ -71,13 +71,15 @@
                 @for (var i = 0; i < 5; i++)
                 {
                     var idx = i;
-                    <div class="board-slot">
+                    <div class="board-slot" style="--fx:@F((DeckX - 50) * 0.74 - (idx - 2) * 5.2)em; --fy:@F((DeckY - 52) * 0.74 / 2.1)em">
                         @if (idx < table.Board.Count)
                         {
                             var card = table.Board[idx];
-                            var delay = idx < 3 ? idx * 140 : 0;
-                            <PlayingCard @key="(table.HandNumber, card)" Card="card" DelayMs="delay"
-                                         Highlight="winningCards.Contains(card)" Dim="winningCards.Count > 0 && !winningCards.Contains(card)" />
+                            var delay = idx < 3 ? idx * 160 : 0;
+                            <div class="felt-card" @key="(table.HandNumber, card)" style="--d:@(delay)ms">
+                                <PlayingCard Card="card" Deal="false"
+                                             Highlight="winningCards.Contains(card)" Dim="winningCards.Count > 0 && !winningCards.Contains(card)" />
+                            </div>
                         }
                     </div>
                 }
@@ -92,6 +94,45 @@
                      style="left:@F(bx)%; top:@F(by)%; --dx:@F((50 - bx) * 0.74)em; --dy:@F((30 - by) * 0.74 / 2.1)em">
                     <ChipStack Amount="p.StreetBet" />
                     <span class="bet-label">@p.StreetBet.ToString("N0")</span>
+                </div>
+            }
+
+            <div class="chip-tray" aria-hidden="true">
+                @foreach (var color in TrayColors)
+                {
+                    <span class="tray-row c-@color"></span>
+                }
+            </div>
+
+            @for (var i = 0; i < table.Players.Count; i++)
+            {
+                var p = table.Players[i];
+                if (p.Chips <= 0) continue;
+                var (px, py) = Layout[slots[i]].Stack;
+                <div class="player-stack" style="left:@F(px)%; top:@F(py)%">
+                    <ChipStack Amount="p.Chips" MaxColumns="4" MaxPerColumn="8" Class="small" />
+                </div>
+            }
+
+            @for (var i = 0; i < table.Players.Count; i++)
+            {
+                var seat = i;
+                var p = table.Players[seat];
+                if (!p.InHand || p.HoleCards.Count == 0) continue;
+                var (hx, hy) = Layout[slots[seat]].Cards;
+                var hero = p.IsHuman;
+                var faceUp = !p.HasFolded && ((hero && !peek) || (revealCards && p.IsActive && !hero));
+                <div class="hole @(hero ? "hero-hole" : "") @(p.HasFolded ? "mucked" : "")" @key="(table.HandNumber, seat)"
+                     style="left:@F(hx)%; top:@F(hy)%; --fx:@F((DeckX - hx) * 0.74)em; --fy:@F((DeckY - hy) * 0.74 / 2.1)em; --mx:@F((MuckX - hx) * 0.74)em; --my:@F((MuckY - hy) * 0.74 / 2.1)em"
+                     @onclick="() => { if (hero) peek = !peek; }">
+                    @for (var c = 0; c < p.HoleCards.Count; c++)
+                    {
+                        var card = p.HoleCards[c];
+                        <div class="felt-card" style="--d:@(DealDelay(seat, c))ms; --c:@c; --spin:@((seat * 47 + c * 83) % 60 - 30)deg">
+                            <PlayingCard Card="card" FaceUp="faceUp" Size="@(hero ? "md" : "sm")" Deal="false"
+                                         Highlight="winningCards.Contains(card)" Dim="winningCards.Count > 0 && p.IsActive && !winningCards.Contains(card)" />
+                        </div>
+                    }
                 </div>
             }
 
@@ -110,13 +151,10 @@
                           HandNumber="table.HandNumber" Street="table.Street"
                           Acting="table.ActingIndex == seat && table.Phase == TablePhase.WaitingForAction"
                           Thinking="thinkingSeat == seat"
-                          ShowCards="(p.IsHuman && !peek) || (revealCards && p.IsActive && !p.IsHuman)"
                           ShowAction="table.Phase != TablePhase.HandComplete"
                           WonAmount="@(winners.Contains(seat) && lastResult is not null ? lastResult.Winnings[seat] : 0)"
                           ShowdownHand="@(lastResult is { WasShowdown: true } && lastResult.Hands.TryGetValue(seat, out var hv) ? hv : null)"
-                          WinningCards="winningCards" DealDelay="c => DealDelay(seat, c)"
-                          Badge="@SeatBadge(seat)"
-                          OnCardsClick="() => { if (p.IsHuman) peek = !peek; }" />
+                          Badge="@SeatBadge(seat)" />
             }
         </div>
 
@@ -127,13 +165,17 @@
 
         @if (banner is not null && gameOver is null)
         {
-            <div class="banner @(banner.Win ? "win" : "")" @key="table.HandNumber">
+            <div class="banner @(banner.Win ? "win" : "") @(autoPaused ? "paused" : "")" @key="table.HandNumber" @onmouseenter="PauseAutoContinue">
                 <h2 class="banner-title">@banner.Title</h2>
                 <p class="banner-sub">@banner.Sub</p>
                 <div class="banner-actions">
                     <button type="button" class="act next" @onclick="NextHandAsync">@L("Table.NextHand") <kbd>@L("Table.Key.Space")</kbd></button>
                 </div>
-                @if (autoContinueMs > 0)
+                @if (autoPaused)
+                {
+                    <p class="banner-paused">@L("Table.AutoPaused")</p>
+                }
+                else if (autoContinueMs > 0)
                 {
                     <div class="banner-progress" style="--t:@(autoContinueMs)ms"></div>
                 }
@@ -146,16 +188,13 @@
             @if (Hero.InHand && Hero.HoleCards.Count == 2 && !Hero.HasFolded)
             {
                 <div class="hand-name"><small>@L("Table.YourHand")</small>@HandText.DescribeCurrent(Hero.HoleCards, table.Board)</div>
-                @if (hints && heroEquity is { } eq && table.Phase != TablePhase.HandComplete)
+                @if (hints && heroOdds is { } odds && table.Phase != TablePhase.HandComplete)
                 {
-                    <div class="equity">
-                        <span>@L("Table.WinChance")</span>
-                        <div class="equity-bar"><span style="width:@F(eq * 100)%"></span></div>
-                        <b>@((eq * 100).ToString("0"))%</b>
-                    </div>
+                    <HeroStats Hole="Hero.HoleCards" Board="table.Board" Odds="odds" Opponents="Math.Max(1, table.ActivePlayerCount - 1)"
+                               Legal="@(heroTurn ? legal : null)" StartingRank="startingRank" StartingTop="startingTop" />
                     @if (heroTurn)
                     {
-                        var (tipText, tipKind) = Tip(eq);
+                        var (tipText, tipKind) = Tip(odds.Equity);
                         <div class="tip @tipKind">@tipText</div>
                     }
                 }
