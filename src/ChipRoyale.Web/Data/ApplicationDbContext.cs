@@ -31,6 +31,8 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
                 b.Property(x => x.BiggestPot);
                 b.Property(x => x.Busts);
                 b.Property(x => x.TablesCleared);
+                b.Property(x => x.TournamentsPlayed);
+                b.Property(x => x.TournamentsWon);
                 b.Ignore(x => x.Total);
                 b.Ignore(x => x.IsSeated);
                 b.Ignore(x => x.IsBroke);

@@ -12,7 +12,19 @@
         <div class="meta">
             <span class="pill stake">@Roster.StakeName(Settings.Stake)@(Settings.IsPractice ? L("Table.PracticeSuffix") : "")</span>
             <span class="pill">Hand #@table.HandNumber</span>
-            <span class="pill">Blinds @table.SmallBlind.ToString("N0")/@table.BigBlind.ToString("N0")</span>
+            @if (sng is not null)
+            {
+                <span class="pill sng-level">@L("Sng.Level", sng.Level + 1, table.SmallBlind, table.BigBlind)</span>
+                @if (sng.HandsLeftInLevel is { } left)
+                {
+                    <span class="pill">@(left == 1 ? L("Sng.RiseAfterThis") : L("Sng.RiseIn", left))</span>
+                }
+                <span class="pill">@L("Sng.PlayersLeft", sng.PlayersLeft, sng.Config.Players)</span>
+            }
+            else
+            {
+                <span class="pill">Blinds @table.SmallBlind.ToString("N0")/@table.BigBlind.ToString("N0")</span>
+            }
             <span class="pill diff-@Settings.Difficulty">@Roster.DifficultyName(Settings.Difficulty)</span>
             @if (table.Phase is TablePhase.WaitingForAction or TablePhase.RoundComplete)
             {
@@ -24,7 +36,7 @@
             <button type="button" class="tool @(sound ? "on" : "")" title="@L("Table.Sound")" @onclick="ToggleSound">@(sound ? "🔊" : "🔇")</button>
             <button type="button" class="tool @(showRankings ? "on" : "")" title="@L("HandRankings.Title")" @onclick="() => showRankings = !showRankings">@L("Table.Hands")</button>
             <button type="button" class="tool @(showLog ? "on" : "")" title="@L("Table.Log")" @onclick="() => showLog = !showLog">📜</button>
-            <button type="button" class="tool" @onclick="ExitAsync">@(Settings.IsPractice ? L("Table.Lobby") : L("Table.CashOut"))</button>
+            <button type="button" class="tool" @onclick="ExitAsync">@(Settings.IsPractice || Settings.IsTournament ? L("Table.Lobby") : L("Table.CashOut"))</button>
         </div>
     </header>
 
@@ -108,6 +120,11 @@
             }
         </div>
 
+        @if (levelNotice is not null)
+        {
+            <div class="level-toast" @key="table.HandNumber">⏫ @levelNotice</div>
+        }
+
         @if (banner is not null && gameOver is null)
         {
             <div class="banner @(banner.Win ? "win" : "")" @key="table.HandNumber">
@@ -186,7 +203,27 @@
         <HandRankings Current="CurrentCategory" OnClose="() => showRankings = false" />
     }
 
-    @if (gameOver is { } go)
+    @if (tournamentResult is { } tr)
+    {
+        var paid = tr.Prize > 0;
+        <div class="overlay">
+            <div class="overlay-card @(paid ? "" : "lost")">
+                <div class="trophy">@(tr.Place == 1 ? "🏆" : paid ? "🥈" : "🎗️")</div>
+                <h2>@(tr.Place == 1 ? L("Sng.Won") : paid ? L("Sng.InTheMoney", tr.Place) : L("Sng.Out", tr.Place))</h2>
+                <p>@(paid ? L("Sng.Prize", tr.Prize) : L("Sng.NoPrize", Settings.BuyIn))</p>
+                <div class="stats">
+                    <div><b>@(tr.Place).</b><span>@L("Sng.Place")</span></div>
+                    <div><b>@handsPlayed</b><span>@L("Over.Hands")</span></div>
+                    <div><b>@handsWon</b><span>@L("Over.Won")</span></div>
+                    <div><b>@biggestPot.ToString("N0")</b><span>@L("Over.BiggestPot")</span></div>
+                </div>
+                <div class="banner-actions">
+                    <button type="button" class="act next" @onclick="ExitAsync">@L("Table.Lobby")</button>
+                </div>
+            </div>
+        </div>
+    }
+    else if (gameOver is { } go)
     {
         <div class="overlay">
             <div class="overlay-card @(go ? "" : "lost")">

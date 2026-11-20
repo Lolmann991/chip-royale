@@ -27,6 +27,9 @@ public sealed class Bankroll
     /// <summary>Times the player knocked out every bot at a table.</summary>
     public int TablesCleared { get; private set; }
 
+    public int TournamentsPlayed { get; private set; }
+    public int TournamentsWon { get; private set; }
+
     public int Total => Chips + TableChips;
 
     public bool IsSeated => TableChips > 0;
@@ -53,6 +56,25 @@ public sealed class Bankroll
             throw new ArgumentOutOfRangeException(nameof(amount), $"Buy-in must be between {stake.MinBuyIn} and {MaxBuyInFor(stake)}.");
         Chips -= amount;
         TableChips = amount;
+    }
+
+    public bool CanEnterTournament(int buyIn) => !IsSeated && Chips >= buyIn;
+
+    /// <summary>Pays a tournament buy-in. It is gone; prizes come back via <see cref="RecordTournament"/>.</summary>
+    public void PayTournamentBuyIn(int buyIn)
+    {
+        if (!CanEnterTournament(buyIn))
+            throw new InvalidOperationException("Not enough chips for this tournament.");
+        Chips -= buyIn;
+    }
+
+    /// <summary>Books a finished tournament: place (1 = winner) and prize money.</summary>
+    public void RecordTournament(int place, int prize)
+    {
+        TournamentsPlayed++;
+        if (place == 1) TournamentsWon++;
+        Chips += Math.Max(0, prize);
+        TrackPeak();
     }
 
     /// <summary>Stores the player's current stack at the table (call after every hand / investment).</summary>

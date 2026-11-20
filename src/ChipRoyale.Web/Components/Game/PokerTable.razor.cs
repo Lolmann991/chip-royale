@@ -2,6 +2,7 @@ using ChipRoyale.Engine.Ai;
 using ChipRoyale.Engine.Cards;
 using ChipRoyale.Engine.Evaluation;
 using ChipRoyale.Engine.Holdem;
+using ChipRoyale.Engine.Tournament;
 using ChipRoyale.Web.Services;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
@@ -18,6 +19,9 @@ public partial class PokerTable
 
     /// <summary>Stack changes and finished hands, so the bankroll can be saved (not raised at the practice table).</summary>
     [Parameter] public EventCallback<TableReport> OnReport { get; set; }
+
+    /// <summary>A Sit &amp; Go is over for the player (knocked out, won, or left).</summary>
+    [Parameter] public EventCallback<TournamentResult> OnTournamentFinished { get; set; }
 
     // Seat slots around the oval (percent of the table box).
     private static readonly (double X, double Y)[] SlotPos = [(50, 101), (2.5, 66), (17, 7), (50, -1), (83, 7), (97.5, 66)];
@@ -58,6 +62,9 @@ public partial class PokerTable
     private int autoContinueMs;
     private bool? gameOver;
     private readonly List<LogLine> log = [];
+    private SitAndGo? sng;
+    private TournamentResult? tournamentResult;
+    private string? levelNotice;
 
     private int handsPlayed, handsWon, biggestPot, peakChips;
 
@@ -76,7 +83,7 @@ public partial class PokerTable
         ? HandEvaluator.EvaluateBest([.. Hero.HoleCards, .. table.Board]).Category
         : Hero.HoleCards.Count == 2 && Hero.HoleCards[0].Rank == Hero.HoleCards[1].Rank && !Hero.HasFolded ? HandCategory.OnePair : null;
 
-    protected override void OnInitialized() => SetupGame(Settings.BuyIn);
+    protected override void OnInitialized() => SetupGame(Settings.Tournament?.StartingStack ?? Settings.BuyIn);
 
     private void SetupGame(int heroStack)
     {
@@ -87,6 +94,9 @@ public partial class PokerTable
         brains = looks.Select((_, i) => i == 0 ? null
             : new BotBrain(new BotProfile(Settings.Difficulty, random.NextDouble(), random.NextDouble()))).ToArray();
         slots = SlotMap[players.Count];
+        sng = Settings.Tournament is { } config ? new SitAndGo(config, table) : null;
+        tournamentResult = null;
+        levelNotice = null;
         hints = Settings.Difficulty == Difficulty.Easy;
         handsPlayed = handsWon = biggestPot = 0;
         peakChips = heroStack;
@@ -121,6 +131,13 @@ public partial class PokerTable
         autoCts?.Cancel();
 
         ResetHandVisuals();
+        levelNotice = null;
+        if (sng is not null && sng.BeforeHand())
+        {
+            levelNotice = L("Sng.LevelUp", table.SmallBlind, table.BigBlind);
+            log.Add(new LogLine(levelNotice, "street"));
+            Sfx("allin");
+        }
         table.StartHand();
         log.Add(new LogLine(L("Table.HandHeader", table.HandNumber), "hand"));
         Sfx("card");
@@ -357,7 +374,20 @@ public partial class PokerTable
         if (Hero.InHand)
             await ReportAsync(new HandOutcome(heroWon > 0, result.TotalPot, cleared));
 
-        if (Hero.Chips == 0)
+        if (sng is not null)
+        {
+            foreach (var busted in sng.AfterHand().Where(i => i != 0))
+                log.Add(new LogLine(L("Sng.KnockedOut", looks[busted].Name, sng.PlaceOf(busted) ?? 0), "street"));
+            if (Hero.Chips == 0 || sng.IsFinished)
+            {
+                await FinishTournamentAsync(sng.PlaceOf(0) ?? sng.PlayersLeft);
+                StateHasChanged();
+                return;
+            }
+            autoContinueMs = heroWon > 0 ? 6000 : 4000;
+            ScheduleAutoContinue(table.HandNumber, autoContinueMs);
+        }
+        else if (Hero.Chips == 0)
         {
             gameOver = false;
             Sfx("lose");
@@ -410,11 +440,40 @@ public partial class PokerTable
         await NextHandAsync();
     }
 
+    private async Task FinishTournamentAsync(int place)
+    {
+        if (sng is null || tournamentResult is not null) return;
+        var result = new TournamentResult(place, sng.Config.Prize(place));
+        tournamentResult = result;
+        gameOver = place == 1;
+        autoCts?.Cancel();
+        if (place == 1)
+        {
+            Sfx("bigwin");
+            _ = JsAsync("celebrate", 3);
+        }
+        else if (result.Prize > 0)
+        {
+            Sfx("win");
+            _ = JsAsync("celebrate", 2);
+        }
+        else
+        {
+            Sfx("lose");
+        }
+        await OnTournamentFinished.InvokeAsync(result);
+    }
+
     private async Task ExitAsync()
     {
         if (exiting) return;
+        if (sng is not null && tournamentResult is null)
+        {
+            if (!await ConfirmAsync(L("Sng.LeaveConfirm", Settings.BuyIn))) return;
+            await FinishTournamentAsync(sng.PlayersLeft);
+        }
         var handRunning = table.Phase is TablePhase.WaitingForAction or TablePhase.RoundComplete;
-        if (handRunning && Hero.IsActive && Hero.TotalInvested > 0 && js is not null && !Settings.IsPractice)
+        if (sng is null && handRunning && Hero.IsActive && Hero.TotalInvested > 0 && js is not null && !Settings.IsPractice)
         {
             bool ok;
             try
@@ -431,14 +490,22 @@ public partial class PokerTable
         await OnExit.InvokeAsync(Hero.Chips);
     }
 
+    private async Task<bool> ConfirmAsync(string message)
+    {
+        if (js is null) return true;
+        try { return await JS.InvokeAsync<bool>("confirm", message); }
+        catch (Exception ex) when (ex is JSDisconnectedException or TaskCanceledException or JSException) { return false; }
+    }
+
     private async Task ReportAsync(HandOutcome? hand)
     {
-        if (Settings.IsPractice) return;
+        if (Settings.IsPractice || (Settings.IsTournament && hand is null)) return;
         await OnReport.InvokeAsync(new TableReport(Hero.Chips, hand));
     }
 
     private int BotStack()
     {
+        if (Settings.Tournament is { } config) return config.StartingStack;
         if (Settings.IsPractice) return Settings.BuyIn;
         var stake = Settings.Stake;
         var raw = Settings.BuyIn * (0.7 + random.NextDouble() * 0.6);
@@ -544,7 +611,8 @@ public partial class PokerTable
     }
 
     /// <summary>Extra label on a seat's plate (used by tournaments for knock-out places).</summary>
-    private string? SeatBadge(int seat) => null;
+    private string? SeatBadge(int seat) =>
+        sng?.PlaceOf(seat) is { } place && table.Players[seat].Chips == 0 ? $"{place}." : null;
 
     private int DealDelay(int seat, int card)
     {

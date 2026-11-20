@@ -42,7 +42,7 @@ Browser-Pokerspiel (Blazor Server) gegen KI-Gegner mit Chip-Progression, freisch
 
 ## 5. Rangliste & Mehrspieler
 
-- **Rangliste:** höchster Chip-Stand (pro Run), aktueller Chip-Stand, gewonnene Turniere
+- **Rangliste:** höchster Chip-Stand (pro Run), aktueller Chip-Stand, abgeräumte Tische, gewonnene Turniere
 - **Mehrspieler (nach V1):**
   - Gemeinsamer Tisch (echte Spieler + NPCs, live über SignalR)
   - Private Tische mit Einladungscode
@@ -86,11 +86,11 @@ Reihenfolge = Umsetzungsreihenfolge.
 - [x] Engine: Blinds zwischen Händen änderbar (für Turniere)
 
 **2. Sit & Go**
-- [ ] 6er-Tisch (du + 5 KI-Gegner), alle starten mit 1.500 Turnier-Chips
-- [ ] Blind-Level steigen alle 8 Hände (10/20 → 15/30 → 25/50 → 50/100 → 75/150 → 100/200 → 150/300 → 200/400 → 300/600 → 500/1.000)
-- [ ] Buy-in-Stufen 200 / 1.000 / 5.000 vom Konto; Preisgeld = 6 × Buy-in, Platz 1 bekommt 65 %, Platz 2 35 %
-- [ ] Turnier-Anzeige (Level, Hände bis zur Erhöhung, verbleibende Spieler) und Platzierung am Ende
-- [ ] Rangliste: Turniersiege
+- [x] 6er-Tisch (du + 5 KI-Gegner), alle starten mit 1.500 Turnier-Chips
+- [x] Blind-Level steigen alle 8 Hände (10/20 → 15/30 → 25/50 → 50/100 → 75/150 → 100/200 → 150/300 → 200/400 → 300/600 → 500/1.000)
+- [x] Buy-in-Stufen 200 / 1.000 / 5.000 vom Konto; Preisgeld = 6 × Buy-in, Platz 1 bekommt 65 %, Platz 2 35 %
+- [x] Turnier-Anzeige (Level, Hände bis zur Erhöhung, verbleibende Spieler) und Platzierung am Ende
+- [x] Rangliste: Turniersiege
 
 **3. Umtausch, Style-Shop und Erfolge**
 - [ ] Chips → Kronen (100 : 1), nur eine Richtung

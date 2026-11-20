@@ -1,17 +1,30 @@
 using ChipRoyale.Engine.Ai;
 using ChipRoyale.Engine.Economy;
+using ChipRoyale.Engine.Tournament;
 using ChipRoyale.Web.Services;
 using static ChipRoyale.Web.Localization.Loc;
 
 namespace ChipRoyale.Web.Components.Game;
 
 /// <param name="BuyIn">Chips the player brings to the table.</param>
-public sealed record GameSettings(Difficulty Difficulty, int Opponents, TableStake Stake, int BuyIn)
+/// <param name="Tournament">Set for a Sit &amp; Go; then <see cref="BuyIn"/> is the tournament buy-in.</param>
+public sealed record GameSettings(Difficulty Difficulty, int Opponents, TableStake Stake, int BuyIn, SitAndGoConfig? Tournament = null)
 {
     public int SmallBlind => Stake.SmallBlind;
     public int BigBlind => Stake.BigBlind;
     public bool IsPractice => Stake.IsPractice;
+    public bool IsTournament => Tournament is not null;
+
+    public static GameSettings ForSitAndGo(Difficulty difficulty, SitAndGoConfig config) => new(
+        difficulty,
+        config.Players - 1,
+        new TableStake("sng", "Sit & Go", config.Levels[0].SmallBlind, config.Levels[0].BigBlind, config.StartingStack),
+        config.BuyIn,
+        config);
 }
+
+/// <param name="Place">Final place (1 = winner).</param>
+public readonly record struct TournamentResult(int Place, int Prize);
 
 /// <param name="Stack">The player's chips at the table right now.</param>
 /// <param name="Hand">Set when a hand the player was dealt into has finished.</param>

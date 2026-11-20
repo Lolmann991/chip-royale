@@ -292,6 +292,12 @@ namespace ChipRoyale.Web.Migrations
                             b1.Property<int>("TablesCleared")
                                 .HasColumnType("INTEGER");
 
+                            b1.Property<int>("TournamentsPlayed")
+                                .HasColumnType("INTEGER");
+
+                            b1.Property<int>("TournamentsWon")
+                                .HasColumnType("INTEGER");
+
                             b1.HasKey("PlayerProfileUserId");
 
                             b1.HasIndex("BestPeak");

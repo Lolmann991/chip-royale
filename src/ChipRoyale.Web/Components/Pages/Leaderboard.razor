@@ -39,7 +39,7 @@
                     <li class="lb-row @(row.IsMe ? "me" : "") @(row.Rank <= 3 ? $"top{row.Rank}" : "")">
                         <span class="lb-rank">@(row.Rank switch { 1 => "🥇", 2 => "🥈", 3 => "🥉", _ => row.Rank.ToString() })</span>
                         <span class="lb-name">@row.Name@(row.IsMe ? L("Board.You") : "")</span>
-                        <span class="lb-main">● @row.Main.ToString("N0")</span>
+                        <span class="lb-main">@(Mode is "tische" or "turniere" ? "🏆 " : "● ")@row.Main.ToString("N0")</span>
                         <span class="lb-sub">@row.Sub</span>
                     </li>
                 }
@@ -67,6 +67,7 @@
         ("rekord", "Board.Tab.Record"),
         ("aktuell", "Board.Tab.Current"),
         ("tische", "Board.Tab.Tables"),
+        ("turniere", "Board.Tab.Tournaments"),
     ];
 
     private string Mode => Tabs.Any(t => t.Key == Sort) ? Sort! : "rekord";
@@ -89,6 +90,7 @@
         {
             "aktuell" => p => p.Bankroll.Chips + p.Bankroll.TableChips,
             "tische" => p => p.Bankroll.TablesCleared,
+            "turniere" => p => p.Bankroll.TournamentsWon,
             _ => p => p.Bankroll.BestPeak,
         };
         var value = key.Compile();
@@ -122,6 +124,7 @@
         {
             "aktuell" => L("Board.Sub.Current", b.Run, b.BestPeak),
             "tische" => L("Board.Sub.Tables", b.HandsWon, Hands(b.HandsPlayed)),
+            "turniere" => L("Board.Sub.Tournaments", b.TournamentsPlayed),
             _ => L("Board.Sub.Record", b.Total, Hands(b.HandsPlayed)),
         };
     }

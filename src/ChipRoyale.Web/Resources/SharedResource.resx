@@ -43,9 +43,11 @@
   <data name="Board.Sub.Current" xml:space="preserve"><value>Run #{0} · Rekord {1:N0}</value></data>
   <data name="Board.Sub.Record" xml:space="preserve"><value>Aktuell {0:N0} · {1}</value></data>
   <data name="Board.Sub.Tables" xml:space="preserve"><value>{0:N0} von {1} gewonnen</value></data>
+  <data name="Board.Sub.Tournaments" xml:space="preserve"><value>{0:N0} Turniere gespielt</value></data>
   <data name="Board.Tab.Current" xml:space="preserve"><value>Aktueller Stand</value></data>
   <data name="Board.Tab.Record" xml:space="preserve"><value>Höchster Stand (Run)</value></data>
   <data name="Board.Tab.Tables" xml:space="preserve"><value>Abgeräumte Tische</value></data>
+  <data name="Board.Tab.Tournaments" xml:space="preserve"><value>Turniersiege</value></data>
   <data name="Board.Title1" xml:space="preserve"><value>Rang</value></data>
   <data name="Board.Title2" xml:space="preserve"><value>liste</value></data>
   <data name="Board.You" xml:space="preserve"><value> (du)</value></data>
@@ -238,6 +240,8 @@ Passen – aussteigen. Deine Chips im Pot sind dann weg.</value></data>
   <data name="Lobby.Learn" xml:space="preserve"><value>🎓 Lernen</value></data>
   <data name="Lobby.LockedFrom" xml:space="preserve"><value>🔒 ab {0:N0}</value></data>
   <data name="Lobby.Login" xml:space="preserve"><value>Anmelden</value></data>
+  <data name="Lobby.Mode.Cash" xml:space="preserve"><value>💵 Cash Game</value></data>
+  <data name="Lobby.Mode.Sng" xml:space="preserve"><value>🏆 Sit &amp; Go</value></data>
   <data name="Lobby.NameAria" xml:space="preserve"><value>Spielername</value></data>
   <data name="Lobby.NewRun" xml:space="preserve"><value>Pleite! Run #{0} startet mit {1:N0} Chips. Dein Rekord bleibt in der Rangliste.</value></data>
   <data name="Lobby.NotEnough" xml:space="preserve"><value>Für diesen Tisch hast du nicht genug Chips.</value></data>
@@ -310,10 +314,33 @@ Passen – aussteigen. Deine Chips im Pot sind dann weg.</value></data>
   <data name="Rank.Two" xml:space="preserve"><value>Zwei</value></data>
   <data name="Rank.Two.Plural" xml:space="preserve"><value>Zweien</value></data>
   <data name="Seat.You" xml:space="preserve"><value>Du</value></data>
+  <data name="Sng.BuyIn" xml:space="preserve"><value>Buy-in {0:N0}</value></data>
+  <data name="Sng.InTheMoney" xml:space="preserve"><value>Platz {0} – im Geld!</value></data>
+  <data name="Sng.KnockedOut" xml:space="preserve"><value>{0} scheidet aus (Platz {1})</value></data>
+  <data name="Sng.LeaveConfirm" xml:space="preserve"><value>Turnier verlassen? Du scheidest auf deinem aktuellen Platz aus, dein Buy-in von {0:N0} ist bezahlt.</value></data>
+  <data name="Sng.Level" xml:space="preserve"><value>Level {0} · {1:N0}/{2:N0}</value></data>
+  <data name="Sng.LevelUp" xml:space="preserve"><value>Blinds steigen: {0:N0}/{1:N0}</value></data>
+  <data name="Sng.NoPrize" xml:space="preserve"><value>Diesmal kein Preisgeld – das Buy-in von {0:N0} ist weg. Nächstes Mal!</value></data>
+  <data name="Sng.Notice.Out" xml:space="preserve"><value>Sit &amp; Go: ausgeschieden auf Platz {0}.</value></data>
+  <data name="Sng.Notice.Prize" xml:space="preserve"><value>Sit &amp; Go: Platz {0}, {1:N0} Chips Preisgeld (Gewinn {2:N0}).</value></data>
+  <data name="Sng.Out" xml:space="preserve"><value>Ausgeschieden auf Platz {0}</value></data>
+  <data name="Sng.Place" xml:space="preserve"><value>Platz</value></data>
+  <data name="Sng.PlayersLeft" xml:space="preserve"><value>{0}/{1} Spieler</value></data>
+  <data name="Sng.Prize" xml:space="preserve"><value>Du bekommst {0:N0} Chips Preisgeld.</value></data>
+  <data name="Sng.RiseAfterThis" xml:space="preserve"><value>Blinds steigen nach dieser Hand</value></data>
+  <data name="Sng.RiseIn" xml:space="preserve"><value>Blinds steigen in {0} Händen</value></data>
+  <data name="Sng.Rules" xml:space="preserve"><value>{0} Spieler, jeder startet mit {1:N0} Turnier-Chips. Die Blinds steigen alle {2} Hände. Platz 1 und 2 bekommen Preisgeld.</value></data>
+  <data name="Sng.Start" xml:space="preserve"><value>Turnier starten ({0:N0})</value></data>
+  <data name="Sng.Tier.bronze" xml:space="preserve"><value>Bronze</value></data>
+  <data name="Sng.Tier.gold" xml:space="preserve"><value>Gold</value></data>
+  <data name="Sng.Tier.silver" xml:space="preserve"><value>Silber</value></data>
+  <data name="Sng.Title" xml:space="preserve"><value>Turnier</value></data>
+  <data name="Sng.Won" xml:space="preserve"><value>Turniersieg! 🏆</value></data>
   <data name="Stake.casino" xml:space="preserve"><value>Casino</value></data>
   <data name="Stake.highroller" xml:space="preserve"><value>High Roller</value></data>
   <data name="Stake.practice" xml:space="preserve"><value>Übungstisch</value></data>
   <data name="Stake.pub" xml:space="preserve"><value>Kneipe</value></data>
+  <data name="Stake.sng" xml:space="preserve"><value>Sit &amp; Go</value></data>
   <data name="Stake.vip" xml:space="preserve"><value>VIP-Salon</value></data>
   <data name="Table.And" xml:space="preserve"><value> &amp; </value></data>
   <data name="Table.Bet" xml:space="preserve"><value>Setzen {0:N0}</value></data>

@@ -16,6 +16,7 @@ tests/ChipRoyale.Web.Tests    Tests für Texte (DE/EN vollständig) und Tutorial
 ## Spielen
 
 - Lobby: Tisch (Übungstisch, Kneipe, Casino, High Roller, VIP-Salon), Buy-in, Schwierigkeit und 1–5 Gegner wählen.
+- Sit & Go: Turnier zu sechst (Bronze 200, Silber 1.000, Gold 5.000 Buy-in), Blinds steigen alle 8 Hände, Platz 1 und 2 bekommen 65 % bzw. 35 % des Preisgelds.
 - Konto: Angemeldete Spieler behalten ihren Chip-Stand (Start 1.000). Buy-in geht vom Konto an den Tisch, „Auszahlen“ bringt den Stapel zurück. Wer pleite ist, startet einen neuen Run mit 1.000 Chips; der Rekord bleibt.
 - Rangliste unter `/rangliste`. Gäste können spielen, werden aber nicht gespeichert.
 - Tutorial unter `/lernen`: vier Lektionen mit vorbereiteten Karten und Quizfragen, danach geht's zum Übungstisch.

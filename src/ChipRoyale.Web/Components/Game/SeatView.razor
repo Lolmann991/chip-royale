@@ -5,7 +5,7 @@
 @* One player at the table: cards, name plate, chips, speech bubble. Stands upright on the rail (billboard). *@
 
 <div class="seat-anchor" style="left:@X; top:@Y">
-    <div class="seat @(Player.IsHuman ? "hero" : "") @(Acting ? "acting" : "") @(Player.HasFolded ? "folded" : "") @(WonAmount > 0 ? "winner" : "") @(Player.IsEliminated && !Player.InHand ? "eliminated" : "")"
+    <div class="seat @(Badge is null ? "" : "badged") @(Player.IsHuman ? "hero" : "") @(Acting ? "acting" : "") @(Player.HasFolded ? "folded" : "") @(WonAmount > 0 ? "winner" : "") @(Player.IsEliminated && !Player.InHand ? "eliminated" : "")"
          id="seat-@Index">
         @if (Player.InHand && Player.HoleCards.Count > 0 && (Player.IsHuman || !Player.HasFolded))
         {

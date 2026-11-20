@@ -78,6 +78,25 @@ public sealed partial class PlayerService(
         }
     });
 
+    public Task EnterTournamentAsync(int buyIn) => MutateAsync(b => b.PayTournamentBuyIn(buyIn));
+
+    /// <summary>Books place and prize of a Sit &amp; Go.</summary>
+    /// <returns>True if the player was broke afterwards and a new run started.</returns>
+    public async Task<bool> FinishTournamentAsync(int place, int prize)
+    {
+        var reset = false;
+        await MutateAsync(b =>
+        {
+            b.RecordTournament(place, prize);
+            reset = b.ResetIfBroke();
+        });
+        StartedNewRun = reset;
+        return reset;
+    }
+
+    /// <summary>Counts a tournament hand for the statistics (no chips move).</summary>
+    public Task RecordHandAsync(HandOutcome hand) => MutateAsync(b => b.RecordHand(hand.Won, hand.Pot));
+
     /// <summary>Leaves the table with the given stack.</summary>
     /// <returns>True if the player was broke and a new run started.</returns>
     public async Task<bool> CashOutAsync(int stack)

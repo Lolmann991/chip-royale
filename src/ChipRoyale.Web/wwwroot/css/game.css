@@ -1460,3 +1460,38 @@
     color: #ddd;
     box-shadow: 0 .2em .4em rgba(0, 0, 0, .4);
 }
+
+/* ---------------------------------------------------------------- Sit & Go */
+
+.pill.sng-level { color: #ffe7a6; border-color: rgba(245, 196, 81, .45); background: rgba(245, 196, 81, .1); }
+
+.level-toast {
+    position: absolute;
+    left: 50%;
+    top: 1rem;
+    transform: translateX(-50%);
+    z-index: 25;
+    padding: .55rem 1.2rem;
+    border-radius: 999px;
+    font-weight: 800;
+    color: #3a2604;
+    background: linear-gradient(180deg, #ffe08a, var(--gold));
+    box-shadow: 0 10px 30px rgba(245, 196, 81, .35);
+    animation: toast 3.6s ease forwards;
+    pointer-events: none;
+}
+@keyframes toast {
+    0% { opacity: 0; transform: translate(-50%, -20px) scale(.8); }
+    10%, 80% { opacity: 1; transform: translate(-50%, 0) scale(1); }
+    100% { opacity: 0; transform: translate(-50%, -10px); }
+}
+
+.mode-switch { display: flex; gap: .4rem; margin-bottom: .8rem; }
+.mode-switch .tab { cursor: pointer; font: inherit; font-size: .88rem; }
+.sng-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: .6rem; }
+.sng-prizes { display: flex; gap: .4rem; flex-wrap: wrap; margin-top: .3rem; }
+.sng-prizes span { font-size: .7rem; padding: .1rem .45rem; border-radius: 999px; background: rgba(255, 255, 255, .07); }
+.sng-prizes span:first-child { color: #ffe7a6; background: rgba(245, 196, 81, .15); }
+.seat.badged .plate::after { content: none; }
+.seat.badged .seat-badge { background: var(--danger); color: #fff; }
+.mode-switch { margin-top: .9rem; }
