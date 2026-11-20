@@ -39,3 +39,23 @@ Die SQLite-Datenbank (`src/ChipRoyale.Web/Data/app.db`) wird beim Start automati
 ```bash
 dotnet test
 ```
+
+## Auf dem eigenen PC (Windows): immer die neueste Version
+
+Einmal in PowerShell ausführen (braucht [Git](https://git-scm.com), z. B. `winget install --id Git.Git -e`):
+
+```powershell
+$ziel = Join-Path ([Environment]::GetFolderPath('MyDocuments')) 'ChipRoyale'
+git clone -b claude/gallant-mayer-y2wk82 https://github.com/Lolmann991/chip-royale.git $ziel
+powershell -ExecutionPolicy Bypass -File "$ziel\tools\windows\Install-ChipRoyale.ps1"
+```
+
+Danach liegt das Spiel unter `Dokumente\ChipRoyale` und
+- die geplante Aufgabe **„Chip Royale aktualisieren“** holt jede Stunde den neuesten Stand
+  (verpasste Läufe werden nach dem Hochfahren nachgeholt) – immer den zuletzt geänderten Branch,
+  also `main` oder den aktuellen Entwicklungs-Branch,
+- die Desktop-Verknüpfung **„Chip Royale“** aktualisiert, startet das Spiel und öffnet es im Browser
+  (`http://localhost:5132`). Dafür wird das .NET 10 SDK gebraucht: `winget install Microsoft.DotNet.SDK.10`.
+
+Dein Konto und deine Chips (lokale Datenbank) bleiben bei Updates erhalten. Protokoll: `update.log`
+im Spielordner. Entfernen: `tools\windows\Uninstall-ChipRoyale.ps1`.
