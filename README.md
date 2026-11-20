@@ -28,9 +28,15 @@ tests/ChipRoyale.Web.Tests    Tests für Texte (DE/EN vollständig) und Tutorial
 
 ## Starten
 
+Voraussetzung: [.NET 10 SDK](https://dotnet.microsoft.com/download/dotnet/10.0)
+(Windows: `winget install Microsoft.DotNet.SDK.10`). Dann im Hauptordner des Projekts:
+
 ```bash
-dotnet run --project src/ChipRoyale.Web
+dotnet run
 ```
+
+und im Browser **http://localhost:5132** öffnen. (`dotnet run --project src/ChipRoyale.Web` geht weiterhin;
+der kleine Starter `ChipRoyale.csproj` im Hauptordner leitet `dotnet run` dorthin weiter.)
 
 Die SQLite-Datenbank (`src/ChipRoyale.Web/Data/app.db`) wird beim Start automatisch angelegt bzw. migriert.
 
