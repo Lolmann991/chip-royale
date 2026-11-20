@@ -33,12 +33,17 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
                 b.Property(x => x.TablesCleared);
                 b.Property(x => x.TournamentsPlayed);
                 b.Property(x => x.TournamentsWon);
+                b.Property(x => x.Crowns);
+                b.Ignore(x => x.ExchangeableChips);
                 b.Ignore(x => x.Total);
                 b.Ignore(x => x.IsSeated);
                 b.Ignore(x => x.IsBroke);
                 b.HasIndex(x => x.BestPeak);
             });
             e.Navigation(p => p.Bankroll).IsRequired();
+            e.Property(p => p.OwnedItems).HasMaxLength(2000);
+            e.Property(p => p.EquippedItems).HasMaxLength(500);
+            e.Property(p => p.UnlockedAchievements).HasMaxLength(2000);
         });
     }
 }

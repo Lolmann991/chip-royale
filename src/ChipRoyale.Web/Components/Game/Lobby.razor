@@ -16,6 +16,7 @@
         <p class="tagline">@L("Lobby.Tagline")</p>
         <div class="hero-links">
             <a class="tool" href="lernen">@L("Lobby.Learn")</a>
+            <a class="tool" href="shop">@L("Lobby.Shop")</a>
             <a class="tool" href="rangliste">@L("Lobby.Leaderboard")</a>
             <button type="button" class="tool" @onclick="() => showRankings = true">@L("Lobby.HandRankings")</button>
             <LanguageSwitch />
@@ -24,7 +25,7 @@
 
     <div class="lobby-panel">
         <div class="profile">
-            <div class="avatar" style="--hue:45">😎</div>
+            <div class="avatar @Player.HeroLook.AvatarClass" style="--hue:45">@Player.HeroLook.Avatar</div>
             <div class="profile-main">
                 @if (editingName)
                 {
@@ -52,6 +53,7 @@
                     <span class="bankroll">● @L("Lobby.Chips", Player.Bankroll.Chips)</span>
                     <span>@L("Lobby.Run", Player.Bankroll.Run)</span>
                     <span>@L("Lobby.Record", Player.Bankroll.BestPeak)</span>
+                    <span class="crowns">👑 @Player.Bankroll.Crowns.ToString("N0")</span>
                 </div>
             </div>
             <div class="profile-links">

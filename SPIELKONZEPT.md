@@ -93,9 +93,9 @@ Reihenfolge = Umsetzungsreihenfolge.
 - [x] Rangliste: Turniersiege
 
 **3. Umtausch, Style-Shop und Erfolge**
-- [ ] Chips → Kronen (100 : 1), nur eine Richtung
-- [ ] Shop: Kartenrückseiten, Filz/Tisch, Avatare, Chip-Designs; Pixel-Art-Set als Extra
-- [ ] Erfolge mit Kronen-Belohnung
+- [x] Chips → Kronen (100 : 1), nur eine Richtung, nur Chips über dem Startkapital (sonst ließe sich über Pleite-Resets farmen)
+- [x] Shop (`/shop`): 23 Artikel – Kartenrückseiten, Filz, Avatare, Chip-Designs; Pixel-Art-Varianten als Extra
+- [x] 13 Erfolge mit Kronen-Belohnung (Übungstisch zählt nicht)
 
 **4. Omaha (Pot-Limit)**
 - [ ] 4 Karten pro Spieler, genau 2 eigene + 3 aus der Mitte

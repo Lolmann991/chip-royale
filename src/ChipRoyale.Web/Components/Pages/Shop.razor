@@ -1,0 +1,205 @@
+@page "/shop"
+@layout GameLayout
+@rendermode InteractiveServer
+@using ChipRoyale.Engine.Economy
+@using ChipRoyale.Web.Services
+@inject PlayerService Player
+
+<PageTitle>@L("Shop.PageTitle")</PageTitle>
+
+<div class="game-root @Player.ThemeClasses">
+    <AchievementToasts />
+    <div class="board-page shop">
+        <header class="board-head">
+            <a class="brand" href="">♠ Chip <span>Royale</span></a>
+            <span class="head-tools">
+                <LanguageSwitch />
+                <a class="tool" href="">@L("Board.Back")</a>
+            </span>
+        </header>
+
+        <h1 class="logo small">@L("Shop.Title1")<span>@L("Shop.Title2")</span></h1>
+
+        @if (loaded)
+        {
+            <div class="wallet">
+                <div class="wallet-item crowns"><span>👑</span><b>@Player.Bankroll.Crowns.ToString("N0")</b><small>@L("Shop.Crowns")</small></div>
+                <div class="wallet-item"><span>●</span><b>@Player.Bankroll.Chips.ToString("N0")</b><small>@L("Shop.Chips")</small></div>
+            </div>
+
+            @if (Player.IsGuest)
+            {
+                <p class="note center">@L("Shop.GuestNote")</p>
+            }
+
+            <section class="exchange">
+                <h2>@L("Shop.Exchange")</h2>
+                @if (Player.Bankroll.ExchangeableChips == 0)
+                {
+                    <p class="note">@L("Shop.Exchange.None", TableStakes.StartingChips)</p>
+                }
+                else
+                {
+                    <div class="buyin">
+                        <input type="range" class="raise-slider" min="@Bankroll.ExchangeRate" max="@Player.Bankroll.ExchangeableChips" step="@Bankroll.ExchangeRate"
+                               value="@exchange" @oninput="OnExchangeSlider" style="--p:@ExchangePercent%" aria-label="@L("Shop.Exchange")" />
+                        <span class="buyin-value">● @exchange.ToString("N0") → 👑 @((exchange / Bankroll.ExchangeRate).ToString("N0"))</span>
+                    </div>
+                    <div class="exchange-actions">
+                        @if (confirmExchange)
+                        {
+                            <span class="note">@L("Shop.Exchange.Confirm", exchange, exchange / Bankroll.ExchangeRate)</span>
+                            <button type="button" class="act raise" @onclick="ExchangeAsync">@L("Shop.Exchange.Yes")</button>
+                            <button type="button" class="act fold" @onclick="() => confirmExchange = false">@L("Common.Cancel")</button>
+                        }
+                        else
+                        {
+                            <button type="button" class="act raise" @onclick="() => confirmExchange = true">@L("Shop.Exchange.Button")</button>
+                        }
+                    </div>
+                    <p class="note">@L("Shop.Exchange.Rules", Bankroll.ExchangeRate, TableStakes.StartingChips)</p>
+                }
+            </section>
+
+            <nav class="tabs">
+                @foreach (var tab in Tabs)
+                {
+                    var t = tab;
+                    <button type="button" class="tab @(current == t ? "on" : "")" @onclick="() => current = t">@L($"Shop.Tab.{t}")</button>
+                }
+            </nav>
+
+            @if (message is not null)
+            {
+                <p class="note highlight">@message</p>
+            }
+
+            @if (current == "Achievements")
+            {
+                <ol class="achievement-list">
+                    @foreach (var a in Achievements.All)
+                    {
+                        var done = Player.Collection.Achievements.Contains(a.Id);
+                        <li class="achievement @(done ? "done" : "")">
+                            <span class="ach-icon">@a.Icon</span>
+                            <span class="ach-text">
+                                <b>@L($"Ach.{a.Id}.Title")</b>
+                                <small>@L($"Ach.{a.Id}.Text")</small>
+                            </span>
+                            <span class="ach-reward">@(done ? "✓" : $"+{a.Reward} 👑")</span>
+                        </li>
+                    }
+                </ol>
+            }
+            else
+            {
+                var category = Enum.Parse<ItemCategory>(current);
+                <div class="shop-grid">
+                    @foreach (var item in ShopCatalog.All.Where(i => i.Category == category))
+                    {
+                        var owned = Player.Collection.Owns(item);
+                        var equipped = Player.Collection.IsEquipped(item);
+                        <div class="shop-item @(equipped ? "equipped" : "") @(owned ? "owned" : "")">
+                            <div class="shop-preview">
+                                @switch (category)
+                                {
+                                    case ItemCategory.CardBack:
+                                        <div class="@item.Id preview-cards">
+                                            <PlayingCard Card="null" FaceUp="false" Size="lg" Deal="false" Style="transform: rotate(-8deg)" />
+                                            <PlayingCard Card="null" FaceUp="false" Size="lg" Deal="false" Style="transform: rotate(6deg); margin-left: -2.5em" />
+                                        </div>
+                                        break;
+                                    case ItemCategory.Felt:
+                                        <div class="felt-swatch @item.Id"></div>
+                                        break;
+                                    case ItemCategory.Avatar:
+                                        <div class="shop-avatar avatar @(item.Pixel ? item.Id : "")" style="--hue:45">@item.Glyph</div>
+                                        break;
+                                    default:
+                                        <div class="@item.Id chip-preview"><ChipStack Amount="1730" MaxPerColumn="6" /></div>
+                                        break;
+                                }
+                                @if (item.Pixel)
+                                {
+                                    <span class="pixel-badge">PIXEL</span>
+                                }
+                            </div>
+                            <b class="shop-name">@L($"Item.{item.Id}")</b>
+                            @if (equipped)
+                            {
+                                <span class="shop-state">✓ @L("Shop.Equipped")</span>
+                            }
+                            else if (owned)
+                            {
+                                <button type="button" class="preset" @onclick="() => EquipAsync(item)">@L("Shop.Equip")</button>
+                            }
+                            else
+                            {
+                                <button type="button" class="preset buy" disabled="@(Player.Bankroll.Crowns < item.Price)" @onclick="() => BuyAsync(item)">
+                                    @L("Shop.Buy", item.Price)
+                                </button>
+                            }
+                        </div>
+                    }
+                </div>
+            }
+        }
+    </div>
+</div>
+
+@code {
+    private static readonly string[] Tabs = [nameof(ItemCategory.CardBack), nameof(ItemCategory.Felt), nameof(ItemCategory.Avatar), nameof(ItemCategory.Chips), "Achievements"];
+
+    private bool loaded;
+    private string current = Tabs[0];
+    private int exchange;
+    private bool confirmExchange;
+    private string? message;
+
+    private string ExchangePercent
+    {
+        get
+        {
+            var max = Player.Bankroll.ExchangeableChips;
+            var min = Bankroll.ExchangeRate;
+            var p = max <= min ? 100 : (exchange - min) * 100.0 / (max - min);
+            return p.ToString("0.#", System.Globalization.CultureInfo.InvariantCulture);
+        }
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await Player.LoadAsync();
+        exchange = Math.Min(Player.Bankroll.ExchangeableChips, 10 * Bankroll.ExchangeRate);
+        loaded = true;
+    }
+
+    private void OnExchangeSlider(ChangeEventArgs e)
+    {
+        if (int.TryParse(e.Value?.ToString(), out var v))
+            exchange = Math.Clamp(v / Bankroll.ExchangeRate * Bankroll.ExchangeRate, Bankroll.ExchangeRate, Player.Bankroll.ExchangeableChips);
+        confirmExchange = false;
+    }
+
+    private async Task ExchangeAsync()
+    {
+        confirmExchange = false;
+        if (exchange <= 0 || exchange > Player.Bankroll.ExchangeableChips) return;
+        await Player.ExchangeAsync(exchange);
+        message = L("Shop.Exchanged", exchange, exchange / Bankroll.ExchangeRate);
+        exchange = Math.Min(exchange, Player.Bankroll.ExchangeableChips);
+    }
+
+    private async Task BuyAsync(ShopItem item)
+    {
+        if (Player.Bankroll.Crowns < item.Price) return;
+        await Player.BuyAsync(item);
+        message = L("Shop.Bought", L($"Item.{item.Id}"));
+    }
+
+    private async Task EquipAsync(ShopItem item)
+    {
+        await Player.EquipAsync(item);
+        message = null;
+    }
+}

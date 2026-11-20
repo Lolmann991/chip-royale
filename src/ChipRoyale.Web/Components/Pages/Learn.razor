@@ -6,10 +6,12 @@
 @using ChipRoyale.Web.Components.Tutorial
 @implements IAsyncDisposable
 @inject IJSRuntime JS
+@inject ChipRoyale.Web.Services.PlayerService Player
 
 <PageTitle>@L("Learn.PageTitle")</PageTitle>
 
-<div class="game-root">
+<div class="game-root @Player.ThemeClasses">
+    <AchievementToasts />
     <div class="board-page learn">
         <header class="board-head">
             <a class="brand" href="">♠ Chip <span>Royale</span></a>
@@ -249,6 +251,8 @@
         : Lessons.All.SkipWhile(l => l != lesson).Skip(1).FirstOrDefault(l => !done.Contains(l.Id))
           ?? Lessons.All.FirstOrDefault(l => !done.Contains(l.Id));
 
+    protected override Task OnInitializedAsync() => Player.LoadAsync();
+
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (!firstRender) return;
@@ -304,6 +308,8 @@
         done.Add(lesson.Id);
         complete = true;
         await Js("saveLessons", (object)done.ToArray()); // cast: pass the array as ONE argument
+        if (Lessons.All.All(l => done.Contains(l.Id)))
+            await Player.CompleteLessonsAsync();
         _ = Js("sfx", "bigwin");
         _ = Js("celebrate", 2);
     }

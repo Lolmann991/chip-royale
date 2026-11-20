@@ -68,6 +68,10 @@ public partial class LocalizationTests
         keys.AddRange(Enum.GetValues<Difficulty>().SelectMany(d => new[] { $"Difficulty.{d}", $"Difficulty.{d}.Text" }));
         keys.AddRange(TableStakes.All.Select(s => $"Stake.{s.Id}"));
         keys.AddRange(Enum.GetValues<Position>().Select(p => $"Mini.{p}"));
+        keys.AddRange(ShopCatalog.All.Select(i => $"Item.{i.Id}"));
+        keys.AddRange(Enum.GetValues<ItemCategory>().Select(c => $"Shop.Tab.{c}"));
+        keys.AddRange(Achievements.All.SelectMany(a => new[] { $"Ach.{a.Id}.Title", $"Ach.{a.Id}.Text" }));
+        keys.AddRange(ChipRoyale.Engine.Tournament.SitAndGoTiers.All.Select(t => $"Sng.Tier.{t.Id}"));
         foreach (var lesson in Lessons.All)
         {
             keys.Add($"Learn.{lesson.Id}.Title");
@@ -108,7 +112,7 @@ public partial class LocalizationTests
     }
 
     // String literals that look like our resource keys, e.g. "Table.Fold" or "Guest".
-    [GeneratedRegex("\"((?:Table|Lobby|Board|Learn|Hand|HandRankings|Over|Tip|Nav|Error|Common|Name|Mini|Action|Rank|Difficulty|Stake|Seat|Account)\\.[A-Za-z0-9.]+|Guest|DefaultName)\"")]
+    [GeneratedRegex("\"((?:Table|Lobby|Board|Learn|Hand|HandRankings|Over|Tip|Nav|Error|Common|Name|Mini|Action|Rank|Difficulty|Stake|Seat|Account|Sng|Shop|Ach|Item)\\.[A-Za-z0-9.]+|Guest|DefaultName)\"")]
     private static partial Regex KeyLiteral();
 
     [GeneratedRegex(@"\{(\d+)")]

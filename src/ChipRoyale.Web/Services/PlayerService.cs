@@ -1,6 +1,8 @@
 using System.Security.Claims;
 using System.Text.RegularExpressions;
 using ChipRoyale.Engine.Economy;
+using ChipRoyale.Engine.Evaluation;
+using ChipRoyale.Web.Components.Game;
 using ChipRoyale.Web.Data;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.EntityFrameworkCore;
@@ -23,6 +25,24 @@ public sealed partial class PlayerService(
     public bool IsGuest => UserId is null;
     public string DisplayName { get; private set; } = L("Guest");
     public Bankroll Bankroll { get; private set; } = Bankroll.New();
+    public PlayerCollection Collection { get; private set; } = new();
+
+    /// <summary>Raised after achievements were unlocked (their crowns are already paid).</summary>
+    public event Action<IReadOnlyList<Achievement>>? AchievementsUnlocked;
+
+    /// <summary>The player's look at the table (equipped avatar).</summary>
+    public SeatLook HeroLook
+    {
+        get
+        {
+            var avatar = Collection.Equipped(ItemCategory.Avatar);
+            return new SeatLook(L("Seat.You"), avatar.Glyph ?? "", 45, avatar.Pixel ? avatar.Id : null);
+        }
+    }
+
+    /// <summary>CSS classes for the equipped card back, felt and chips (defaults add nothing).</summary>
+    public string ThemeClasses => string.Join(' ', new[] { ItemCategory.CardBack, ItemCategory.Felt, ItemCategory.Chips }
+        .Select(Collection.Equipped).Where(i => !i.IsDefault).Select(i => i.Id));
 
     /// <summary>Set when loading found the player broke and started a new run.</summary>
     public bool StartedNewRun { get; private set; }
@@ -58,11 +78,14 @@ public sealed partial class PlayerService(
             profile.Bankroll.CashOut();
         }
         StartedNewRun = profile.Bankroll.ResetIfBroke();
+        // Achievements are checked on the next change, when a toast can show them.
+        var collection = profile.LoadCollection();
         profile.UpdatedAt = DateTime.UtcNow;
         await db.SaveChangesAsync();
 
         DisplayName = profile.DisplayName;
         Bankroll = profile.Bankroll;
+        Collection = collection;
     }
 
     public Task BuyInAsync(TableStake stake, int amount) => MutateAsync(b => b.BuyIn(stake, amount));
@@ -76,7 +99,7 @@ public sealed partial class PlayerService(
             b.RecordHand(h.Won, h.Pot);
             if (h.TableCleared) b.RecordTableCleared();
         }
-    });
+    }, hand?.ToEvent());
 
     public Task EnterTournamentAsync(int buyIn) => MutateAsync(b => b.PayTournamentBuyIn(buyIn));
 
@@ -89,13 +112,23 @@ public sealed partial class PlayerService(
         {
             b.RecordTournament(place, prize);
             reset = b.ResetIfBroke();
-        });
+        }, new GameEvent { TournamentPlace = place });
         StartedNewRun = reset;
         return reset;
     }
 
     /// <summary>Counts a tournament hand for the statistics (no chips move).</summary>
-    public Task RecordHandAsync(HandOutcome hand) => MutateAsync(b => b.RecordHand(hand.Won, hand.Pot));
+    public Task RecordHandAsync(HandOutcome hand) => MutateAsync(b => b.RecordHand(hand.Won, hand.Pot), hand.ToEvent());
+
+    /// <summary>Exchanges chips for crowns (one way).</summary>
+    public Task ExchangeAsync(int chips) => MutateAsync(b => b.Exchange(chips));
+
+    public Task BuyAsync(ShopItem item) => MutateAsync((b, c) => c.Buy(item, b));
+
+    public Task EquipAsync(ShopItem item) => MutateAsync((_, c) => c.Equip(item));
+
+    /// <summary>All tutorial lessons are done (awards the achievement once).</summary>
+    public Task CompleteLessonsAsync() => MutateAsync(_ => { }, new GameEvent { LessonsCompleted = true });
 
     /// <summary>Leaves the table with the given stack.</summary>
     /// <returns>True if the player was broke and a new run started.</returns>
@@ -141,24 +174,42 @@ public sealed partial class PlayerService(
         return null;
     }
 
-    private async Task MutateAsync(Action<Bankroll> change)
+    private Task MutateAsync(Action<Bankroll> change, GameEvent? e = null) => MutateAsync((b, _) => change(b), e);
+
+    /// <summary>Applies a change, checks achievements and saves (registered players re-read their row first).</summary>
+    private async Task MutateAsync(Action<Bankroll, PlayerCollection> change, GameEvent? e = null)
     {
+        IReadOnlyList<Achievement> unlocked;
         if (IsGuest)
         {
-            change(Bankroll);
-            return;
+            // Check before too, so e.g. "10,000 chips" still counts when they are exchanged right away.
+            var before = Achievements.Check(Collection, Bankroll, GameEvent.None);
+            change(Bankroll, Collection);
+            unlocked = [.. before, .. Achievements.Check(Collection, Bankroll, e ?? GameEvent.None)];
         }
-
-        await using var db = await dbFactory.CreateDbContextAsync();
-        var profile = await db.Profiles.FirstAsync(p => p.UserId == UserId);
-        change(profile.Bankroll);
-        profile.UpdatedAt = DateTime.UtcNow;
-        await db.SaveChangesAsync();
-        Bankroll = profile.Bankroll;
+        else
+        {
+            await using var db = await dbFactory.CreateDbContextAsync();
+            var profile = await db.Profiles.FirstAsync(p => p.UserId == UserId);
+            var collection = profile.LoadCollection();
+            var before = Achievements.Check(collection, profile.Bankroll, GameEvent.None);
+            change(profile.Bankroll, collection);
+            unlocked = [.. before, .. Achievements.Check(collection, profile.Bankroll, e ?? GameEvent.None)];
+            profile.StoreCollection(collection);
+            profile.UpdatedAt = DateTime.UtcNow;
+            await db.SaveChangesAsync();
+            Bankroll = profile.Bankroll;
+            Collection = collection;
+        }
+        if (unlocked.Count > 0) AchievementsUnlocked?.Invoke(unlocked);
     }
 
     [GeneratedRegex(@"^[\p{L}\p{N} _\-]+$")]
     private static partial Regex NameRegex();
 }
 
-public readonly record struct HandOutcome(bool Won, int Pot, bool TableCleared);
+/// <param name="WinningHand">The player's hand if they won at showdown.</param>
+public readonly record struct HandOutcome(bool Won, int Pot, bool TableCleared, HandCategory? WinningHand = null)
+{
+    public GameEvent ToEvent() => new() { HandWon = Won, Pot = Pot, WinningHand = WinningHand, TableCleared = TableCleared };
+}

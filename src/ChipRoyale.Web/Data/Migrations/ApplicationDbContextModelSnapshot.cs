@@ -92,6 +92,21 @@ namespace ChipRoyale.Web.Migrations
                         .HasMaxLength(20)
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("EquippedItems")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("OwnedItems")
+                        .IsRequired()
+                        .HasMaxLength(2000)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("UnlockedAchievements")
+                        .IsRequired()
+                        .HasMaxLength(2000)
+                        .HasColumnType("TEXT");
+
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("TEXT");
 
@@ -272,6 +287,9 @@ namespace ChipRoyale.Web.Migrations
                                 .HasColumnType("INTEGER");
 
                             b1.Property<int>("Chips")
+                                .HasColumnType("INTEGER");
+
+                            b1.Property<int>("Crowns")
                                 .HasColumnType("INTEGER");
 
                             b1.Property<int>("HandsPlayed")

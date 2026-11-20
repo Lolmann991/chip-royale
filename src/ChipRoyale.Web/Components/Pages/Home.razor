@@ -7,7 +7,8 @@
 
 <PageTitle>Chip Royale</PageTitle>
 
-<div class="game-root @(settings is null ? "" : $"diff-{settings.Difficulty}")">
+<div class="game-root @(settings is null ? "" : $"diff-{settings.Difficulty}") @Player.ThemeClasses">
+    <AchievementToasts />
     @if (!loaded)
     {
         <div class="loading">♠</div>
@@ -18,7 +19,7 @@
     }
     else
     {
-        <PokerTable @key="tableKey" Settings="settings" OnExit="ExitAsync" OnReport="ReportAsync" OnTournamentFinished="TournamentFinishedAsync" />
+        <PokerTable @key="tableKey" Settings="settings" HeroLook="Player.HeroLook" OnExit="ExitAsync" OnReport="ReportAsync" OnTournamentFinished="TournamentFinishedAsync" />
     }
 </div>
 

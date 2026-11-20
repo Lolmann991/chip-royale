@@ -19,6 +19,7 @@ tests/ChipRoyale.Web.Tests    Tests für Texte (DE/EN vollständig) und Tutorial
 - Sit & Go: Turnier zu sechst (Bronze 200, Silber 1.000, Gold 5.000 Buy-in), Blinds steigen alle 8 Hände, Platz 1 und 2 bekommen 65 % bzw. 35 % des Preisgelds.
 - Konto: Angemeldete Spieler behalten ihren Chip-Stand (Start 1.000). Buy-in geht vom Konto an den Tisch, „Auszahlen“ bringt den Stapel zurück. Wer pleite ist, startet einen neuen Run mit 1.000 Chips; der Rekord bleibt.
 - Rangliste unter `/rangliste`. Gäste können spielen, werden aber nicht gespeichert.
+- Shop unter `/shop`: Chips über dem Startkapital in Kronen tauschen (100 : 1, nur eine Richtung), damit Kartenrückseiten, Filz, Avatare und Chip-Designs kaufen (auch Pixel-Art). Erfolge bringen zusätzliche Kronen.
 - Tutorial unter `/lernen`: vier Lektionen mit vorbereiteten Karten und Quizfragen, danach geht's zum Übungstisch.
 - Sprache: Deutsch oder Englisch (Umschalter DE/EN, sonst Browser-Sprache). Texte stehen in `src/ChipRoyale.Web/Resources/SharedResource(.en).resx`.
 - Tastatur: `F` passen, `C` checken/mitgehen, `R` setzen/erhöhen, `A` All-in vorwählen, `↑`/`↓` Einsatz ändern, `Leertaste` nächste Hand.

@@ -23,6 +23,9 @@ public partial class PokerTable
     /// <summary>A Sit &amp; Go is over for the player (knocked out, won, or left).</summary>
     [Parameter] public EventCallback<TournamentResult> OnTournamentFinished { get; set; }
 
+    /// <summary>Name and avatar of the player (equipped shop avatar).</summary>
+    [Parameter] public SeatLook? HeroLook { get; set; }
+
     // Seat slots around the oval (percent of the table box).
     private static readonly (double X, double Y)[] SlotPos = [(50, 101), (2.5, 66), (17, 7), (50, -1), (83, 7), (97.5, 66)];
     private static readonly int[][] SlotMap = [[], [], [0, 3], [0, 2, 4], [0, 1, 3, 5], [0, 1, 2, 4, 5], [0, 1, 2, 3, 4, 5]];
@@ -88,7 +91,7 @@ public partial class PokerTable
     private void SetupGame(int heroStack)
     {
         var bots = Roster.PickBots(Settings.Opponents, random);
-        looks = [Roster.Human, .. bots];
+        looks = [HeroLook ?? Roster.Human, .. bots];
         var players = looks.Select((l, i) => new Player(l.Name, i == 0 ? heroStack : BotStack(), isHuman: i == 0)).ToList();
         table = new HoldemTable(players, Settings.SmallBlind, Settings.BigBlind);
         brains = looks.Select((_, i) => i == 0 ? null
@@ -372,7 +375,8 @@ public partial class PokerTable
         peakChips = Math.Max(peakChips, Hero.Chips);
         var cleared = Hero.Chips > 0 && table.Players.Skip(1).All(p => p.Chips == 0);
         if (Hero.InHand)
-            await ReportAsync(new HandOutcome(heroWon > 0, result.TotalPot, cleared));
+            await ReportAsync(new HandOutcome(heroWon > 0, result.TotalPot, cleared,
+                heroWon > 0 && result.Hands.TryGetValue(0, out var heroHand) ? heroHand.Category : null));
 
         if (sng is not null)
         {

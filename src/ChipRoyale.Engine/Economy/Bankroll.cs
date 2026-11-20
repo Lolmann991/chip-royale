@@ -27,6 +27,9 @@ public sealed class Bankroll
     /// <summary>Times the player knocked out every bot at a table.</summary>
     public int TablesCleared { get; private set; }
 
+    /// <summary>Shop currency. Survives going broke (like bought styles).</summary>
+    public int Crowns { get; private set; }
+
     public int TournamentsPlayed { get; private set; }
     public int TournamentsWon { get; private set; }
 
@@ -56,6 +59,34 @@ public sealed class Bankroll
             throw new ArgumentOutOfRangeException(nameof(amount), $"Buy-in must be between {stake.MinBuyIn} and {MaxBuyInFor(stake)}.");
         Chips -= amount;
         TableChips = amount;
+    }
+
+    /// <summary>Chips per crown.</summary>
+    public const int ExchangeRate = 100;
+
+    /// <summary>Only chips above the starting chips can be exchanged (otherwise busting and resetting would farm crowns).</summary>
+    public int ExchangeableChips => IsSeated ? 0 : Math.Max(0, Chips - TableStakes.StartingChips) / ExchangeRate * ExchangeRate;
+
+    /// <summary>One-way exchange chips → crowns.</summary>
+    public int Exchange(int chips)
+    {
+        if (chips <= 0 || chips % ExchangeRate != 0)
+            throw new ArgumentException($"Exchange multiples of {ExchangeRate} chips.", nameof(chips));
+        if (chips > ExchangeableChips)
+            throw new InvalidOperationException("Not enough exchangeable chips.");
+        Chips -= chips;
+        var crowns = chips / ExchangeRate;
+        Crowns += crowns;
+        return crowns;
+    }
+
+    public void AddCrowns(int crowns) => Crowns += Math.Max(0, crowns);
+
+    public void SpendCrowns(int crowns)
+    {
+        if (crowns < 0 || crowns > Crowns)
+            throw new InvalidOperationException("Not enough crowns.");
+        Crowns -= crowns;
     }
 
     public bool CanEnterTournament(int buyIn) => !IsSeated && Chips >= buyIn;

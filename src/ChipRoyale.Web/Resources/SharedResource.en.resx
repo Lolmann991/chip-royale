@@ -28,6 +28,33 @@
   <data name="Account.Register.External" xml:space="preserve"><value>Use another service to register.</value></data>
   <data name="Account.RegisterConfirmation" xml:space="preserve"><value>Register confirmation</value></data>
   <data name="Account.WouldBeEmailed" xml:space="preserve"><value>Normally this would be emailed:</value></data>
+  <data name="Ach.Unlocked" xml:space="preserve"><value>Achievement unlocked</value></data>
+  <data name="Ach.big-pot.Text" xml:space="preserve"><value>Win a pot of at least 5,000 chips.</value></data>
+  <data name="Ach.big-pot.Title" xml:space="preserve"><value>Big fish</value></data>
+  <data name="Ach.busted.Text" xml:space="preserve"><value>Go broke once. Happens to the best.</value></data>
+  <data name="Ach.busted.Title" xml:space="preserve"><value>Lesson learned</value></data>
+  <data name="Ach.first-win.Text" xml:space="preserve"><value>Win your first pot.</value></data>
+  <data name="Ach.first-win.Title" xml:space="preserve"><value>First pot</value></data>
+  <data name="Ach.full-house.Text" xml:space="preserve"><value>Win a pot with a full house or better.</value></data>
+  <data name="Ach.full-house.Title" xml:space="preserve"><value>Full house</value></data>
+  <data name="Ach.hands-100.Text" xml:space="preserve"><value>Play 100 hands.</value></data>
+  <data name="Ach.hands-100.Title" xml:space="preserve"><value>Regular</value></data>
+  <data name="Ach.hands-500.Text" xml:space="preserve"><value>Play 500 hands.</value></data>
+  <data name="Ach.hands-500.Title" xml:space="preserve"><value>Card shark</value></data>
+  <data name="Ach.quads.Text" xml:space="preserve"><value>Win a pot with four of a kind or better.</value></data>
+  <data name="Ach.quads.Title" xml:space="preserve"><value>Four-leaf clover</value></data>
+  <data name="Ach.rich.Text" xml:space="preserve"><value>Own 10,000 chips in total.</value></data>
+  <data name="Ach.rich.Title" xml:space="preserve"><value>High earner</value></data>
+  <data name="Ach.sng-cash.Text" xml:space="preserve"><value>Finish 1st or 2nd in a Sit &amp; Go.</value></data>
+  <data name="Ach.sng-cash.Title" xml:space="preserve"><value>In the money</value></data>
+  <data name="Ach.sng-win.Text" xml:space="preserve"><value>Win a Sit &amp; Go.</value></data>
+  <data name="Ach.sng-win.Title" xml:space="preserve"><value>Champion</value></data>
+  <data name="Ach.straight-flush.Text" xml:space="preserve"><value>Win a pot with a straight flush.</value></data>
+  <data name="Ach.straight-flush.Title" xml:space="preserve"><value>Rainbow</value></data>
+  <data name="Ach.student.Text" xml:space="preserve"><value>Finish all lessons.</value></data>
+  <data name="Ach.student.Title" xml:space="preserve"><value>Top student</value></data>
+  <data name="Ach.table-cleared.Text" xml:space="preserve"><value>Knock out every opponent at a cash table.</value></data>
+  <data name="Ach.table-cleared.Title" xml:space="preserve"><value>Table swept</value></data>
   <data name="Action.AllIn" xml:space="preserve"><value>All-in!</value></data>
   <data name="Action.Call" xml:space="preserve"><value>Calls {0:N0}</value></data>
   <data name="Action.Check" xml:space="preserve"><value>Checks</value></data>
@@ -100,6 +127,29 @@
   <data name="HandRankings.ThreeOfAKind" xml:space="preserve"><value>Three cards of the same rank.</value></data>
   <data name="HandRankings.Title" xml:space="preserve"><value>Hand rankings</value></data>
   <data name="HandRankings.TwoPair" xml:space="preserve"><value>Two different pairs.</value></data>
+  <data name="Item.av-alien" xml:space="preserve"><value>Alien</value></data>
+  <data name="Item.av-cowboy" xml:space="preserve"><value>Cowboy</value></data>
+  <data name="Item.av-default" xml:space="preserve"><value>Sunglasses</value></data>
+  <data name="Item.av-king" xml:space="preserve"><value>Prince</value></data>
+  <data name="Item.av-pixel" xml:space="preserve"><value>Pixel smiley</value></data>
+  <data name="Item.av-robot" xml:space="preserve"><value>Robot</value></data>
+  <data name="Item.av-unicorn" xml:space="preserve"><value>Unicorn</value></data>
+  <data name="Item.av-wizard" xml:space="preserve"><value>Wizard</value></data>
+  <data name="Item.cb-classic" xml:space="preserve"><value>Classic red</value></data>
+  <data name="Item.cb-emerald" xml:space="preserve"><value>Emerald</value></data>
+  <data name="Item.cb-midnight" xml:space="preserve"><value>Midnight &amp; gold</value></data>
+  <data name="Item.cb-pixel-crown" xml:space="preserve"><value>Pixel crowns</value></data>
+  <data name="Item.cb-pixel-heart" xml:space="preserve"><value>Pixel hearts</value></data>
+  <data name="Item.cb-royal" xml:space="preserve"><value>Royal blue</value></data>
+  <data name="Item.chips-classic" xml:space="preserve"><value>Classic</value></data>
+  <data name="Item.chips-gold" xml:space="preserve"><value>Gold rim</value></data>
+  <data name="Item.chips-neon" xml:space="preserve"><value>Neon</value></data>
+  <data name="Item.chips-pixel" xml:space="preserve"><value>Pixel chips</value></data>
+  <data name="Item.felt-default" xml:space="preserve"><value>Casino green</value></data>
+  <data name="Item.felt-midnight" xml:space="preserve"><value>Midnight</value></data>
+  <data name="Item.felt-ocean" xml:space="preserve"><value>Ocean</value></data>
+  <data name="Item.felt-pixel" xml:space="preserve"><value>Pixel meadow</value></data>
+  <data name="Item.felt-purple" xml:space="preserve"><value>Royal purple</value></data>
   <data name="Learn.Back" xml:space="preserve"><value>Back</value></data>
   <data name="Learn.BestHand" xml:space="preserve"><value>Best hand: {0}</value></data>
   <data name="Learn.Board" xml:space="preserve"><value>Community cards</value></data>
@@ -254,6 +304,7 @@ Fold – give up. Your chips in the pot are gone.</value></data>
   <data name="Lobby.Rename" xml:space="preserve"><value>Change name</value></data>
   <data name="Lobby.Returned" xml:space="preserve"><value>Your {0:N0} chips from the last table were cashed out.</value></data>
   <data name="Lobby.Run" xml:space="preserve"><value>Run #{0}</value></data>
+  <data name="Lobby.Shop" xml:space="preserve"><value>🛍️ Shop</value></data>
   <data name="Lobby.StartPractice" xml:space="preserve"><value>Start practice table</value></data>
   <data name="Lobby.Table" xml:space="preserve"><value>Table</value></data>
   <data name="Lobby.Tagline" xml:space="preserve"><value>Texas Hold'em · No-Limit · against AI opponents</value></data>
@@ -314,6 +365,28 @@ Fold – give up. Your chips in the pot are gone.</value></data>
   <data name="Rank.Two" xml:space="preserve"><value>Two</value></data>
   <data name="Rank.Two.Plural" xml:space="preserve"><value>Twos</value></data>
   <data name="Seat.You" xml:space="preserve"><value>You</value></data>
+  <data name="Shop.Bought" xml:space="preserve"><value>Bought and equipped: {0}</value></data>
+  <data name="Shop.Buy" xml:space="preserve"><value>Buy · {0} 👑</value></data>
+  <data name="Shop.Chips" xml:space="preserve"><value>chips</value></data>
+  <data name="Shop.Crowns" xml:space="preserve"><value>crowns</value></data>
+  <data name="Shop.Equip" xml:space="preserve"><value>Equip</value></data>
+  <data name="Shop.Equipped" xml:space="preserve"><value>Equipped</value></data>
+  <data name="Shop.Exchange" xml:space="preserve"><value>Exchange chips for crowns</value></data>
+  <data name="Shop.Exchange.Button" xml:space="preserve"><value>Exchange</value></data>
+  <data name="Shop.Exchange.Confirm" xml:space="preserve"><value>Exchange {0:N0} chips for {1:N0} 👑? This can't be undone.</value></data>
+  <data name="Shop.Exchange.None" xml:space="preserve"><value>You can only exchange chips above your starting {0:N0}. Win a few pots first!</value></data>
+  <data name="Shop.Exchange.Rules" xml:space="preserve"><value>{0} chips = 1 crown · only chips above {1:N0} · crowns can't be exchanged back and survive going broke.</value></data>
+  <data name="Shop.Exchange.Yes" xml:space="preserve"><value>Yes, exchange</value></data>
+  <data name="Shop.Exchanged" xml:space="preserve"><value>Exchanged: {0:N0} chips → {1:N0} 👑</value></data>
+  <data name="Shop.GuestNote" xml:space="preserve"><value>As a guest, purchases and crowns are lost when you reload. Log in to keep them.</value></data>
+  <data name="Shop.PageTitle" xml:space="preserve"><value>Shop – Chip Royale</value></data>
+  <data name="Shop.Tab.Achievements" xml:space="preserve"><value>🏅 Achievements</value></data>
+  <data name="Shop.Tab.Avatar" xml:space="preserve"><value>😎 Avatars</value></data>
+  <data name="Shop.Tab.CardBack" xml:space="preserve"><value>🂠 Card backs</value></data>
+  <data name="Shop.Tab.Chips" xml:space="preserve"><value>🪙 Chips</value></data>
+  <data name="Shop.Tab.Felt" xml:space="preserve"><value>🟩 Felt</value></data>
+  <data name="Shop.Title1" xml:space="preserve"><value>Style </value></data>
+  <data name="Shop.Title2" xml:space="preserve"><value>shop</value></data>
   <data name="Sng.BuyIn" xml:space="preserve"><value>Buy-in {0:N0}</value></data>
   <data name="Sng.InTheMoney" xml:space="preserve"><value>Place {0} – in the money!</value></data>
   <data name="Sng.KnockedOut" xml:space="preserve"><value>{0} is knocked out ({1}. place)</value></data>

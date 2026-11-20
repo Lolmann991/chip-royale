@@ -31,7 +31,8 @@ public readonly record struct TournamentResult(int Place, int Prize);
 public readonly record struct TableReport(int Stack, HandOutcome? Hand);
 
 /// <summary>Look and personality of a seat at the table.</summary>
-public sealed record SeatLook(string Name, string Avatar, int Hue);
+/// <param name="AvatarClass">CSS class for avatars drawn without an emoji (pixel art).</param>
+public sealed record SeatLook(string Name, string Avatar, int Hue, string? AvatarClass = null);
 
 public static class Roster
 {
