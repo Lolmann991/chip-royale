@@ -1,0 +1,33 @@
+@inherits LayoutComponentBase
+
+@* Layout for the account pages (login, register, manage) in the look of the game. *@
+<div class="game-root account-root">
+    <div class="account-shell">
+        <header class="board-head">
+            <a class="brand" href="">♠ Chip <span>Royale</span></a>
+            <span class="head-tools">
+                <LanguageSwitch />
+                <AuthorizeView>
+                    <Authorized>
+                        <a class="tool" href="Account/Manage">👤 @L("Lobby.Account")</a>
+                        <form action="Account/Logout" method="post" class="inline-form">
+                            <AntiforgeryToken />
+                            <input type="hidden" name="ReturnUrl" value="" />
+                            <button type="submit" class="tool">@L("Account.Logout")</button>
+                        </form>
+                    </Authorized>
+                </AuthorizeView>
+                <a class="tool" href="">@L("Board.Back")</a>
+            </span>
+        </header>
+        <main class="account-main">
+            @Body
+        </main>
+    </div>
+</div>
+
+<div id="blazor-error-ui" data-nosnippet>
+    @L("Error.Text")
+    <a href="." class="reload">@L("Error.Reload")</a>
+    <span class="dismiss">🗙</span>
+</div>

@@ -112,7 +112,7 @@ public partial class LocalizationTests
     }
 
     // String literals that look like our resource keys, e.g. "Table.Fold" or "Guest".
-    [GeneratedRegex("\"((?:Table|Lobby|Board|Learn|Hand|HandRankings|Over|Tip|Nav|Error|Common|Name|Mini|Action|Rank|Difficulty|Stake|Seat|Account|Sng|Shop|Ach|Item)\\.[A-Za-z0-9.]+|Guest|DefaultName)\"")]
+    [GeneratedRegex("\"((?:Table|Lobby|Board|Learn|Hand|HandRankings|Over|Tip|Nav|Error|Common|Name|Mini|Action|Rank|Difficulty|Stake|Seat|Account|Sng|Shop|Ach|Item|Validation|IdentityError|Manage|Stats)\\.[A-Za-z0-9.]+|Guest|DefaultName)\"")]
     private static partial Regex KeyLiteral();
 
     [GeneratedRegex(@"\{(\d+)")]

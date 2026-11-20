@@ -1,4 +1,4 @@
-﻿@page "/Account/Register"
+@page "/Account/Register"
 
 @using System.ComponentModel.DataAnnotations
 @using System.Text
@@ -6,6 +6,7 @@
 @using Microsoft.AspNetCore.Identity
 @using Microsoft.AspNetCore.WebUtilities
 @using ChipRoyale.Web.Data
+@using ChipRoyale.Web.Localization
 
 @inject UserManager<ApplicationUser> UserManager
 @inject IUserStore<ApplicationUser> UserStore
@@ -17,41 +18,39 @@
 
 <PageTitle>@L("Account.Register")</PageTitle>
 
-<h1>@L("Account.Register")</h1>
+<div class="auth-card">
+    <div class="auth-cards" aria-hidden="true"><span>Q♦</span><span>J♣</span></div>
+    <nav class="auth-tabs">
+        <a href="@(NavigationManager.GetUriWithQueryParameters("Account/Login", new Dictionary<string, object?> { ["ReturnUrl"] = ReturnUrl }))">@L("Account.Login")</a>
+        <a class="on" href="@(NavigationManager.GetUriWithQueryParameters("Account/Register", new Dictionary<string, object?> { ["ReturnUrl"] = ReturnUrl }))">@L("Account.Register")</a>
+    </nav>
+    <h1 class="auth-title">@L("Account.Register.Title")</h1>
+    <p class="auth-sub">@L("Account.Register.Sub")</p>
 
-<div class="row">
-    <div class="col-lg-6">
-        <StatusMessage Message="@Message" />
-        <EditForm Model="Input" method="post" OnValidSubmit="RegisterUser" FormName="register">
-            <DataAnnotationsValidator />
-            <h2>@L("Account.Register.Create")</h2>
-            <hr />
-            <ValidationSummary class="text-danger" role="alert" />
-            <div class="form-floating mb-3">
-                <InputText @bind-Value="Input.Email" id="Input.Email" class="form-control" autocomplete="username" aria-required="true" placeholder="name@example.com" />
-                <label for="Input.Email">@L("Account.Email")</label>
-                <ValidationMessage For="() => Input.Email" class="text-danger" />
-            </div>
-            <div class="form-floating mb-3">
-                <InputText type="password" @bind-Value="Input.Password" id="Input.Password" class="form-control" autocomplete="new-password" aria-required="true" placeholder="password" />
-                <label for="Input.Password">@L("Account.Password")</label>
-                <ValidationMessage For="() => Input.Password" class="text-danger" />
-            </div>
-            <div class="form-floating mb-3">
-                <InputText type="password" @bind-Value="Input.ConfirmPassword" id="Input.ConfirmPassword" class="form-control" autocomplete="new-password" aria-required="true" placeholder="password" />
-                <label for="Input.ConfirmPassword">@L("Account.ConfirmPassword")</label>
-                <ValidationMessage For="() => Input.ConfirmPassword" class="text-danger" />
-            </div>
-            <button type="submit" class="w-100 btn btn-lg btn-primary">@L("Account.Register")</button>
-        </EditForm>
-    </div>
-    <div class="col-lg-4 col-lg-offset-2">
-        <section>
-            <h3>@L("Account.Register.External")</h3>
-            <hr />
-            <ExternalLoginPicker />
-        </section>
-    </div>
+    <StatusMessage Message="@Message" />
+    <EditForm Model="Input" method="post" OnValidSubmit="RegisterUser" FormName="register" class="auth-form">
+        <DataAnnotationsValidator />
+        <ValidationSummary class="auth-errors" role="alert" />
+        <label class="field" for="Input.Email">
+            <span>@L("Account.Email")</span>
+            <InputText @bind-Value="Input.Email" id="Input.Email" autocomplete="username" aria-required="true" placeholder="name@beispiel.de" />
+        </label>
+        <label class="field" for="Input.Password">
+            <span>@L("Account.Password")</span>
+            <InputText type="password" @bind-Value="Input.Password" id="Input.Password" autocomplete="new-password" aria-required="true" placeholder="••••••" />
+            <small>@L("Account.PasswordHint")</small>
+        </label>
+        <label class="field" for="Input.ConfirmPassword">
+            <span>@L("Account.ConfirmPassword")</span>
+            <InputText type="password" @bind-Value="Input.ConfirmPassword" id="Input.ConfirmPassword" autocomplete="new-password" aria-required="true" placeholder="••••••" />
+        </label>
+        <button type="submit" class="play-btn"><span>@L("Account.Register.Button")</span></button>
+    </EditForm>
+    <ul class="auth-perks">
+        <li>● @L("Account.Perk.Chips")</li>
+        <li>👑 @L("Account.Perk.Shop")</li>
+        <li>🏆 @L("Account.Perk.Board")</li>
+    </ul>
 </div>
 
 @code {
@@ -133,20 +132,20 @@
 
     private sealed class InputModel
     {
-        [Required]
-        [EmailAddress]
-        [Display(Name = "Email")]
+        [Required(ErrorMessageResourceType = typeof(ValidationTexts), ErrorMessageResourceName = nameof(ValidationTexts.Required))]
+        [EmailAddress(ErrorMessageResourceType = typeof(ValidationTexts), ErrorMessageResourceName = nameof(ValidationTexts.EmailAddress))]
+        [Display(ResourceType = typeof(ValidationTexts), Name = nameof(ValidationTexts.EmailName))]
         public string Email { get; set; } = "";
 
-        [Required]
-        [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 6)]
+        [Required(ErrorMessageResourceType = typeof(ValidationTexts), ErrorMessageResourceName = nameof(ValidationTexts.Required))]
+        [StringLength(100, MinimumLength = 6, ErrorMessageResourceType = typeof(ValidationTexts), ErrorMessageResourceName = nameof(ValidationTexts.PasswordLength))]
         [DataType(DataType.Password)]
-        [Display(Name = "Password")]
+        [Display(ResourceType = typeof(ValidationTexts), Name = nameof(ValidationTexts.PasswordName))]
         public string Password { get; set; } = "";
 
         [DataType(DataType.Password)]
-        [Display(Name = "Confirm password")]
-        [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
+        [Display(ResourceType = typeof(ValidationTexts), Name = nameof(ValidationTexts.ConfirmPasswordName))]
+        [Compare("Password", ErrorMessageResourceType = typeof(ValidationTexts), ErrorMessageResourceName = nameof(ValidationTexts.PasswordCompare))]
         public string ConfirmPassword { get; set; } = "";
     }
 }

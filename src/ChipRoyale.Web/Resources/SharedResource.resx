@@ -15,18 +15,31 @@
   <data name="Account.Login" xml:space="preserve"><value>Anmelden</value></data>
   <data name="Account.Login.External" xml:space="preserve"><value>Mit einem anderen Dienst anmelden.</value></data>
   <data name="Account.Login.Forgot" xml:space="preserve"><value>Passwort vergessen?</value></data>
-  <data name="Account.Login.Invalid" xml:space="preserve"><value>Fehler: Anmeldung fehlgeschlagen.</value></data>
+  <data name="Account.Login.Invalid" xml:space="preserve"><value>Fehler: E-Mail oder Passwort stimmt nicht. Noch kein Konto? Dann registriere dich.</value></data>
   <data name="Account.Login.Local" xml:space="preserve"><value>Mit deinem Konto anmelden.</value></data>
   <data name="Account.Login.Passkey" xml:space="preserve"><value>Mit Passkey anmelden</value></data>
   <data name="Account.Login.RegisterNew" xml:space="preserve"><value>Neues Konto erstellen</value></data>
   <data name="Account.Login.Resend" xml:space="preserve"><value>Bestätigungs-E-Mail erneut senden</value></data>
+  <data name="Account.Login.Sub" xml:space="preserve"><value>Melde dich an – deine Chips, Kronen und Rekorde warten auf dich.</value></data>
+  <data name="Account.Login.Title" xml:space="preserve"><value>Willkommen zurück!</value></data>
+  <data name="Account.Logout" xml:space="preserve"><value>Abmelden</value></data>
+  <data name="Account.Manage.Sub" xml:space="preserve"><value>Profil, E-Mail, Passwort und Sicherheit.</value></data>
+  <data name="Account.Manage.Title" xml:space="preserve"><value>Dein Konto</value></data>
   <data name="Account.NoEmailSender" xml:space="preserve"><value>Es ist noch kein echter E-Mail-Versand eingerichtet. Wie das geht:</value></data>
   <data name="Account.Or" xml:space="preserve"><value>ODER</value></data>
   <data name="Account.Password" xml:space="preserve"><value>Passwort</value></data>
+  <data name="Account.PasswordHint" xml:space="preserve"><value>Mindestens 6 Zeichen.</value></data>
+  <data name="Account.Perk.Board" xml:space="preserve"><value>Mit eigenem Namen in die Rangliste</value></data>
+  <data name="Account.Perk.Chips" xml:space="preserve"><value>Chips und Run-Rekorde bleiben gespeichert</value></data>
+  <data name="Account.Perk.Shop" xml:space="preserve"><value>Kronen sammeln und im Shop Designs kaufen</value></data>
   <data name="Account.Register" xml:space="preserve"><value>Registrieren</value></data>
+  <data name="Account.Register.Button" xml:space="preserve"><value>Konto erstellen</value></data>
   <data name="Account.Register.Create" xml:space="preserve"><value>Neues Konto erstellen.</value></data>
   <data name="Account.Register.External" xml:space="preserve"><value>Mit einem anderen Dienst registrieren.</value></data>
+  <data name="Account.Register.Sub" xml:space="preserve"><value>Kostenloses Konto in 10 Sekunden. Du startest mit 1.000 Chips.</value></data>
+  <data name="Account.Register.Title" xml:space="preserve"><value>Platz nehmen</value></data>
   <data name="Account.RegisterConfirmation" xml:space="preserve"><value>Registrierung bestätigen</value></data>
+  <data name="Account.RememberMe" xml:space="preserve"><value>Angemeldet bleiben</value></data>
   <data name="Account.WouldBeEmailed" xml:space="preserve"><value>Normalerweise käme dieser Link per E-Mail:</value></data>
   <data name="Ach.Unlocked" xml:space="preserve"><value>Erfolg freigeschaltet</value></data>
   <data name="Ach.big-pot.Text" xml:space="preserve"><value>Gewinne einen Pot von mindestens 5.000 Chips.</value></data>
@@ -127,6 +140,17 @@
   <data name="HandRankings.ThreeOfAKind" xml:space="preserve"><value>Drei Karten mit gleichem Wert.</value></data>
   <data name="HandRankings.Title" xml:space="preserve"><value>Hand-Rangliste</value></data>
   <data name="HandRankings.TwoPair" xml:space="preserve"><value>Zwei verschiedene Paare.</value></data>
+  <data name="IdentityError.DefaultError" xml:space="preserve"><value>Etwas ist schiefgelaufen. Bitte versuch es nochmal.</value></data>
+  <data name="IdentityError.DuplicateEmail" xml:space="preserve"><value>Für {0} gibt es schon ein Konto – melde dich einfach an.</value></data>
+  <data name="IdentityError.InvalidEmail" xml:space="preserve"><value>„{0}“ ist keine gültige E-Mail-Adresse.</value></data>
+  <data name="IdentityError.InvalidToken" xml:space="preserve"><value>Der Link ist ungültig oder abgelaufen.</value></data>
+  <data name="IdentityError.PasswordMismatch" xml:space="preserve"><value>Falsches Passwort.</value></data>
+  <data name="IdentityError.PasswordRequiresDigit" xml:space="preserve"><value>Das Passwort braucht mindestens eine Ziffer.</value></data>
+  <data name="IdentityError.PasswordRequiresLower" xml:space="preserve"><value>Das Passwort braucht einen Kleinbuchstaben.</value></data>
+  <data name="IdentityError.PasswordRequiresNonAlphanumeric" xml:space="preserve"><value>Das Passwort braucht ein Sonderzeichen.</value></data>
+  <data name="IdentityError.PasswordRequiresUniqueChars" xml:space="preserve"><value>Das Passwort braucht mindestens {0} verschiedene Zeichen.</value></data>
+  <data name="IdentityError.PasswordRequiresUpper" xml:space="preserve"><value>Das Passwort braucht einen Großbuchstaben.</value></data>
+  <data name="IdentityError.PasswordTooShort" xml:space="preserve"><value>Das Passwort muss mindestens {0} Zeichen lang sein.</value></data>
   <data name="Item.av-alien" xml:space="preserve"><value>Alien</value></data>
   <data name="Item.av-cowboy" xml:space="preserve"><value>Cowboy</value></data>
   <data name="Item.av-default" xml:space="preserve"><value>Sonnenbrille</value></data>
@@ -308,6 +332,17 @@ Passen – aussteigen. Deine Chips im Pot sind dann weg.</value></data>
   <data name="Lobby.StartPractice" xml:space="preserve"><value>Übungstisch starten</value></data>
   <data name="Lobby.Table" xml:space="preserve"><value>Tisch</value></data>
   <data name="Lobby.Tagline" xml:space="preserve"><value>Texas Hold'em · No-Limit · gegen KI-Gegner</value></data>
+  <data name="Manage.Nav.Email" xml:space="preserve"><value>E-Mail</value></data>
+  <data name="Manage.Nav.External" xml:space="preserve"><value>Externe Logins</value></data>
+  <data name="Manage.Nav.Passkeys" xml:space="preserve"><value>Passkeys</value></data>
+  <data name="Manage.Nav.Password" xml:space="preserve"><value>Passwort</value></data>
+  <data name="Manage.Nav.PersonalData" xml:space="preserve"><value>Persönliche Daten</value></data>
+  <data name="Manage.Nav.Profile" xml:space="preserve"><value>Profil</value></data>
+  <data name="Manage.Nav.TwoFactor" xml:space="preserve"><value>Zwei-Faktor</value></data>
+  <data name="Manage.Phone" xml:space="preserve"><value>Telefonnummer (optional)</value></data>
+  <data name="Manage.PhoneFailed" xml:space="preserve"><value>Fehler: Die Telefonnummer konnte nicht gespeichert werden.</value></data>
+  <data name="Manage.Updated" xml:space="preserve"><value>Dein Profil wurde gespeichert.</value></data>
+  <data name="Manage.Username" xml:space="preserve"><value>Benutzername (E-Mail)</value></data>
   <data name="Mini.Blinds" xml:space="preserve"><value>Blinds</value></data>
   <data name="Mini.Early" xml:space="preserve"><value>Früh</value></data>
   <data name="Mini.Late" xml:space="preserve"><value>Spät</value></data>
@@ -475,4 +510,8 @@ Passen – aussteigen. Deine Chips im Pot sind dann weg.</value></data>
   <data name="Tip.TooExpensive" xml:space="preserve"><value>Eher schwach – für diesen Preis lieber passen.</value></data>
   <data name="Tip.WeakCall" xml:space="preserve"><value>Schwache Hand – billig weiterschauen ist okay.</value></data>
   <data name="Tip.WeakCheck" xml:space="preserve"><value>Schwache Hand – einfach checken.</value></data>
+  <data name="Validation.EmailAddress" xml:space="preserve"><value>Das ist keine gültige E-Mail-Adresse.</value></data>
+  <data name="Validation.PasswordCompare" xml:space="preserve"><value>Die Passwörter stimmen nicht überein.</value></data>
+  <data name="Validation.PasswordLength" xml:space="preserve"><value>Das Passwort muss mindestens {2} Zeichen lang sein.</value></data>
+  <data name="Validation.Required" xml:space="preserve"><value>Bitte {0} angeben.</value></data>
 </root>

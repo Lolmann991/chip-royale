@@ -1,17 +1,13 @@
-﻿@inherits LayoutComponentBase
-@layout ChipRoyale.Web.Components.Layout.MainLayout
+@inherits LayoutComponentBase
+@layout ChipRoyale.Web.Components.Layout.AccountLayout
 
-<h1>Manage your account</h1>
-
-<div>
-    <h2>Change your account settings</h2>
-    <hr />
-    <div class="row">
-        <div class="col-lg-3">
-            <ManageNavMenu />
-        </div>
-        <div class="col-lg-9">
+<div class="auth-card wide">
+    <h1 class="auth-title">@L("Account.Manage.Title")</h1>
+    <p class="auth-sub">@L("Account.Manage.Sub")</p>
+    <div class="manage-grid">
+        <ManageNavMenu />
+        <section class="manage-body">
             @Body
-        </div>
+        </section>
     </div>
 </div>

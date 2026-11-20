@@ -113,6 +113,17 @@ Reihenfolge = Umsetzungsreihenfolge.
 - [ ] Statistik-Seite (Hände, Siege, größter Pot, Turniere) und Replay der letzten Hand
 - [ ] Tutorial-Fortschritt im Konto speichern; restliche Kontoseiten übersetzen
 
+**Erledigt außer der Reihe**
+- [x] Konto-Seiten (Anmelden, Registrieren, Kontoverwaltung) im Spiel-Design, Fehlermeldungen DE/EN, einfache Passwortregeln (mind. 6 Zeichen)
+- [x] Datenbank im Benutzerordner (Windows: `%LOCALAPPDATA%\ChipRoyale`), damit ein Update Konten nicht löscht; alte `Data\app.db` wird beim ersten Start übernommen
+
+**Ideen für V2.x** (nach Omaha / Five Card Draw)
+- [ ] Gegner mit Persönlichkeit: Spielstil-Etikett (z. B. „Calling Station“, „Bluffer“) und kurze Sprüche in der Sprechblase
+- [ ] Vor-Aktionen („Check/Fold“, „Jeden Einsatz mitgehen“) und Tempo-Einstellung (normal / schnell)
+- [ ] Tägliche Herausforderung mit Kronen-Belohnung (z. B. „Gewinne 3 Pots mit Zwei Paaren oder besser“)
+- [ ] Verlauf der letzten Hände mit Karten und Replay
+- [ ] Statistik-Seite: Gewinnrate, gespielte Starthände, Lieblingshand, Turnier-Bilanz
+
 ### V3
 - Mehrspieler: gemeinsame Tische, private Tische, Turniere, Seed-Challenge
 - Balancing, Glücksfaktor der KI

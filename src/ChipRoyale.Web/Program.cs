@@ -26,6 +26,7 @@ builder.Services.AddAuthentication(options =>
     .AddIdentityCookies();
 
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+connectionString = PlayerDataLocation.Resolve(connectionString, builder.Configuration["Storage:DataDirectory"], builder.Environment.ContentRootPath);
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlite(connectionString));
 // Interactive components need short-lived contexts (one per operation).
@@ -40,7 +41,15 @@ builder.Services.AddIdentityCore<ApplicationUser>(options =>
         // Off until a real email sender exists (see SPIELKONZEPT V3); otherwise nobody could confirm an account.
         options.SignIn.RequireConfirmedAccount = builder.Configuration.GetValue("Auth:RequireConfirmedAccount", false);
         options.Stores.SchemaVersion = IdentitySchemaVersions.Version3;
+        // A game account: 6+ characters, no special-character rules.
+        options.Password.RequiredLength = 6;
+        options.Password.RequireDigit = false;
+        options.Password.RequireLowercase = false;
+        options.Password.RequireUppercase = false;
+        options.Password.RequireNonAlphanumeric = false;
+        options.Password.RequiredUniqueChars = 1;
     })
+    .AddErrorDescriber<LocalizedIdentityErrorDescriber>()
     .AddEntityFrameworkStores<ApplicationDbContext>()
     .AddSignInManager()
     .AddDefaultTokenProviders();
