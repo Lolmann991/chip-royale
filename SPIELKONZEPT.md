@@ -106,7 +106,6 @@ Reihenfolge = Umsetzungsreihenfolge.
 - [ ] Karten zum Tauschen anklicken; KI-Tauschstrategie
 
 **Außerdem in V2**
-- [x] Deployment: GitHub Actions spielt `main` automatisch auf Azure App Service aus (Anleitung im README)
 - [ ] KI „Schwer“ nachschärfen (in Simulationen gewinnt ein Spieler der Stufe „Mittel“ noch gegen „Schwer“)
 - [ ] Statistik-Seite (Hände, Siege, größter Pot, Turniere) und Replay der letzten Hand
 - [ ] Tutorial-Fortschritt im Konto speichern; restliche Kontoseiten übersetzen
