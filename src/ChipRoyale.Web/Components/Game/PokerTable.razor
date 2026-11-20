@@ -136,6 +136,13 @@
                 </div>
             }
 
+            @if (Charm is not null)
+            {
+                <div class="charm-anchor" style="left:36%; top:98%">
+                    <div class="charm @(banner?.Win == true ? "cheer" : "")" title="@L("Shop.Tab.Charm")">@Charm</div>
+                </div>
+            }
+
             @if (table.Phase != TablePhase.Idle)
             {
                 var (dx, dy) = DealerPos(table.DealerIndex);

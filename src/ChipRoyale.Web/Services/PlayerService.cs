@@ -41,8 +41,14 @@ public sealed partial class PlayerService(
     }
 
     /// <summary>CSS classes for the equipped card back, felt and chips (defaults add nothing).</summary>
-    public string ThemeClasses => string.Join(' ', new[] { ItemCategory.CardBack, ItemCategory.Felt, ItemCategory.Chips }
+    public string ThemeClasses => string.Join(' ', new[]
+        {
+            ItemCategory.CardBack, ItemCategory.CardFront, ItemCategory.Felt, ItemCategory.Rail, ItemCategory.Room, ItemCategory.Chips,
+        }
         .Select(Collection.Equipped).Where(i => !i.IsDefault).Select(i => i.Id));
+
+    /// <summary>Emoji of the equipped lucky charm, or null.</summary>
+    public string? Charm => Collection.Equipped(ItemCategory.Charm).Glyph;
 
     /// <summary>Set when loading found the player broke and started a new run.</summary>
     public bool StartedNewRun { get; private set; }

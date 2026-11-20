@@ -7,7 +7,7 @@
         {
             var red = HandText.IsRed(c.Suit);
             var face = c.Rank >= Rank.Jack && c.Rank != Rank.Ace;
-            <div class="card-face front @(red ? "red" : "black")">
+            <div class="card-face front @(red ? "red" : "black") suit-@c.Suit">
                 <div class="corner tl"><b>@HandText.RankSymbol(c.Rank)</b><i>@HandText.SuitSymbol(c.Suit)</i></div>
                 @if (face)
                 {

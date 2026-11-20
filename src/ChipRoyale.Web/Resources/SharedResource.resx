@@ -46,6 +46,8 @@
   <data name="Ach.big-pot.Title" xml:space="preserve"><value>Großer Fisch</value></data>
   <data name="Ach.busted.Text" xml:space="preserve"><value>Geh einmal pleite. Passiert den Besten.</value></data>
   <data name="Ach.busted.Title" xml:space="preserve"><value>Lehrgeld</value></data>
+  <data name="Ach.collector.Text" xml:space="preserve"><value>Besitze 10 Artikel aus dem Shop.</value></data>
+  <data name="Ach.collector.Title" xml:space="preserve"><value>Sammler</value></data>
   <data name="Ach.first-win.Text" xml:space="preserve"><value>Gewinne deinen ersten Pot.</value></data>
   <data name="Ach.first-win.Title" xml:space="preserve"><value>Erster Pot</value></data>
   <data name="Ach.full-house.Text" xml:space="preserve"><value>Gewinne einen Pot mit Full House oder besser.</value></data>
@@ -68,6 +70,8 @@
   <data name="Ach.student.Title" xml:space="preserve"><value>Musterschüler</value></data>
   <data name="Ach.table-cleared.Text" xml:space="preserve"><value>Wirf an einem Cash-Tisch alle Gegner raus.</value></data>
   <data name="Ach.table-cleared.Title" xml:space="preserve"><value>Tisch leergefegt</value></data>
+  <data name="Ach.trendsetter.Text" xml:space="preserve"><value>Trag in jeder Shop-Kategorie etwas Gekauftes.</value></data>
+  <data name="Ach.trendsetter.Title" xml:space="preserve"><value>Trendsetter</value></data>
   <data name="Action.AllIn" xml:space="preserve"><value>All-in!</value></data>
   <data name="Action.Call" xml:space="preserve"><value>Geht mit {0:N0}</value></data>
   <data name="Action.Check" xml:space="preserve"><value>Checkt</value></data>
@@ -154,26 +158,86 @@
   <data name="Item.av-alien" xml:space="preserve"><value>Alien</value></data>
   <data name="Item.av-cowboy" xml:space="preserve"><value>Cowboy</value></data>
   <data name="Item.av-default" xml:space="preserve"><value>Sonnenbrille</value></data>
+  <data name="Item.av-dragon" xml:space="preserve"><value>Drache</value></data>
+  <data name="Item.av-frog" xml:space="preserve"><value>Frosch</value></data>
+  <data name="Item.av-ghost" xml:space="preserve"><value>Gespenst</value></data>
   <data name="Item.av-king" xml:space="preserve"><value>Prinz</value></data>
+  <data name="Item.av-lion" xml:space="preserve"><value>Löwe</value></data>
+  <data name="Item.av-ninja" xml:space="preserve"><value>Ninja</value></data>
+  <data name="Item.av-octopus" xml:space="preserve"><value>Krake</value></data>
   <data name="Item.av-pixel" xml:space="preserve"><value>Pixel-Smiley</value></data>
   <data name="Item.av-robot" xml:space="preserve"><value>Roboter</value></data>
   <data name="Item.av-unicorn" xml:space="preserve"><value>Einhorn</value></data>
+  <data name="Item.av-vampire" xml:space="preserve"><value>Vampir</value></data>
   <data name="Item.av-wizard" xml:space="preserve"><value>Zauberer</value></data>
+  <data name="Item.cb-aurora" xml:space="preserve"><value>Polarlicht</value></data>
+  <data name="Item.cb-bauhaus" xml:space="preserve"><value>Bauhaus</value></data>
+  <data name="Item.cb-circuit" xml:space="preserve"><value>Platine</value></data>
   <data name="Item.cb-classic" xml:space="preserve"><value>Klassisch Rot</value></data>
   <data name="Item.cb-emerald" xml:space="preserve"><value>Smaragd</value></data>
+  <data name="Item.cb-galaxy" xml:space="preserve"><value>Galaxie</value></data>
+  <data name="Item.cb-gatsby" xml:space="preserve"><value>Art déco Gatsby</value></data>
+  <data name="Item.cb-harlequin" xml:space="preserve"><value>Harlekin</value></data>
+  <data name="Item.cb-lineart" xml:space="preserve"><value>Line Art</value></data>
+  <data name="Item.cb-mandala" xml:space="preserve"><value>Mandala</value></data>
+  <data name="Item.cb-marble" xml:space="preserve"><value>Marmor &amp; Gold</value></data>
   <data name="Item.cb-midnight" xml:space="preserve"><value>Mitternacht &amp; Gold</value></data>
+  <data name="Item.cb-mosaic" xml:space="preserve"><value>Mosaik</value></data>
   <data name="Item.cb-pixel-crown" xml:space="preserve"><value>Pixel-Kronen</value></data>
   <data name="Item.cb-pixel-heart" xml:space="preserve"><value>Pixel-Herzen</value></data>
+  <data name="Item.cb-pixel-space" xml:space="preserve"><value>Pixel-Weltall</value></data>
   <data name="Item.cb-royal" xml:space="preserve"><value>Königsblau</value></data>
+  <data name="Item.cb-sakura" xml:space="preserve"><value>Kirschblüte</value></data>
+  <data name="Item.cb-seigaiha" xml:space="preserve"><value>Japanische Wellen</value></data>
+  <data name="Item.cb-synthwave" xml:space="preserve"><value>Synthwave</value></data>
+  <data name="Item.cb-tartan" xml:space="preserve"><value>Schottenkaro</value></data>
+  <data name="Item.cb-victorian" xml:space="preserve"><value>Viktorianisch</value></data>
+  <data name="Item.charm-cactus" xml:space="preserve"><value>Kaktus</value></data>
+  <data name="Item.charm-cat" xml:space="preserve"><value>Schwarze Katze</value></data>
+  <data name="Item.charm-clover" xml:space="preserve"><value>Kleeblatt</value></data>
+  <data name="Item.charm-coffee" xml:space="preserve"><value>Kaffee</value></data>
+  <data name="Item.charm-crystal" xml:space="preserve"><value>Kristallkugel</value></data>
+  <data name="Item.charm-dice" xml:space="preserve"><value>Würfel</value></data>
+  <data name="Item.charm-dragon" xml:space="preserve"><value>Glücksdrache</value></data>
+  <data name="Item.charm-duck" xml:space="preserve"><value>Gummiente</value></data>
+  <data name="Item.charm-mocktail" xml:space="preserve"><value>Mocktail</value></data>
+  <data name="Item.charm-none" xml:space="preserve"><value>Keiner</value></data>
+  <data name="Item.charm-pig" xml:space="preserve"><value>Glücksschwein</value></data>
+  <data name="Item.charm-trophy" xml:space="preserve"><value>Mini-Pokal</value></data>
   <data name="Item.chips-classic" xml:space="preserve"><value>Klassisch</value></data>
   <data name="Item.chips-gold" xml:space="preserve"><value>Goldrand</value></data>
   <data name="Item.chips-neon" xml:space="preserve"><value>Neon</value></data>
+  <data name="Item.chips-pastel" xml:space="preserve"><value>Pastell</value></data>
   <data name="Item.chips-pixel" xml:space="preserve"><value>Pixel-Chips</value></data>
+  <data name="Item.chips-ruby" xml:space="preserve"><value>Rubin</value></data>
+  <data name="Item.deck-classic" xml:space="preserve"><value>Klassisch</value></data>
+  <data name="Item.deck-fourcolor" xml:space="preserve"><value>Vier Farben (Poker)</value></data>
+  <data name="Item.deck-gold" xml:space="preserve"><value>Schwarz &amp; Gold</value></data>
+  <data name="Item.deck-jumbo" xml:space="preserve"><value>Jumbo-Index</value></data>
+  <data name="Item.deck-neon" xml:space="preserve"><value>Neon</value></data>
+  <data name="Item.deck-noir" xml:space="preserve"><value>Noir</value></data>
+  <data name="Item.deck-pixel" xml:space="preserve"><value>Pixel-Deck</value></data>
+  <data name="Item.deck-vintage" xml:space="preserve"><value>Vintage-Pergament</value></data>
+  <data name="Item.felt-burgundy" xml:space="preserve"><value>Bordeaux</value></data>
   <data name="Item.felt-default" xml:space="preserve"><value>Casino-Grün</value></data>
+  <data name="Item.felt-galaxy" xml:space="preserve"><value>Sternenhimmel</value></data>
   <data name="Item.felt-midnight" xml:space="preserve"><value>Mitternacht</value></data>
   <data name="Item.felt-ocean" xml:space="preserve"><value>Ozean</value></data>
   <data name="Item.felt-pixel" xml:space="preserve"><value>Pixel-Wiese</value></data>
   <data name="Item.felt-purple" xml:space="preserve"><value>Royal Purpur</value></data>
+  <data name="Item.felt-sand" xml:space="preserve"><value>Wüstensand</value></data>
+  <data name="Item.rail-gold" xml:space="preserve"><value>Blattgold</value></data>
+  <data name="Item.rail-leather" xml:space="preserve"><value>Schwarzes Leder</value></data>
+  <data name="Item.rail-marble" xml:space="preserve"><value>Weißer Marmor</value></data>
+  <data name="Item.rail-neon" xml:space="preserve"><value>Neon-Rand</value></data>
+  <data name="Item.rail-oak" xml:space="preserve"><value>Helle Eiche</value></data>
+  <data name="Item.rail-wood" xml:space="preserve"><value>Mahagoni</value></data>
+  <data name="Item.room-casino" xml:space="preserve"><value>Casino</value></data>
+  <data name="Item.room-garden" xml:space="preserve"><value>Wintergarten</value></data>
+  <data name="Item.room-montecarlo" xml:space="preserve"><value>Monte Carlo</value></data>
+  <data name="Item.room-saloon" xml:space="preserve"><value>Western-Saloon</value></data>
+  <data name="Item.room-space" xml:space="preserve"><value>Raumstation</value></data>
+  <data name="Item.room-vegas" xml:space="preserve"><value>Las Vegas bei Nacht</value></data>
   <data name="Learn.Back" xml:space="preserve"><value>Zurück</value></data>
   <data name="Learn.BestHand" xml:space="preserve"><value>Beste Hand: {0}</value></data>
   <data name="Learn.Board" xml:space="preserve"><value>Gemeinschaftskarten</value></data>
@@ -414,12 +478,17 @@ Passen – aussteigen. Deine Chips im Pot sind dann weg.</value></data>
   <data name="Shop.Exchange.Yes" xml:space="preserve"><value>Ja, tauschen</value></data>
   <data name="Shop.Exchanged" xml:space="preserve"><value>Getauscht: {0:N0} Chips → {1:N0} 👑</value></data>
   <data name="Shop.GuestNote" xml:space="preserve"><value>Als Gast gehen Käufe und Kronen beim Neuladen verloren. Melde dich an, um sie zu behalten.</value></data>
+  <data name="Shop.NoCharm" xml:space="preserve"><value>kein Glücksbringer</value></data>
   <data name="Shop.PageTitle" xml:space="preserve"><value>Shop – Chip Royale</value></data>
   <data name="Shop.Tab.Achievements" xml:space="preserve"><value>🏅 Erfolge</value></data>
   <data name="Shop.Tab.Avatar" xml:space="preserve"><value>😎 Avatare</value></data>
   <data name="Shop.Tab.CardBack" xml:space="preserve"><value>🂠 Kartenrückseiten</value></data>
+  <data name="Shop.Tab.CardFront" xml:space="preserve"><value>🃏 Kartendecks</value></data>
+  <data name="Shop.Tab.Charm" xml:space="preserve"><value>🍀 Glücksbringer</value></data>
   <data name="Shop.Tab.Chips" xml:space="preserve"><value>🪙 Chips</value></data>
   <data name="Shop.Tab.Felt" xml:space="preserve"><value>🟩 Filz</value></data>
+  <data name="Shop.Tab.Rail" xml:space="preserve"><value>🪵 Tischrand</value></data>
+  <data name="Shop.Tab.Room" xml:space="preserve"><value>🏛️ Raum</value></data>
   <data name="Shop.Title1" xml:space="preserve"><value>Style-</value></data>
   <data name="Shop.Title2" xml:space="preserve"><value>Shop</value></data>
   <data name="Sng.BuyIn" xml:space="preserve"><value>Buy-in {0:N0}</value></data>

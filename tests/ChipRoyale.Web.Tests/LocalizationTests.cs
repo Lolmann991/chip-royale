@@ -111,6 +111,18 @@ public partial class LocalizationTests
         Assert.Empty(mismatched);
     }
 
+    [Fact]
+    public void Every_shop_item_has_a_style()
+    {
+        var css = File.ReadAllText(Path.Combine(WebDir(), "wwwroot", "css", "game.css"));
+        var missing = ShopCatalog.All
+            .Where(i => i.Category is not (ItemCategory.Avatar or ItemCategory.Charm) || i.Pixel)
+            .Where(i => !Regex.IsMatch(css, $@"\.{Regex.Escape(i.Id)}\b"))
+            .Select(i => i.Id)
+            .ToList();
+        Assert.Empty(missing);
+    }
+
     // String literals that look like our resource keys, e.g. "Table.Fold" or "Guest".
     [GeneratedRegex("\"((?:Table|Lobby|Board|Learn|Hand|HandRankings|Over|Tip|Nav|Error|Common|Name|Mini|Action|Rank|Difficulty|Stake|Seat|Account|Sng|Shop|Ach|Item|Validation|IdentityError|Manage|Stats)\\.[A-Za-z0-9.]+|Guest|DefaultName)\"")]
     private static partial Regex KeyLiteral();

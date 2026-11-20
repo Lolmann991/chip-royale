@@ -109,8 +109,25 @@
                                             <PlayingCard Card="null" FaceUp="false" Size="lg" Deal="false" Style="transform: rotate(6deg); margin-left: -2.5em" />
                                         </div>
                                         break;
+                                    case ItemCategory.CardFront:
+                                        <div class="@item.Id preview-deck">
+                                            @foreach (var c in PreviewCards)
+                                            {
+                                                <PlayingCard Card="c" Size="sm" Deal="false" />
+                                            }
+                                        </div>
+                                        break;
                                     case ItemCategory.Felt:
                                         <div class="felt-swatch @item.Id"></div>
+                                        break;
+                                    case ItemCategory.Rail:
+                                        <div class="rail-swatch @item.Id"></div>
+                                        break;
+                                    case ItemCategory.Room:
+                                        <div class="room-swatch @item.Id"></div>
+                                        break;
+                                    case ItemCategory.Charm:
+                                        <div class="charm-swatch @(item.Glyph is null ? "none" : "")">@(item.Glyph ?? L("Shop.NoCharm"))</div>
                                         break;
                                     case ItemCategory.Avatar:
                                         <div class="shop-avatar avatar @(item.Pixel ? item.Id : "")" style="--hue:45">@item.Glyph</div>
@@ -148,7 +165,10 @@
 </div>
 
 @code {
-    private static readonly string[] Tabs = [nameof(ItemCategory.CardBack), nameof(ItemCategory.Felt), nameof(ItemCategory.Avatar), nameof(ItemCategory.Chips), "Achievements"];
+    private static readonly string[] Tabs = [.. Enum.GetNames<ItemCategory>(), "Achievements"];
+
+    private static readonly ChipRoyale.Engine.Cards.Card[] PreviewCards =
+        [.. ChipRoyale.Engine.Cards.Card.ParseMany("As Kh Td 7c")];
 
     private bool loaded;
     private string current = Tabs[0];

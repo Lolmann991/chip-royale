@@ -3,14 +3,22 @@ namespace ChipRoyale.Engine.Economy;
 public enum ItemCategory
 {
     CardBack,
+    /// <summary>Card fronts (the whole deck: colours, font, background).</summary>
+    CardFront,
     Felt,
+    /// <summary>The padded edge of the table.</summary>
+    Rail,
+    /// <summary>The room around the table (page background).</summary>
+    Room,
+    /// <summary>Lucky charm standing next to your seat.</summary>
+    Charm,
     Avatar,
     Chips,
 }
 
 /// <param name="Id">Unique id; also the CSS class that applies the style.</param>
 /// <param name="Price">Price in crowns (0 = free default of its category).</param>
-/// <param name="Glyph">Emoji for avatars (null for the pixel avatar, drawn by CSS).</param>
+/// <param name="Glyph">Emoji for avatars and charms (null for pixel avatars drawn by CSS, and for "no charm").</param>
 public sealed record ShopItem(string Id, ItemCategory Category, int Price, bool Pixel = false, string? Glyph = null)
 {
     public bool IsDefault => Price == 0;
@@ -20,30 +28,102 @@ public static class ShopCatalog
 {
     public static readonly IReadOnlyList<ShopItem> All =
     [
+        // ---- card backs
         new("cb-classic", ItemCategory.CardBack, 0),
         new("cb-royal", ItemCategory.CardBack, 5),
         new("cb-emerald", ItemCategory.CardBack, 5),
+        new("cb-sakura", ItemCategory.CardBack, 6),
+        new("cb-tartan", ItemCategory.CardBack, 8),
+        new("cb-harlequin", ItemCategory.CardBack, 8),
+        new("cb-seigaiha", ItemCategory.CardBack, 10),
+        new("cb-mosaic", ItemCategory.CardBack, 10),
+        new("cb-bauhaus", ItemCategory.CardBack, 12),
+        new("cb-lineart", ItemCategory.CardBack, 12),
         new("cb-midnight", ItemCategory.CardBack, 12),
+        new("cb-victorian", ItemCategory.CardBack, 14),
+        new("cb-mandala", ItemCategory.CardBack, 15),
+        new("cb-circuit", ItemCategory.CardBack, 15),
+        new("cb-aurora", ItemCategory.CardBack, 18),
+        new("cb-galaxy", ItemCategory.CardBack, 18),
+        new("cb-synthwave", ItemCategory.CardBack, 20),
+        new("cb-marble", ItemCategory.CardBack, 22),
+        new("cb-gatsby", ItemCategory.CardBack, 25),
         new("cb-pixel-heart", ItemCategory.CardBack, 15, Pixel: true),
         new("cb-pixel-crown", ItemCategory.CardBack, 20, Pixel: true),
+        new("cb-pixel-space", ItemCategory.CardBack, 22, Pixel: true),
 
+        // ---- card fronts (decks)
+        new("deck-classic", ItemCategory.CardFront, 0),
+        new("deck-fourcolor", ItemCategory.CardFront, 8),
+        new("deck-jumbo", ItemCategory.CardFront, 8),
+        new("deck-vintage", ItemCategory.CardFront, 14),
+        new("deck-noir", ItemCategory.CardFront, 16),
+        new("deck-neon", ItemCategory.CardFront, 20),
+        new("deck-gold", ItemCategory.CardFront, 25),
+        new("deck-pixel", ItemCategory.CardFront, 18, Pixel: true),
+
+        // ---- felts
         new("felt-default", ItemCategory.Felt, 0),
         new("felt-ocean", ItemCategory.Felt, 8),
         new("felt-purple", ItemCategory.Felt, 8),
+        new("felt-burgundy", ItemCategory.Felt, 8),
+        new("felt-sand", ItemCategory.Felt, 10),
         new("felt-midnight", ItemCategory.Felt, 12),
+        new("felt-galaxy", ItemCategory.Felt, 20),
         new("felt-pixel", ItemCategory.Felt, 25, Pixel: true),
 
+        // ---- table rails
+        new("rail-wood", ItemCategory.Rail, 0),
+        new("rail-oak", ItemCategory.Rail, 10),
+        new("rail-leather", ItemCategory.Rail, 12),
+        new("rail-marble", ItemCategory.Rail, 20),
+        new("rail-gold", ItemCategory.Rail, 25),
+        new("rail-neon", ItemCategory.Rail, 25),
+
+        // ---- rooms
+        new("room-casino", ItemCategory.Room, 0),
+        new("room-saloon", ItemCategory.Room, 15),
+        new("room-garden", ItemCategory.Room, 15),
+        new("room-montecarlo", ItemCategory.Room, 22),
+        new("room-vegas", ItemCategory.Room, 25),
+        new("room-space", ItemCategory.Room, 30),
+
+        // ---- lucky charms
+        new("charm-none", ItemCategory.Charm, 0),
+        new("charm-clover", ItemCategory.Charm, 4, Glyph: "🍀"),
+        new("charm-coffee", ItemCategory.Charm, 4, Glyph: "☕"),
+        new("charm-dice", ItemCategory.Charm, 5, Glyph: "🎲"),
+        new("charm-duck", ItemCategory.Charm, 6, Glyph: "🦆"),
+        new("charm-cactus", ItemCategory.Charm, 6, Glyph: "🌵"),
+        new("charm-mocktail", ItemCategory.Charm, 7, Glyph: "🍹"),
+        new("charm-pig", ItemCategory.Charm, 8, Glyph: "🐷"),
+        new("charm-cat", ItemCategory.Charm, 10, Glyph: "🐈‍⬛"),
+        new("charm-crystal", ItemCategory.Charm, 12, Glyph: "🔮"),
+        new("charm-trophy", ItemCategory.Charm, 14, Glyph: "🏆"),
+        new("charm-dragon", ItemCategory.Charm, 15, Glyph: "🐉"),
+
+        // ---- avatars
         new("av-default", ItemCategory.Avatar, 0, Glyph: "😎"),
         new("av-cowboy", ItemCategory.Avatar, 3, Glyph: "🤠"),
+        new("av-frog", ItemCategory.Avatar, 3, Glyph: "🐸"),
         new("av-robot", ItemCategory.Avatar, 5, Glyph: "🤖"),
+        new("av-ghost", ItemCategory.Avatar, 5, Glyph: "👻"),
+        new("av-octopus", ItemCategory.Avatar, 6, Glyph: "🐙"),
         new("av-alien", ItemCategory.Avatar, 8, Glyph: "👽"),
+        new("av-lion", ItemCategory.Avatar, 8, Glyph: "🦁"),
         new("av-unicorn", ItemCategory.Avatar, 10, Glyph: "🦄"),
+        new("av-ninja", ItemCategory.Avatar, 10, Glyph: "🥷"),
+        new("av-vampire", ItemCategory.Avatar, 10, Glyph: "🧛"),
         new("av-wizard", ItemCategory.Avatar, 12, Glyph: "🧙"),
+        new("av-dragon", ItemCategory.Avatar, 12, Glyph: "🐲"),
         new("av-king", ItemCategory.Avatar, 15, Glyph: "🤴"),
         new("av-pixel", ItemCategory.Avatar, 20, Pixel: true),
 
+        // ---- chips
         new("chips-classic", ItemCategory.Chips, 0),
+        new("chips-pastel", ItemCategory.Chips, 8),
         new("chips-neon", ItemCategory.Chips, 10),
+        new("chips-ruby", ItemCategory.Chips, 12),
         new("chips-gold", ItemCategory.Chips, 15),
         new("chips-pixel", ItemCategory.Chips, 15, Pixel: true),
     ];

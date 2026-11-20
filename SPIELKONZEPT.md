@@ -22,8 +22,8 @@ Browser-Pokerspiel (Blazor Server) gegen KI-Gegner mit Chip-Progression, freisch
 - **Style-Shop** (mit Kronen; der 3D-Look ist der Grundstil, Pixel-Art-Designs sind freischaltbare Extras):
   - Kartenrückseiten
   - Kartenvorderseiten / Deck-Designs
-  - Tisch / Spielfeld
-  - Avatare & Chip-Designs
+  - Filz, Tischrand und Raum (Hintergrund)
+  - Glücksbringer, Avatare & Chip-Designs
 
 ## 3. KI & Schwierigkeit
 
@@ -116,6 +116,8 @@ Reihenfolge = Umsetzungsreihenfolge.
 **Erledigt außer der Reihe**
 - [x] Konto-Seiten (Anmelden, Registrieren, Kontoverwaltung) im Spiel-Design, Fehlermeldungen DE/EN, einfache Passwortregeln (mind. 6 Zeichen)
 - [x] Datenbank im Benutzerordner (Windows: `%LOCALAPPDATA%\ChipRoyale`), damit ein Update Konten nicht löscht; alte `Data\app.db` wird beim ersten Start übernommen
+
+- [x] Mehr Deko im Shop (80 Artikel): 22 Kartenrückseiten (u. a. Art déco, Bauhaus, Japanische Wellen, Mandala, Synthwave, Marmor, Line Art, Pixel), 8 Kartendecks (Vier-Farben-Poker-Deck, Jumbo, Vintage, Noir, Neon, Gold, Pixel), 8 Filze, 6 Tischränder, 6 Räume, 11 Glücksbringer neben dem eigenen Platz, 15 Avatare, 6 Chip-Designs; Erfolge „Sammler“ und „Trendsetter“
 
 **Ideen für V2.x** (nach Omaha / Five Card Draw)
 - [ ] Gegner mit Persönlichkeit: Spielstil-Etikett (z. B. „Calling Station“, „Bluffer“) und kurze Sprüche in der Sprechblase

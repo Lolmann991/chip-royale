@@ -22,25 +22,27 @@ public sealed record GameEvent
 }
 
 /// <param name="Reward">Crowns paid out when unlocked.</param>
-public sealed record Achievement(string Id, string Icon, int Reward, Func<GameEvent, Bankroll, bool> Condition);
+public sealed record Achievement(string Id, string Icon, int Reward, Func<GameEvent, Bankroll, PlayerCollection, bool> Condition);
 
 public static class Achievements
 {
     public static readonly IReadOnlyList<Achievement> All =
     [
-        new("first-win", "🥇", 2, (e, _) => e.HandWon),
-        new("hands-100", "🃏", 5, (_, b) => b.HandsPlayed >= 100),
-        new("hands-500", "🗂️", 15, (_, b) => b.HandsPlayed >= 500),
-        new("full-house", "🏠", 3, (e, _) => e.HandWon && e.WinningHand >= HandCategory.FullHouse),
-        new("quads", "🍀", 8, (e, _) => e.HandWon && e.WinningHand >= HandCategory.FourOfAKind),
-        new("straight-flush", "🌈", 20, (e, _) => e.HandWon && e.WinningHand >= HandCategory.StraightFlush),
-        new("big-pot", "💰", 5, (e, _) => e.HandWon && e.Pot >= 5000),
-        new("table-cleared", "🧹", 10, (e, b) => e.TableCleared || b.TablesCleared > 0),
-        new("sng-cash", "🎯", 5, (e, _) => e.TournamentPlace is 1 or 2),
-        new("sng-win", "🏆", 15, (e, b) => e.TournamentPlace == 1 || b.TournamentsWon > 0),
-        new("rich", "💎", 10, (_, b) => b.Total >= 10_000),
-        new("student", "🎓", 5, (e, _) => e.LessonsCompleted),
-        new("busted", "💸", 2, (_, b) => b.Busts > 0),
+        new("first-win", "🥇", 2, (e, _, _) => e.HandWon),
+        new("hands-100", "🃏", 5, (_, b, _) => b.HandsPlayed >= 100),
+        new("hands-500", "🗂️", 15, (_, b, _) => b.HandsPlayed >= 500),
+        new("full-house", "🏠", 3, (e, _, _) => e.HandWon && e.WinningHand >= HandCategory.FullHouse),
+        new("quads", "🍀", 8, (e, _, _) => e.HandWon && e.WinningHand >= HandCategory.FourOfAKind),
+        new("straight-flush", "🌈", 20, (e, _, _) => e.HandWon && e.WinningHand >= HandCategory.StraightFlush),
+        new("big-pot", "💰", 5, (e, _, _) => e.HandWon && e.Pot >= 5000),
+        new("table-cleared", "🧹", 10, (e, b, _) => e.TableCleared || b.TablesCleared > 0),
+        new("sng-cash", "🎯", 5, (e, _, _) => e.TournamentPlace is 1 or 2),
+        new("sng-win", "🏆", 15, (e, b, _) => e.TournamentPlace == 1 || b.TournamentsWon > 0),
+        new("rich", "💎", 10, (_, b, _) => b.Total >= 10_000),
+        new("student", "🎓", 5, (e, _, _) => e.LessonsCompleted),
+        new("busted", "💸", 2, (_, b, _) => b.Busts > 0),
+        new("collector", "🧺", 10, (_, _, c) => c.Owned.Count >= 10),
+        new("trendsetter", "✨", 15, (_, _, c) => Enum.GetValues<ItemCategory>().All(cat => !c.Equipped(cat).IsDefault)),
     ];
 
     public static Achievement? Find(string id) => All.FirstOrDefault(a => a.Id == id);
@@ -52,7 +54,7 @@ public static class Achievements
         var unlocked = new List<Achievement>();
         foreach (var a in All)
         {
-            if (collection.Achievements.Contains(a.Id) || !a.Condition(e, bankroll)) continue;
+            if (collection.Achievements.Contains(a.Id) || !a.Condition(e, bankroll, collection)) continue;
             collection.Unlock(a.Id);
             bankroll.AddCrowns(a.Reward);
             unlocked.Add(a);

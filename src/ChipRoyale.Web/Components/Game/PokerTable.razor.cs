@@ -26,6 +26,9 @@ public partial class PokerTable
     /// <summary>Name and avatar of the player (equipped shop avatar).</summary>
     [Parameter] public SeatLook? HeroLook { get; set; }
 
+    /// <summary>Emoji of the player's lucky charm on the table (shop item), or null.</summary>
+    [Parameter] public string? Charm { get; set; }
+
     // Seat slots around the oval (percent of the table box).
     private static readonly (double X, double Y)[] SlotPos = [(50, 101), (2.5, 66), (17, 7), (50, -1), (83, 7), (97.5, 66)];
     private static readonly int[][] SlotMap = [[], [], [0, 3], [0, 2, 4], [0, 1, 3, 5], [0, 1, 2, 4, 5], [0, 1, 2, 3, 4, 5]];
