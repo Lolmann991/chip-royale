@@ -46,7 +46,7 @@ export function init(dotnetRef) {
         if (e.target instanceof HTMLInputElement && e.target.type !== "range") return;
         if (e.ctrlKey || e.metaKey || e.altKey) return;
         const key = e.key.length === 1 ? e.key.toLowerCase() : e.key;
-        if (["f", "c", "r", "a", " ", "ArrowUp", "ArrowDown", "Enter"].includes(key)) {
+        if (["f", "c", "r", "a", "h", "s", "d", "p", " ", "ArrowUp", "ArrowDown", "Enter"].includes(key)) {
             if (key === " " || key.startsWith("Arrow")) e.preventDefault();
             dotnet?.invokeMethodAsync("Hotkey", key).catch(() => { });
         }
