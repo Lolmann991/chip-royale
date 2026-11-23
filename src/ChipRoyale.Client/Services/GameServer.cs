@@ -22,15 +22,21 @@ public sealed class GameServer(HttpClient http, BrowserStorage storage, IConfigu
     private AuthTokens? tokens;
     private bool initialized;
 
-    /// <summary>Server address, e.g. http://localhost:5132 ("" = same address as the game).</summary>
+    /// <summary>Value of <see cref="BaseUrl"/> meaning "no server": the game runs offline (e.g. on GitHub Pages).</summary>
+    public const string NoServer = "none";
+
+    /// <summary>Server address, e.g. http://localhost:5132 ("" = same address as the game, "none" = no server).</summary>
     public string BaseUrl { get; private set; } = "";
+
+    /// <summary>False when no server is set up: nothing is requested, the game starts offline.</summary>
+    public bool HasServer => !string.Equals(BaseUrl, NoServer, StringComparison.OrdinalIgnoreCase);
 
     public bool IsOnline { get; private set; }
     public bool IsLoggedIn => tokens is not null;
     public string? Email => tokens?.Email;
 
     /// <summary>Address shown to the player (the page's own address when BaseUrl is empty).</summary>
-    public string DisplayUrl => string.IsNullOrEmpty(BaseUrl) ? http.BaseAddress?.GetLeftPart(UriPartial.Authority) ?? "" : BaseUrl;
+    public string DisplayUrl => !HasServer ? "" : string.IsNullOrEmpty(BaseUrl) ? http.BaseAddress?.GetLeftPart(UriPartial.Authority) ?? "" : BaseUrl;
 
     public async Task InitializeAsync()
     {
@@ -44,6 +50,7 @@ public sealed class GameServer(HttpClient http, BrowserStorage storage, IConfigu
     /// <summary>Pings the server (2.5 s timeout) and updates <see cref="IsOnline"/>.</summary>
     public async Task<bool> CheckAsync()
     {
+        if (!HasServer) return IsOnline = false;
         try
         {
             using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(2.5));
@@ -59,7 +66,9 @@ public sealed class GameServer(HttpClient http, BrowserStorage storage, IConfigu
 
     public async Task SetBaseUrlAsync(string url)
     {
-        BaseUrl = url.Trim().TrimEnd('/');
+        url = url.Trim().TrimEnd('/');
+        // An empty field means "no server" wherever the page comes from GitHub Pages and the like.
+        BaseUrl = url.Length == 0 && config["ApiBaseUrl"] == NoServer ? NoServer : url;
         await storage.SetStringAsync(ServerKey, BaseUrl);
         await CheckAsync();
     }

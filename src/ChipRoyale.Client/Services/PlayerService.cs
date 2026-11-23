@@ -38,6 +38,9 @@ public sealed class PlayerService(GameServer server, BrowserStorage storage)
     public string? Email => server.Email;
     public string ServerUrl => server.DisplayUrl;
 
+    /// <summary>A server address is set up (otherwise the game is offline on purpose).</summary>
+    public bool HasServer => server.HasServer;
+
     /// <summary>The server went away during this session; progress is no longer saved until reloading.</summary>
     public bool ConnectionLost => connectionLost;
 

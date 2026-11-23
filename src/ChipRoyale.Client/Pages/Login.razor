@@ -46,7 +46,7 @@
                     <a href="register">@L("Account.Login.RegisterNew")</a>
                     <a href="">@L("Account.PlayAsGuest")</a>
                 </div>
-                <p class="note">@L("Account.ServerNote", Player.ServerUrl)</p>
+                <p class="note">@(Player.HasServer ? L("Account.ServerNote", Player.ServerUrl) : L("Account.NoServer"))</p>
             </div>
         </main>
     </div>
