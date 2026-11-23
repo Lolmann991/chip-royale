@@ -43,8 +43,7 @@
     /// <summary>Server found or lost, login, logout: show the lobby with the new profile.</summary>
     private void OnPlayerChanged()
     {
-        if (settings is not null) return;
-        lobbyKey++;
+        if (settings is null) lobbyKey++;
         InvokeAsync(StateHasChanged);
     }
 

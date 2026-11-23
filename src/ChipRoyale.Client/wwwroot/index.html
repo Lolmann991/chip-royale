@@ -35,6 +35,35 @@
             storageGet: (k) => { try { return localStorage.getItem(k); } catch { return null; } },
             storageSet: (k, v) => { try { localStorage.setItem(k, v); } catch { } },
             storageRemove: (k) => { try { localStorage.removeItem(k); } catch { } },
+            // Developer console: ^ (key left of 1) or F2 opens and closes it.
+            devConsole: {
+                ref: null,
+                onKey: null,
+                init(ref) {
+                    this.dispose();
+                    this.ref = ref;
+                    this.onKey = (e) => {
+                        const toggle = e.code === "Backquote" || e.key === "F2";
+                        const inConsole = e.target && e.target.id === "devcon-input";
+                        if (inConsole && ["Tab", "ArrowUp", "ArrowDown"].includes(e.key)) e.preventDefault();
+                        if (!toggle) return;
+                        const typing = !inConsole && e.target && (e.target.isContentEditable
+                            || (e.target.tagName === "INPUT" && e.target.type !== "range") || e.target.tagName === "TEXTAREA");
+                        if (typing && e.key !== "F2") return;
+                        e.preventDefault();
+                        e.stopPropagation();
+                        this.ref?.invokeMethodAsync("Toggle").catch(() => { });
+                    };
+                    document.addEventListener("keydown", this.onKey, true);
+                },
+                dispose() {
+                    if (this.onKey) document.removeEventListener("keydown", this.onKey, true);
+                    this.onKey = null;
+                    this.ref = null;
+                },
+                scroll() { const o = document.getElementById("devcon-out"); if (o) o.scrollTop = o.scrollHeight; },
+                focus() { document.getElementById("devcon-input")?.focus(); },
+            },
         };
     </script>
     <script src="_framework/blazor.webassembly.js"></script>

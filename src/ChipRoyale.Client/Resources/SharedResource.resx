@@ -83,6 +83,7 @@
   <data name="Action.Fold" xml:space="preserve"><value>Passt</value></data>
   <data name="Action.Raise" xml:space="preserve"><value>Erhöht auf {0:N0}</value></data>
   <data name="Board.Back" xml:space="preserve"><value>← Zum Spiel</value></data>
+  <data name="Board.DevTools" xml:space="preserve"><value>Mit Entwickler-Befehlen verändert</value></data>
   <data name="Board.Empty" xml:space="preserve"><value>Noch niemand auf der Liste. Melde dich an und spiel eine Runde – dann stehst du hier ganz oben!</value></data>
   <data name="Board.Hand" xml:space="preserve"><value>1 Hand</value></data>
   <data name="Board.Hands" xml:space="preserve"><value>{0:N0} Hände</value></data>
@@ -118,6 +119,24 @@
   <data name="Conn.Server" xml:space="preserve"><value>Server-Adresse</value></data>
   <data name="Conn.ServerHint" xml:space="preserve"><value>Leer lassen, wenn das Spiel vom Server selbst kommt. Für den Server aus dem ZIP: http://localhost:5132</value></data>
   <data name="DefaultName" xml:space="preserve"><value>Spieler{0}</value></data>
+  <data name="Dev.Close" xml:space="preserve"><value>Schließen (^ / F2 / Esc)</value></data>
+  <data name="Dev.Cmd.Clear" xml:space="preserve"><value>Ausgabe leeren</value></data>
+  <data name="Dev.Cmd.Close" xml:space="preserve"><value>Konsole schließen</value></data>
+  <data name="Dev.Cmd.Help" xml:space="preserve"><value>Diese Hilfe</value></data>
+  <data name="Dev.Cmd.Server" xml:space="preserve"><value>Server-Adresse setzen (none = ohne Server)</value></data>
+  <data name="Dev.Cmd.Status" xml:space="preserve"><value>Modus, Server und Konto anzeigen</value></data>
+  <data name="Dev.Help.Categories" xml:space="preserve"><value>Kategorien: {0} (auch deutsch: filz, rand, raum, deck, rückseite, glücksbringer)</value></data>
+  <data name="Dev.Help.Console" xml:space="preserve"><value>Konsole</value></data>
+  <data name="Dev.Help.Profile" xml:space="preserve"><value>Profil</value></data>
+  <data name="Dev.Marked" xml:space="preserve"><value>Hinweis: Profile, die mit Dev-Befehlen verändert wurden, tragen 🛠 in der Rangliste.</value></data>
+  <data name="Dev.NoAccount" xml:space="preserve"><value>nicht angemeldet</value></data>
+  <data name="Dev.NotInGame" xml:space="preserve"><value>Erst den Tisch bzw. das Turnier verlassen.</value></data>
+  <data name="Dev.ServerSet" xml:space="preserve"><value>Server: {0} → {1}</value></data>
+  <data name="Dev.Status" xml:space="preserve"><value>Modus: {0} · Server: {1} · Konto: {2}</value></data>
+  <data name="Dev.Target.Local" xml:space="preserve"><value>Änderungen gehen an das Profil in diesem Browser</value></data>
+  <data name="Dev.Target.Server" xml:space="preserve"><value>Änderungen gehen an dein Konto in der Datenbank</value></data>
+  <data name="Dev.Title" xml:space="preserve"><value>Entwickler-Konsole</value></data>
+  <data name="Dev.Welcome" xml:space="preserve"><value>Befehle eingeben – „help“ zeigt alle. Öffnen/Schließen: ^ oder F2 · Tab ergänzt · ↑/↓ Verlauf.</value></data>
   <data name="Difficulty.Easy" xml:space="preserve"><value>Leicht</value></data>
   <data name="Difficulty.Easy.Text" xml:space="preserve"><value>Spendable Gegner, die gute Hände auszahlen. Tipps sind an.</value></data>
   <data name="Difficulty.Hard" xml:space="preserve"><value>Schwer</value></data>

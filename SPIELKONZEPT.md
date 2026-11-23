@@ -136,6 +136,49 @@ Reihenfolge = Umsetzungsreihenfolge.
 - [x] Windows-ZIP mit Server + Datenbank (Datenbank neben dem Server, übersteht Updates)
 - [ ] Server ins Internet stellen (dann auch für Freunde ohne eigenen Server) – Ergebnisse vom Server prüfen lassen
 
+### Entwickler-Konsole (umgesetzt)
+- [x] Öffnen mit `^` (Taste links neben der 1) oder `F2`, auf jeder Seite; Tab ergänzt, ↑/↓ Verlauf, Esc schließt
+- [x] Befehle: `chips`, `crowns`, `unlock`, `lock`, `equip`, `items`, `achieve`, `unachieve`, `achievements`, `stats`, `reset confirm`, dazu `help`, `clear`, `status`, `server`
+- [x] Online gegen die Datenbank (Server-Schalter `DevConsole:Enabled`, optional nur für `DevConsole:Admins`), offline gegen das Browser-Profil
+- [x] Veränderte Profile tragen 🛠 in der Rangliste
+
+### Mehrspieler mit Freunden (Plan)
+
+**Ziel:** Einen privaten Tisch erstellen, Link an Freunde schicken, zusammen spielen – über den eigenen Server.
+
+**Ablauf für Spieler**
+1. Lobby → „Mit Freunden spielen“ → Tisch einstellen (Blinds, Startstack, Plätze 2–6, freie Plätze mit Bots füllen ja/nein).
+2. Der Server erzeugt einen Tisch-Code (z. B. `K7P2QX`) und einen Einladungslink:
+   `https://lolmann991.github.io/chip-royale/tisch/K7P2QX?server=<Server-Adresse>`
+   (der Link enthält die Server-Adresse – Freunde brauchen nichts einzustellen).
+3. Freunde öffnen den Link, melden sich an (oder spielen als Gast mit Namen), setzen sich.
+4. Der Gastgeber startet; Wartezimmer zeigt, wer da ist. Rematch mit einem Klick.
+
+**Technik**
+- **Server entscheidet alles** (server-authoritative): Der Tisch (`HoldemTable` aus der Engine) läuft auf dem Server, nicht im Browser. Jeder bekommt nur seine eigenen Karten zu sehen – sonst könnte man mogeln.
+- **Echtzeit mit SignalR** (WebSockets): `TableHub` mit `Create`, `Join`, `Sit`, `Act`, `Leave`, `Chat`; der Server schickt Ereignisse (Karten ausgeteilt, Aktion, Pot, Showdown) an alle am Tisch.
+- **Bots** laufen ebenfalls auf dem Server (vorhandene `BotBrain`).
+- **Zeitlimit** pro Zug (z. B. 30 s, danach Check/Passen), **Verbindungsabbruch**: Platz bleibt 60 s reserviert, Hände werden automatisch gepasst, Wiederverbinden setzt fort.
+- **Client**: neuer „Remote“-Modus der Tischansicht – bestehende Bausteine (Sitzplätze, Karten, Chips, Animationen, Einsatz-Steuerung) bleiben, nur der Spielablauf kommt vom Server statt aus der lokalen Schleife.
+- **Erreichbarkeit**: Freunde müssen den Server per **HTTPS** erreichen (GitHub Pages ist HTTPS; `localhost` gilt nur für den eigenen PC). Optionen:
+  - **Cloudflare Tunnel** (kostenlos, ohne Router-Einstellungen; Schnell-Tunnel mit wechselnder Adresse, feste Adresse mit eigener Domain),
+  - **Tailscale Funnel** (kostenlos, feste Adresse `name.tailnet.ts.net`),
+  - Router-Portfreigabe + DynDNS + Zertifikat (aufwendig),
+  - später: Server in der Cloud.
+  Das Startskript kann den Tunnel mitstarten und die Einladungsadresse anzeigen.
+- **Sicherheit**: Dev-Befehle an Mehrspieler-Tischen gesperrt; Rate-Limits; Tisch-Codes sind nicht erratbar (6 Zeichen ohne verwechselbare Buchstaben, ~1 Mrd. Kombinationen) und laufen ab.
+
+**Phasen**
+- [ ] **M1 – Freundschaftsspiel:** Privater Tisch per Code/Link, alle mit gleichem Startstack, Chips zählen nicht fürs Konto. 2–6 Menschen + optional Bots, Zeitlimit, Wiederverbinden, Wartezimmer, Rematch.
+- [ ] **M2 – Mit Konto-Chips:** Buy-in vom Konto, Auszahlen, Hände zählen für Statistik, Erfolge und Rangliste.
+- [ ] **M3 – Extras:** Sit & Go mit Freunden, Chat und Emotes, Zuschauer, Hand-Verlauf der Runde.
+- [ ] **M4 – Öffentlich:** offene Tische/Matchmaking (nur sinnvoll mit dauerhaft erreichbarem Server).
+
+**Offene Entscheidungen**
+- Erst Freundschaftsspiel (M1) oder direkt mit Konto-Chips?
+- Welcher Weg ins Internet: Cloudflare Tunnel oder Tailscale Funnel?
+- Dürfen Freunde ohne Konto (nur mit Namen) mitspielen?
+
 ### V3
 - Mehrspieler: gemeinsame Tische, private Tische, Turniere, Seed-Challenge
 - Balancing, Glücksfaktor der KI

@@ -1,3 +1,4 @@
+using ChipRoyale.Engine.Economy;
 using System.Linq.Expressions;
 using System.Security.Claims;
 using ChipRoyale.Server.Data;
@@ -104,6 +105,28 @@ api.MapPost(ApiRoutes.Equip, (ItemRequest r, ClaimsPrincipal user, ApplicationDb
 api.MapPost(ApiRoutes.Lessons, (ClaimsPrincipal user, ApplicationDbContext db) =>
     Mutate(user, db, ProfileOperations.LessonsCompleted));
 
+// Developer console: only if enabled in appsettings.json (DevConsole:Enabled), optionally only for some accounts.
+api.MapPost(ApiRoutes.Dev, async (DevRequest r, ClaimsPrincipal user, ApplicationDbContext db, IConfiguration config) =>
+{
+    var german = r.Lang != "en";
+    var (profile, state) = await LoadAsync(user, db);
+    var admins = config.GetSection("DevConsole:Admins").Get<string[]>() ?? [];
+    var email = user.FindFirstValue(ClaimTypes.Email) ?? user.Identity?.Name ?? "";
+    string? refused = !config.GetValue("DevConsole:Enabled", false)
+        ? (german ? "Der Server erlaubt keine Dev-Befehle (appsettings.json: DevConsole:Enabled = true)."
+                  : "This server does not allow developer commands (appsettings.json: DevConsole:Enabled = true).")
+        : admins.Length > 0 && !admins.Contains(email, StringComparer.OrdinalIgnoreCase)
+            ? (german ? "Dein Konto darf keine Dev-Befehle ausführen (DevConsole:Admins)." : "Your account may not run developer commands (DevConsole:Admins).")
+            : null;
+    if (refused is not null)
+        return Results.Ok(new DevResponse(new OperationResult([]).ToResponse(state), [refused], false));
+
+    var result = DevCommands.Execute(state, r.Command, german);
+    await SaveAsync(profile, state, db);
+    app.Logger.LogInformation("Dev command by {Email}: {Command}", email, r.Command);
+    return Results.Ok(new DevResponse(result.Operation.ToResponse(state), result.Output, result.Ok));
+});
+
 app.MapGet(ApiRoutes.Leaderboard, async (string? sort, ClaimsPrincipal user, ApplicationDbContext db) =>
 {
     var id = user.Identity?.IsAuthenticated == true ? UserId(user) : null;
@@ -138,6 +161,14 @@ static string UserId(ClaimsPrincipal user) =>
 
 static async Task<IResult> Mutate(ClaimsPrincipal user, ApplicationDbContext db, Func<PlayerState, OperationResult> operation)
 {
+    var (profile, state) = await LoadAsync(user, db);
+    var result = operation(state);
+    await SaveAsync(profile, state, db);
+    return Results.Ok(result.ToResponse(state));
+}
+
+static async Task<(PlayerProfile Profile, PlayerState State)> LoadAsync(ClaimsPrincipal user, ApplicationDbContext db)
+{
     var id = UserId(user);
     var profile = await db.Profiles.FirstOrDefaultAsync(p => p.UserId == id);
     if (profile is null)
@@ -145,21 +176,23 @@ static async Task<IResult> Mutate(ClaimsPrincipal user, ApplicationDbContext db,
         profile = new PlayerProfile { UserId = id, DisplayName = $"Spieler{Random.Shared.Next(1000, 10000)}" };
         db.Profiles.Add(profile);
     }
+    return (profile, new PlayerState(profile.DisplayName, profile.Bankroll, profile.LoadCollection()));
+}
 
-    var state = new PlayerState(profile.DisplayName, profile.Bankroll, profile.LoadCollection());
-    var result = operation(state);
+static async Task SaveAsync(PlayerProfile profile, PlayerState state, ApplicationDbContext db)
+{
     profile.DisplayName = state.DisplayName;
     profile.StoreCollection(state.Collection);
     profile.UpdatedAt = DateTime.UtcNow;
     await db.SaveChangesAsync();
-    return Results.Ok(result.ToResponse(state));
 }
 
 static LeaderboardEntry Entry(PlayerProfile p, int rank, bool isMe)
 {
     var b = p.Bankroll;
     return new LeaderboardEntry(rank, p.DisplayName, b.BestPeak, b.Total, b.Run, b.HandsPlayed, b.HandsWon,
-        b.TablesCleared, b.TournamentsPlayed, b.TournamentsWon, isMe);
+        b.TablesCleared, b.TournamentsPlayed, b.TournamentsWon, isMe,
+        DevTools: (p.UnlockedAchievements ?? "").Split(',').Contains(PlayerCollection.DevToolsMarker));
 }
 
 /// <summary>Marker for integration tests (WebApplicationFactory).</summary>

@@ -57,6 +57,15 @@ Die Lobby zeigt den Modus an. Das Spiel prüft den Server alle 8 Sekunden: Ein s
 Server wird automatisch genutzt, ein gestoppter schaltet in den Offline-Modus (nie mitten an einem
 Tisch, erst zurück in der Lobby). Über ⚙️ lässt sich die Server-Adresse ändern. Beide Wege nutzen dieselben Regeln (`ChipRoyale.Shared/ProfileOperations.cs`).
 
+## Entwickler-Konsole
+
+`^` (Taste links neben der 1) oder `F2` öffnet auf jeder Seite eine Konsole für Tests, z. B.
+`chips 250k`, `crowns +500`, `unlock all`, `unlock filz`, `equip felt-ocean`, `achieve all`, `stats`,
+`reset confirm` – `help` zeigt alle Befehle. Angemeldet ändert sie das Konto in der Datenbank
+(nur wenn `DevConsole:Enabled` in `src/ChipRoyale.Server/appsettings.json` an ist; mit
+`DevConsole:Admins` lässt sie sich auf bestimmte E-Mail-Adressen beschränken), sonst das Profil im
+Browser. Veränderte Profile tragen 🛠 in der Rangliste.
+
 ## GitHub Pages
 
 Der Workflow `.github/workflows/pages.yml` veröffentlicht den Client bei jedem Push auf `deployment`

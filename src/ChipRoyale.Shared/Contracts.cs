@@ -21,6 +21,7 @@ public static class ApiRoutes
     public const string Equip = "api/shop/equip";
     public const string Lessons = "api/lessons/complete";
     public const string Leaderboard = "api/leaderboard";
+    public const string Dev = "api/dev";
 }
 
 /// <summary>Everything the client needs to know about a player.</summary>
@@ -72,7 +73,8 @@ public sealed record LeaderboardEntry(
     int TablesCleared,
     int TournamentsPlayed,
     int TournamentsWon,
-    bool IsMe);
+    bool IsMe,
+    bool DevTools = false);
 
 public sealed record LeaderboardResponse(IReadOnlyList<LeaderboardEntry> Top, LeaderboardEntry? Me);
 

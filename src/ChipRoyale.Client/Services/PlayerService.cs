@@ -253,6 +253,50 @@ public sealed class PlayerService(GameServer server, BrowserStorage storage)
         return error;
     }
 
+    /// <summary>
+    /// Runs a developer console command on the profile: on the server when online (if the server
+    /// allows it), otherwise on the profile in this browser.
+    /// </summary>
+    public async Task<DevResult> DevAsync(string command)
+    {
+        var german = System.Globalization.CultureInfo.CurrentUICulture.TwoLetterISOLanguageName == "de";
+        pending++;
+        try
+        {
+            if (UsesServer)
+            {
+                try
+                {
+                    var response = await server.PostAsync<DevResponse>(ApiRoutes.Dev, new DevRequest(command, german ? "de" : "en"));
+                    if (response is null) return new DevResult(new OperationResult([]), [L("Error.Request")], false);
+                    Apply(response.Profile, keepNotices: true);
+                    Changed?.Invoke();
+                    return new DevResult(new OperationResult(response.Profile.Unlocked), response.Output, response.Ok);
+                }
+                catch (UnauthorizedAccessException)
+                {
+                    await ReloadAsync();
+                    return new DevResult(new OperationResult([]), [L("Account.SessionExpired")], false);
+                }
+                catch (Exception ex) when (ex is HttpRequestException or TaskCanceledException)
+                {
+                    connectionLost = true;
+                    Changed?.Invoke();
+                    return new DevResult(new OperationResult([]), [L("Conn.Lost")], false);
+                }
+            }
+
+            var result = DevCommands.Execute(state, command, german);
+            if (!connectionLost) await SaveLocalAsync();
+            Changed?.Invoke();
+            return result;
+        }
+        finally
+        {
+            pending--;
+        }
+    }
+
     public void DismissNotices()
     {
         StartedNewRun = false;
