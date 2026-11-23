@@ -43,7 +43,7 @@
                 {
                     <li class="lb-row @(row.IsMe ? "me" : "") @(row.Rank <= 3 ? $"top{row.Rank}" : "")">
                         <span class="lb-rank">@(row.Rank switch { 1 => "🥇", 2 => "🥈", 3 => "🥉", _ => row.Rank.ToString() })</span>
-                        <span class="lb-name">@row.Name@(row.IsMe ? L("Board.You") : "")</span>
+                        <span class="lb-name">@row.Name@(row.IsMe ? L("Board.You") : "")@if (row.DevTools) {<span class="lb-dev" title="@L("Board.DevTools")"> 🛠</span>}</span>
                         <span class="lb-main">@(Mode is "tische" or "turniere" ? "🏆 " : "● ")@Main(row).ToString("N0")</span>
                         <span class="lb-sub">@Describe(row)</span>
                     </li>

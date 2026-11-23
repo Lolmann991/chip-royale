@@ -26,6 +26,7 @@
   <data name="Account.Manage.Sub" xml:space="preserve"><value>Profile, email, password and security.</value></data>
   <data name="Account.Manage.Title" xml:space="preserve"><value>Your account</value></data>
   <data name="Account.NoEmailSender" xml:space="preserve"><value>This app does not have a real email sender yet. How to configure one:</value></data>
+  <data name="Account.NoServer" xml:space="preserve"><value>An account needs a server. Enter its address in the lobby via ⚙️ next to the connection status.</value></data>
   <data name="Account.Or" xml:space="preserve"><value>OR</value></data>
   <data name="Account.Password" xml:space="preserve"><value>Password</value></data>
   <data name="Account.PasswordHint" xml:space="preserve"><value>At least 6 characters.</value></data>
@@ -82,6 +83,7 @@
   <data name="Action.Fold" xml:space="preserve"><value>Folds</value></data>
   <data name="Action.Raise" xml:space="preserve"><value>Raises to {0:N0}</value></data>
   <data name="Board.Back" xml:space="preserve"><value>← Back to the game</value></data>
+  <data name="Board.DevTools" xml:space="preserve"><value>Changed with developer commands</value></data>
   <data name="Board.Empty" xml:space="preserve"><value>Nobody on the list yet. Log in and play a round – then you're right at the top!</value></data>
   <data name="Board.Hand" xml:space="preserve"><value>1 hand</value></data>
   <data name="Board.Hands" xml:space="preserve"><value>{0:N0} hands</value></data>
@@ -108,6 +110,7 @@
   <data name="Conn.Guest" xml:space="preserve"><value>Guest</value></data>
   <data name="Conn.Guest.Text" xml:space="preserve"><value>Server connected – log in to save your progress in the database. Until then it is saved in this browser.</value></data>
   <data name="Conn.Lost" xml:space="preserve"><value>Lost the connection to the server – what you play now is not saved. Click “Reconnect”.</value></data>
+  <data name="Conn.NoServer.Text" xml:space="preserve"><value>No server set up – you play offline, your progress is saved in this browser. Add your own server: ⚙️</value></data>
   <data name="Conn.Offline" xml:space="preserve"><value>Offline mode</value></data>
   <data name="Conn.Offline.Text" xml:space="preserve"><value>No server reachable – keep playing, your progress is saved in this browser.</value></data>
   <data name="Conn.Online" xml:space="preserve"><value>Online</value></data>
@@ -116,6 +119,24 @@
   <data name="Conn.Server" xml:space="preserve"><value>Server address</value></data>
   <data name="Conn.ServerHint" xml:space="preserve"><value>Leave empty if the game comes from the server itself. For the server from the ZIP: http://localhost:5132</value></data>
   <data name="DefaultName" xml:space="preserve"><value>Player{0}</value></data>
+  <data name="Dev.Close" xml:space="preserve"><value>Close (^ / F2 / Esc)</value></data>
+  <data name="Dev.Cmd.Clear" xml:space="preserve"><value>Clear the output</value></data>
+  <data name="Dev.Cmd.Close" xml:space="preserve"><value>Close the console</value></data>
+  <data name="Dev.Cmd.Help" xml:space="preserve"><value>This help</value></data>
+  <data name="Dev.Cmd.Server" xml:space="preserve"><value>Set the server address (none = no server)</value></data>
+  <data name="Dev.Cmd.Status" xml:space="preserve"><value>Show mode, server and account</value></data>
+  <data name="Dev.Help.Categories" xml:space="preserve"><value>Categories: {0}</value></data>
+  <data name="Dev.Help.Console" xml:space="preserve"><value>Console</value></data>
+  <data name="Dev.Help.Profile" xml:space="preserve"><value>Profile</value></data>
+  <data name="Dev.Marked" xml:space="preserve"><value>Note: profiles changed with developer commands show 🛠 on the leaderboard.</value></data>
+  <data name="Dev.NoAccount" xml:space="preserve"><value>not logged in</value></data>
+  <data name="Dev.NotInGame" xml:space="preserve"><value>Leave the table or tournament first.</value></data>
+  <data name="Dev.ServerSet" xml:space="preserve"><value>Server: {0} → {1}</value></data>
+  <data name="Dev.Status" xml:space="preserve"><value>Mode: {0} · Server: {1} · Account: {2}</value></data>
+  <data name="Dev.Target.Local" xml:space="preserve"><value>Changes go to the profile in this browser</value></data>
+  <data name="Dev.Target.Server" xml:space="preserve"><value>Changes go to your account in the database</value></data>
+  <data name="Dev.Title" xml:space="preserve"><value>Developer console</value></data>
+  <data name="Dev.Welcome" xml:space="preserve"><value>Type commands – "help" lists them all. Open/close: ^ or F2 · Tab completes · ↑/↓ history.</value></data>
   <data name="Difficulty.Easy" xml:space="preserve"><value>Easy</value></data>
   <data name="Difficulty.Easy.Text" xml:space="preserve"><value>Generous opponents who pay off good hands. Tips are on.</value></data>
   <data name="Difficulty.Hard" xml:space="preserve"><value>Hard</value></data>

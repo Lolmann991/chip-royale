@@ -2,6 +2,7 @@
 @layout GameLayout
 @using ChipRoyale.Engine.Economy
 @using ChipRoyale.Client.Services
+@implements IDisposable
 @inject PlayerService Player
 
 <PageTitle>@L("Shop.PageTitle")</PageTitle>
@@ -191,7 +192,13 @@
         await Player.LoadAsync();
         exchange = Math.Min(Player.Bankroll.ExchangeableChips, 10 * Bankroll.ExchangeRate);
         loaded = true;
+        Player.Changed += OnPlayerChanged;
     }
+
+    /// <summary>Profile changed elsewhere (server found or lost, developer console).</summary>
+    private void OnPlayerChanged() => InvokeAsync(StateHasChanged);
+
+    public void Dispose() => Player.Changed -= OnPlayerChanged;
 
     private void OnExchangeSlider(ChangeEventArgs e)
     {

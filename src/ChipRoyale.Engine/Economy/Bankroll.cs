@@ -61,6 +61,24 @@ public sealed class Bankroll
         TournamentsWon = s.TournamentsWon,
     };
 
+    /// <summary>Overwrites all values (developer console; also keeps an EF-tracked instance).</summary>
+    public void Restore(BankrollState s)
+    {
+        Chips = Math.Max(0, s.Chips);
+        TableChips = Math.Max(0, s.TableChips);
+        Run = Math.Max(1, s.Run);
+        RunPeak = Math.Max(0, s.RunPeak);
+        BestPeak = Math.Max(0, s.BestPeak);
+        HandsPlayed = Math.Max(0, s.HandsPlayed);
+        HandsWon = Math.Max(0, s.HandsWon);
+        BiggestPot = Math.Max(0, s.BiggestPot);
+        Busts = Math.Max(0, s.Busts);
+        TablesCleared = Math.Max(0, s.TablesCleared);
+        Crowns = Math.Max(0, s.Crowns);
+        TournamentsPlayed = Math.Max(0, s.TournamentsPlayed);
+        TournamentsWon = Math.Max(0, s.TournamentsWon);
+    }
+
     public static Bankroll New(int startingChips = TableStakes.StartingChips) => new()
     {
         Chips = startingChips,

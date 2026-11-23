@@ -1,9 +1,11 @@
 name: GitHub Pages
 
 # Publishes the Blazor WebAssembly client as a static site.
-# The game talks to a Chip Royale server (database) at CHIPROYALE_API_URL; without one it runs in offline mode.
-# Setup: Settings → Pages → Source: "GitHub Actions". Optional: Settings → Secrets and variables → Actions →
-# Variables → CHIPROYALE_API_URL (default http://localhost:5132 = the server from the ZIP on your own PC).
+# The game uses the Chip Royale server on the player's own PC (http://localhost:5132) as soon as it runs
+# (accounts and values from its database); without it the game runs in offline mode (progress in the browser).
+# Setup: Settings → Pages → Source: "GitHub Actions"; Settings → Environments → github-pages: allow this branch.
+# Optional: Settings → Secrets and variables → Actions → Variables → CHIPROYALE_API_URL = another server address
+# ("none" = never look for a server).
 
 on:
   push:

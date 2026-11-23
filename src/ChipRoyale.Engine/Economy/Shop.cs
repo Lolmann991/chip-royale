@@ -168,6 +168,31 @@ public sealed class PlayerCollection
     /// <returns>True if the achievement was new.</returns>
     public bool Unlock(string achievementId) => _achievements.Add(achievementId);
 
+    // ------------------------------------------------------------------ developer console
+
+    /// <summary>Stored with the achievements: this profile was changed with developer commands.</summary>
+    public const string DevToolsMarker = "dev-tools";
+
+    public bool UsedDevTools => _achievements.Contains(DevToolsMarker);
+
+    public void MarkDevTools() => _achievements.Add(DevToolsMarker);
+
+    /// <summary>Owns an item without paying for it.</summary>
+    /// <returns>True if it was new.</returns>
+    public bool Grant(ShopItem item) => !item.IsDefault && _owned.Add(item.Id);
+
+    /// <summary>Takes an item away (and puts the default of its category back on if it was worn).</summary>
+    /// <returns>True if it was owned.</returns>
+    public bool Revoke(ShopItem item)
+    {
+        if (!_owned.Remove(item.Id)) return false;
+        if (_equipped.TryGetValue(item.Category, out var id) && id == item.Id) _equipped.Remove(item.Category);
+        return true;
+    }
+
+    /// <returns>True if the achievement was unlocked.</returns>
+    public bool Relock(string achievementId) => achievementId != DevToolsMarker && _achievements.Remove(achievementId);
+
     // ------------------------------------------------------------------ storage as plain strings
 
     public string SerializeOwned() => string.Join(',', _owned.Order());

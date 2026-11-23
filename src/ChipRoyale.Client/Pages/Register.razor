@@ -57,7 +57,7 @@
                     <li>👑 @L("Account.Perk.Shop")</li>
                     <li>🏆 @L("Account.Perk.Board")</li>
                 </ul>
-                <p class="note">@L("Account.ServerNote", Player.ServerUrl)</p>
+                <p class="note">@(Player.HasServer ? L("Account.ServerNote", Player.ServerUrl) : L("Account.NoServer"))</p>
             </div>
         </main>
     </div>

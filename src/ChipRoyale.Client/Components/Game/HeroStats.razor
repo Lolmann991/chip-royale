@@ -39,14 +39,23 @@
         <span class="stat-note">@L(Opponents == 1 ? "Stats.VsOne" : "Stats.VsMany", Opponents)</span>
     </div>
 
+    @* Always two lines (placeholder when nothing has to be paid), so the panel keeps its height. *@
     @if (Legal is { ToCall: > 0 } legal)
     {
         var potOdds = legal.ToCall / (double)(legal.Pot + legal.ToCall);
         var worth = Odds.Equity >= potOdds;
-        <div class="stat-row @(worth ? "good" : "bad")">
+        <div class="stat-row pot @(worth ? "good" : "bad")">
             <span class="stat-label">@L("Stats.PotOdds")</span>
             <span>@L("Stats.PotOddsText", legal.ToCall, Pct(potOdds))</span>
             <b>@(worth ? L("Stats.Worth") : L("Stats.NotWorth"))</b>
+        </div>
+    }
+    else
+    {
+        <div class="stat-row pot idle">
+            <span class="stat-label">@L("Stats.PotOdds")</span>
+            <span>–</span>
+            <b>&nbsp;</b>
         </div>
     }
 

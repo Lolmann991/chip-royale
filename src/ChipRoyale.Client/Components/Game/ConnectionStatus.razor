@@ -8,9 +8,9 @@
     <span class="conn-dot"></span>
     <div class="conn-text">
         <b>@L($"Conn.{Player.Mode}")</b>
-        <small>@(Player.ConnectionLost ? L("Conn.Lost") : L($"Conn.{Player.Mode}.Text"))</small>
+        <small>@(Player.ConnectionLost ? L("Conn.Lost") : !Player.HasServer ? L("Conn.NoServer.Text") : L($"Conn.{Player.Mode}.Text"))</small>
     </div>
-    @if (Player.Mode != PlayerMode.Online)
+    @if (Player.Mode != PlayerMode.Online && Player.HasServer)
     {
         <button type="button" class="preset" disabled="@busy" @onclick="RetryAsync">@(busy ? "…" : L("Conn.Retry"))</button>
     }

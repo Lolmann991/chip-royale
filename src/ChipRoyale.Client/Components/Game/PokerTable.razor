@@ -204,6 +204,11 @@
                         var (tipText, tipKind) = Tip(odds.Equity);
                         <div class="tip @tipKind">@tipText</div>
                     }
+                    else
+                    {
+                        @* keeps the space, so the panel does not move up when it is the player's turn *@
+                        <div class="tip idle" aria-hidden="true">&nbsp;</div>
+                    }
                 }
             }
             else if (Hero.HasFolded && table.Phase != TablePhase.HandComplete)
