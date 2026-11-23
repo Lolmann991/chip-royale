@@ -18,6 +18,11 @@ public sealed record GameEvent
 
     public bool LessonsCompleted { get; init; }
 
+    /// <summary>A blackjack round: natural 21, a doubled hand won, all split hands won.</summary>
+    public bool BlackjackNatural { get; init; }
+    public bool BlackjackDoubleWon { get; init; }
+    public bool BlackjackSplitWon { get; init; }
+
     public static readonly GameEvent None = new();
 }
 
@@ -43,6 +48,10 @@ public static class Achievements
         new("busted", "💸", 2, (_, b, _) => b.Busts > 0),
         new("collector", "🧺", 10, (_, _, c) => c.Owned.Count >= 10),
         new("trendsetter", "✨", 15, (_, _, c) => Enum.GetValues<ItemCategory>().All(cat => !c.Equipped(cat).IsDefault)),
+        new("bj-natural", "🂡", 3, (e, b, _) => e.BlackjackNatural || b.BlackjackNaturals > 0),
+        new("bj-double", "✌️", 3, (e, _, _) => e.BlackjackDoubleWon),
+        new("bj-split", "🪓", 5, (e, _, _) => e.BlackjackSplitWon),
+        new("bj-rounds-100", "🎰", 8, (_, b, _) => b.BlackjackRounds >= 100),
     ];
 
     public static Achievement? Find(string id) => All.FirstOrDefault(a => a.Id == id);

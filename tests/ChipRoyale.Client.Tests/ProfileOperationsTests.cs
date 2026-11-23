@@ -53,4 +53,22 @@ public class ProfileOperationsTests
         Assert.Equal(Stake.MinBuyIn, result.ReturnedFromTable);
         Assert.Equal(0, state.Bankroll.TableChips);
     }
+
+    [Fact]
+    public void Blackjack_rounds_move_the_stack_and_count_statistics()
+    {
+        var state = PlayerState.New("Test");
+        Assert.Null(ProfileOperations.BuyIn(state, "bj-pub", 500).Error);
+        Assert.Equal(500, state.Bankroll.TableChips);
+
+        var result = ProfileOperations.Blackjack(state, 575, new BlackjackRoundDto(75, Natural: true, DoubleWon: false, SplitWon: false));
+        Assert.Contains("bj-natural", result.Unlocked);
+        Assert.Equal(1, state.Bankroll.BlackjackRounds);
+        Assert.Equal(1, state.Bankroll.BlackjackNaturals);
+        Assert.Equal(75, state.Bankroll.BlackjackBiggestWin);
+        Assert.Equal(0, state.Bankroll.HandsPlayed); // poker statistics stay untouched
+
+        ProfileOperations.CashOut(state, 575);
+        Assert.Equal(1075 + 3, state.Bankroll.Chips + state.Bankroll.Crowns); // 1075 chips, 3 crowns reward
+    }
 }

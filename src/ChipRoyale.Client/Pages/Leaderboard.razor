@@ -44,7 +44,7 @@
                     <li class="lb-row @(row.IsMe ? "me" : "") @(row.Rank <= 3 ? $"top{row.Rank}" : "")">
                         <span class="lb-rank">@(row.Rank switch { 1 => "🥇", 2 => "🥈", 3 => "🥉", _ => row.Rank.ToString() })</span>
                         <span class="lb-name">@row.Name@(row.IsMe ? L("Board.You") : "")@if (row.DevTools) {<span class="lb-dev" title="@L("Board.DevTools")"> 🛠</span>}</span>
-                        <span class="lb-main">@(Mode is "tische" or "turniere" ? "🏆 " : "● ")@Main(row).ToString("N0")</span>
+                        <span class="lb-main">@(Mode is "tische" or "turniere" ? "🏆 " : Mode == "blackjack" ? "🂡 +" : "● ")@Main(row).ToString("N0")</span>
                         <span class="lb-sub">@Describe(row)</span>
                     </li>
                 }
@@ -71,6 +71,7 @@
         ("aktuell", "Board.Tab.Current"),
         ("tische", "Board.Tab.Tables"),
         ("turniere", "Board.Tab.Tournaments"),
+        ("blackjack", "Board.Tab.Blackjack"),
     ];
 
     private string Mode => Tabs.Any(t => t.Key == Sort) ? Sort! : "rekord";
@@ -102,6 +103,7 @@
         "aktuell" => e.Total,
         "tische" => e.TablesCleared,
         "turniere" => e.TournamentsWon,
+        "blackjack" => e.BlackjackBiggestWin,
         _ => e.BestPeak,
     };
 
@@ -112,6 +114,7 @@
         "aktuell" => L("Board.Sub.Current", e.Run, e.BestPeak),
         "tische" => L("Board.Sub.Tables", e.HandsWon, Hands(e.HandsPlayed)),
         "turniere" => L("Board.Sub.Tournaments", e.TournamentsPlayed),
+        "blackjack" => L("Board.Sub.Blackjack", e.BlackjackRounds, e.BlackjackNaturals),
         _ => L("Board.Sub.Record", e.Total, Hands(e.HandsPlayed)),
     };
 }

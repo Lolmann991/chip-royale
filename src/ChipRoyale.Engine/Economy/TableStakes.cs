@@ -31,4 +31,26 @@ public static class TableStakes
     public static int SmallestMinBuyIn => Real.Min(s => s.MinBuyIn);
 
     public static TableStake? Find(string id) => All.FirstOrDefault(s => s.Id == id);
+
+    /// <summary>Poker or blackjack table.</summary>
+    public static TableStake? FindAny(string id) => Find(id) ?? BlackjackTables.Find(id);
+}
+
+/// <summary>
+/// Blackjack tables. <see cref="TableStake.SmallBlind"/> is the smallest bet, <see cref="TableStake.BigBlind"/>
+/// the biggest; the buy-in works like at the poker tables.
+/// </summary>
+public static class BlackjackTables
+{
+    public static readonly TableStake Practice = new("bj-practice", "Übungstisch", 10, 200, 1000, IsPractice: true);
+
+    public static readonly IReadOnlyList<TableStake> All =
+    [
+        Practice,
+        new("bj-pub", "Kneipe", 5, 100, 100),
+        new("bj-casino", "Casino", 25, 500, 500),
+        new("bj-vip", "VIP-Salon", 100, 2000, 2000),
+    ];
+
+    public static TableStake? Find(string id) => All.FirstOrDefault(s => s.Id == id);
 }

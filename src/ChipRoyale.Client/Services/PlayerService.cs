@@ -215,6 +215,13 @@ public sealed class PlayerService(GameServer server, BrowserStorage storage)
         return StartedNewRun;
     }
 
+    /// <summary>A blackjack round is over: stack at the table and statistics.</summary>
+    public Task BlackjackRoundAsync(int stack, Engine.Blackjack.BjRoundResult round)
+    {
+        var dto = new BlackjackRoundDto(round.Net, round.Natural, round.DoubleWon, round.SplitWon);
+        return RunAsync(s => ProfileOperations.Blackjack(s, stack, dto), ApiRoutes.Blackjack, new BlackjackRequest(stack, dto));
+    }
+
     public Task EnterTournamentAsync(string tierId) => RunAsync(
         s => ProfileOperations.TournamentEnter(s, tierId), ApiRoutes.TournamentEnter, new TournamentEnterRequest(tierId));
 

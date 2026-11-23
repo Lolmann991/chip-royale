@@ -22,6 +22,7 @@ public static class ApiRoutes
     public const string Lessons = "api/lessons/complete";
     public const string Leaderboard = "api/leaderboard";
     public const string Dev = "api/dev";
+    public const string Blackjack = "api/blackjack/round";
 }
 
 /// <summary>Everything the client needs to know about a player.</summary>
@@ -55,6 +56,16 @@ public sealed record HandOutcomeDto(bool Won, int Pot, bool TableCleared, HandCa
 
 public sealed record BuyInRequest(string StakeId, int Amount);
 public sealed record TableRequest(int Stack, HandOutcomeDto? Hand);
+
+/// <summary>A finished blackjack round.</summary>
+/// <param name="Net">Chips won (positive) or lost (negative).</param>
+public sealed record BlackjackRoundDto(int Net, bool Natural, bool DoubleWon, bool SplitWon)
+{
+    public GameEvent ToEvent() => new() { BlackjackNatural = Natural, BlackjackDoubleWon = DoubleWon, BlackjackSplitWon = SplitWon };
+}
+
+/// <param name="Stack">Chips at the blackjack table after the round.</param>
+public sealed record BlackjackRequest(int Stack, BlackjackRoundDto Round);
 public sealed record CashOutRequest(int Stack);
 public sealed record TournamentEnterRequest(string TierId);
 public sealed record TournamentFinishRequest(string TierId, int Place);
@@ -74,7 +85,10 @@ public sealed record LeaderboardEntry(
     int TournamentsPlayed,
     int TournamentsWon,
     bool IsMe,
-    bool DevTools = false);
+    bool DevTools = false,
+    int BlackjackRounds = 0,
+    int BlackjackNaturals = 0,
+    int BlackjackBiggestWin = 0);
 
 public sealed record LeaderboardResponse(IReadOnlyList<LeaderboardEntry> Top, LeaderboardEntry? Me);
 

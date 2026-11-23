@@ -48,7 +48,7 @@ public static class ProfileOperations
 
     public static OperationResult BuyIn(PlayerState s, string stakeId, int amount)
     {
-        if (TableStakes.Find(stakeId) is not { } stake) return OperationResult.Fail("Error.Request");
+        if (TableStakes.FindAny(stakeId) is not { } stake) return OperationResult.Fail("Error.Request");
         if (!s.Bankroll.CanSit(stake) || (!stake.IsPractice && (amount < stake.MinBuyIn || amount > s.Bankroll.MaxBuyInFor(stake))))
             return OperationResult.Fail("Lobby.NotEnough");
         return Run(s, (b, _) => b.BuyIn(stake, amount));
@@ -63,6 +63,13 @@ public static class ProfileOperations
             if (hand.TableCleared) b.RecordTableCleared();
         }
     }, hand?.ToEvent());
+
+    /// <summary>A blackjack round is over: new stack at the table and statistics.</summary>
+    public static OperationResult Blackjack(PlayerState s, int stack, BlackjackRoundDto round) => Run(s, (b, _) =>
+    {
+        b.SetTableStack(stack);
+        b.RecordBlackjack(round.Net, round.Natural);
+    }, round.ToEvent());
 
     public static OperationResult CashOut(PlayerState s, int stack)
     {

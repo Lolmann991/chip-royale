@@ -18,6 +18,7 @@ tests/ChipRoyale.Client.Tests  Tests für Texte (DE/EN), Tutorial und Konto-Rege
 ## Spielen
 
 - Lobby: Tisch (Übungstisch, Kneipe, Casino, High Roller, VIP-Salon), Buy-in, Schwierigkeit und 1–5 Gegner wählen.
+- Blackjack: eigener Reiter in der Lobby – 6 Decks, Dealer steht auf Soft 17, Blackjack zahlt 3 : 2, Verdoppeln und Teilen; Tipps mit Basisstrategie und Kartenzählen; Tasten H/S/D/P.
 - Sit & Go: Turnier zu sechst (Bronze 200, Silber 1.000, Gold 5.000 Buy-in), Blinds steigen alle 8 Hände, Platz 1 und 2 bekommen 65 % bzw. 35 % des Preisgelds.
 - Konto: Angemeldete Spieler behalten ihren Chip-Stand (Start 1.000). Buy-in geht vom Konto an den Tisch, „Auszahlen“ bringt den Stapel zurück. Wer pleite ist, startet einen neuen Run mit 1.000 Chips; der Rekord bleibt.
 - Rangliste unter `/rangliste` (nur mit Server). Gäste spielen mit einem Profil, das im Browser gespeichert wird.
