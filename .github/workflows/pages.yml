@@ -1,23 +1,20 @@
-name: GitHub Pages (Offline-Version)
+name: Offline-Version bauen
 
-# Publishes the offline version of the game as a static site: no server, no accounts, progress in the
-# browser (save files for backups). A service worker keeps the app in the browser, so after the first
-# visit it also starts without internet and can be installed as an app.
-# Setup: Settings → Pages → Source: "GitHub Actions"; Settings → Environments → github-pages: allow
-# the branch "offline". Note: a repository has one Pages site – the last deployment wins.
+# Builds the offline version (no server, no accounts, progress in the browser, playable without
+# internet after the first visit) and puts the finished site into the branch "offline".
+# GitHub Pages serves that branch directly: Settings → Pages → Source: "Deploy from a branch" → offline / (root).
+# Source code: this branch (offline-src). Every push here updates the game on GitHub Pages.
 
 on:
   push:
-    branches: [offline]
+    branches: [offline-src]
   workflow_dispatch:
 
 permissions:
-  contents: read
-  pages: write
-  id-token: write
+  contents: write
 
 concurrency:
-  group: pages
+  group: offline-site
   cancel-in-progress: true
 
 jobs:
@@ -44,19 +41,17 @@ jobs:
           rm -f index.html.br index.html.gz
           # Deep links (e.g. /shop) are answered with 404.html → load the app there too.
           cp index.html 404.html
-          # Let files starting with "_" (_framework) through.
+          # Serve the files as they are (no Jekyll; keeps the "_framework" folder).
           touch .nojekyll
+          printf '# Chip Royale – Offline-Version\n\nFertig gebautes Spiel für GitHub Pages (automatisch erzeugt aus dem Branch `offline-src`, bitte nicht von Hand ändern).\n' > README.md
 
-      - uses: actions/upload-pages-artifact@v3
+      - name: Put the site into the branch "offline"
+        uses: peaceiris/actions-gh-pages@v4
         with:
-          path: publish/wwwroot
-
-  deploy:
-    needs: build
-    runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    steps:
-      - id: deployment
-        uses: actions/deploy-pages@v4
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_branch: offline
+          publish_dir: ./publish/wwwroot
+          enable_jekyll: false
+          user_name: "github-actions[bot]"
+          user_email: "41898282+github-actions[bot]@users.noreply.github.com"
+          commit_message: "Offline-Version aktualisiert"

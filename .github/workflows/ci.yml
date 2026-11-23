@@ -2,7 +2,7 @@ name: CI
 
 on:
   push:
-    branches: [main, v2, deployment, offline, "claude/**"]
+    branches: [main, v2, deployment, offline-src, "claude/**"]
   pull_request:
 
 jobs:
