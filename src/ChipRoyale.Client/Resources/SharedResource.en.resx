@@ -131,6 +131,7 @@
   <data name="Dev.Marked" xml:space="preserve"><value>Note: profiles changed with developer commands show 🛠 on the leaderboard.</value></data>
   <data name="Dev.NoAccount" xml:space="preserve"><value>not logged in</value></data>
   <data name="Dev.NotInGame" xml:space="preserve"><value>Leave the table or tournament first.</value></data>
+  <data name="Dev.OfflineEdition" xml:space="preserve"><value>The offline version does not use a server.</value></data>
   <data name="Dev.ServerSet" xml:space="preserve"><value>Server: {0} → {1}</value></data>
   <data name="Dev.Status" xml:space="preserve"><value>Mode: {0} · Server: {1} · Account: {2}</value></data>
   <data name="Dev.Target.Local" xml:space="preserve"><value>Changes go to the profile in this browser</value></data>
@@ -425,6 +426,7 @@ Fold – give up. Your chips in the pot are gone.</value></data>
   <data name="Lobby.OpponentsCount" xml:space="preserve"><value>{0} opponents</value></data>
   <data name="Lobby.PracticeNote" xml:space="preserve"><value>You get {0:N0} practice chips. Opponents play on “Easy”, your chip count stays untouched.</value></data>
   <data name="Lobby.Record" xml:space="preserve"><value>Record {0:N0}</value></data>
+  <data name="Lobby.Records" xml:space="preserve"><value>🏆 Records</value></data>
   <data name="Lobby.Register" xml:space="preserve"><value>Register</value></data>
   <data name="Lobby.Rename" xml:space="preserve"><value>Change name</value></data>
   <data name="Lobby.Returned" xml:space="preserve"><value>Your {0:N0} chips from the last table were cashed out.</value></data>
@@ -501,6 +503,31 @@ Fold – give up. Your chips in the pot are gone.</value></data>
   <data name="Rank.Three.Plural" xml:space="preserve"><value>Threes</value></data>
   <data name="Rank.Two" xml:space="preserve"><value>Two</value></data>
   <data name="Rank.Two.Plural" xml:space="preserve"><value>Twos</value></data>
+  <data name="Records.BestPeak" xml:space="preserve"><value>Best chip count</value></data>
+  <data name="Records.BiggestPot" xml:space="preserve"><value>Biggest pot</value></data>
+  <data name="Records.Busts" xml:space="preserve"><value>Busts</value></data>
+  <data name="Records.Crowns" xml:space="preserve"><value>Crowns</value></data>
+  <data name="Records.Hands" xml:space="preserve"><value>Hands</value></data>
+  <data name="Records.HandsText" xml:space="preserve"><value>{0:N0} played · {1:N0} won ({2} %)</value></data>
+  <data name="Records.Note" xml:space="preserve"><value>The offline version has no shared leaderboard – these are your own best values.</value></data>
+  <data name="Records.Run" xml:space="preserve"><value>Current run</value></data>
+  <data name="Records.RunPeak" xml:space="preserve"><value>peak {0:N0}</value></data>
+  <data name="Records.TablesCleared" xml:space="preserve"><value>Tables cleared</value></data>
+  <data name="Records.Title1" xml:space="preserve"><value>Your </value></data>
+  <data name="Records.Title2" xml:space="preserve"><value>records</value></data>
+  <data name="Records.Total" xml:space="preserve"><value>Chips now</value></data>
+  <data name="Records.Tournaments" xml:space="preserve"><value>Sit &amp; Go</value></data>
+  <data name="Records.TournamentsText" xml:space="preserve"><value>{0} won of {1}</value></data>
+  <data name="Save.Export" xml:space="preserve"><value>Save</value></data>
+  <data name="Save.ExportHint" xml:space="preserve"><value>Download your progress as a file (backup or another device)</value></data>
+  <data name="Save.Exported" xml:space="preserve"><value>Saved as {0}.</value></data>
+  <data name="Save.Import" xml:space="preserve"><value>Load</value></data>
+  <data name="Save.ImportHint" xml:space="preserve"><value>Load progress from a file (replaces the current one)</value></data>
+  <data name="Save.Imported" xml:space="preserve"><value>Progress loaded: {0:N0} chips.</value></data>
+  <data name="Save.Invalid" xml:space="preserve"><value>That is not a valid Chip Royale save file.</value></data>
+  <data name="Save.OnlyLocal" xml:space="preserve"><value>Save files can only be loaded without a server account.</value></data>
+  <data name="Save.Text" xml:space="preserve"><value>No server, no account – your progress is saved in this browser. Back it up as a file now and then.</value></data>
+  <data name="Save.Title" xml:space="preserve"><value>Offline version</value></data>
   <data name="Seat.You" xml:space="preserve"><value>You</value></data>
   <data name="Shop.Bought" xml:space="preserve"><value>Bought and equipped: {0}</value></data>
   <data name="Shop.Buy" xml:space="preserve"><value>Buy · {0} 👑</value></data>

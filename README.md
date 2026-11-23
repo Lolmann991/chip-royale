@@ -4,6 +4,12 @@ Pokerspiel im Browser (Blazor WebAssembly + ASP.NET-Core-Server, .NET 10): Spiel
 
 Das vollständige Konzept steht in [SPIELKONZEPT.md](SPIELKONZEPT.md).
 
+> **Branch `offline` – Offline-Version für GitHub Pages:** läuft komplett im Browser, ohne Server und
+> ohne Konto (`wwwroot/appsettings.json`: `"Edition": "offline"`). Fortschritt im Browser, „💾 Sichern“ /
+> „📂 Laden“ als Datei, eigene Rekorde statt Rangliste, Entwickler-Konsole lokal. Ein Service Worker
+> hält das Spiel im Browser: nach dem ersten Aufruf startet es auch ohne Internet und lässt sich als App
+> installieren. Veröffentlicht wird per `.github/workflows/pages.yml` bei jedem Push auf `offline`.
+
 ## Projektstruktur
 
 ```

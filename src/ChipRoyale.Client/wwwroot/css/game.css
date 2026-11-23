@@ -2151,3 +2151,10 @@
 }
 .lb-dev { font-size: .85em; opacity: .8; cursor: help; }
 .devcon-head .icon-btn { color: #f4efe2; opacity: .85; font-size: 1rem; }
+
+/* ---------------------------------------------------------------- offline version */
+.save-game { flex-wrap: wrap; }
+.save-load { position: relative; cursor: pointer; display: inline-flex; align-items: center; gap: .3rem; }
+.save-load input[type=file] { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; }
+.records .lb-main { font-size: 1rem; }
+.save-game .conn-dot { background: #6fb6ff; box-shadow: 0 0 8px #6fb6ff; }

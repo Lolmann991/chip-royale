@@ -1,0 +1,17 @@
+{
+  "name": "Chip Royale",
+  "short_name": "Chip Royale",
+  "description": "Texas Hold'em gegen KI-Gegner – läuft komplett offline im Browser.",
+  "id": "./",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#0d0b10",
+  "theme_color": "#0d0b10",
+  "lang": "de",
+  "icons": [
+    { "src": "icon-192.png", "type": "image/png", "sizes": "192x192" },
+    { "src": "icon-512.png", "type": "image/png", "sizes": "512x512" },
+    { "src": "icon-512.png", "type": "image/png", "sizes": "512x512", "purpose": "maskable" }
+  ]
+}

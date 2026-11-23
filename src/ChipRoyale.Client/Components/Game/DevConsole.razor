@@ -116,6 +116,9 @@
                 Print(L("Dev.Status", L($"Conn.{Player.Mode}"), Player.HasServer ? Player.ServerUrl : "–",
                     Player.IsLoggedIn ? Player.Email ?? "" : L("Dev.NoAccount")), "ok");
                 break;
+            case "server" when Player.OfflineEdition:
+                Print(L("Dev.OfflineEdition"), "err");
+                break;
             case "server":
                 if (parts.Length != 2)
                 {

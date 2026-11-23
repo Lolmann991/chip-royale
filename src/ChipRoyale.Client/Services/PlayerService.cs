@@ -1,3 +1,4 @@
+using System.Text.Json;
 using ChipRoyale.Client.Components.Game;
 using ChipRoyale.Engine.Economy;
 using ChipRoyale.Engine.Evaluation;
@@ -41,6 +42,9 @@ public sealed class PlayerService(GameServer server, BrowserStorage storage)
     public bool IsLoggedIn => server.IsLoggedIn;
     public string? Email => server.Email;
     public string ServerUrl => server.DisplayUrl;
+
+    /// <summary>Offline version: no server, no accounts; the profile lives in this browser.</summary>
+    public bool OfflineEdition => server.OfflineEdition;
 
     /// <summary>A server address is set up (otherwise the game is offline on purpose).</summary>
     public bool HasServer => server.HasServer;
@@ -297,6 +301,40 @@ public sealed class PlayerService(GameServer server, BrowserStorage storage)
         }
     }
 
+    // ---------------------------------------------------------------- save files (offline version)
+
+    /// <summary>The browser profile as a save file (JSON) for backups or other devices.</summary>
+    public string ExportSave() => JsonSerializer.Serialize(new SaveFile("ChipRoyale", 1, DateTimeOffset.Now, state.ToDto()), SaveJson);
+
+    /// <summary>Reads a save file; null if it is not a valid Chip Royale save.</summary>
+    public static SaveFile? ReadSave(string json)
+    {
+        try
+        {
+            return JsonSerializer.Deserialize<SaveFile>(json, SaveJson) is { Game: "ChipRoyale", Profile.Bankroll: not null } save ? save : null;
+        }
+        catch (JsonException)
+        {
+            return null;
+        }
+    }
+
+    /// <summary>Loads a save file into the browser profile.</summary>
+    /// <returns>An error message, or null on success.</returns>
+    public async Task<string?> ImportSaveAsync(SaveFile save)
+    {
+        if (UsesServer) return L("Save.OnlyLocal");
+        state = PlayerState.FromDto(save.Profile);
+        var result = ProfileOperations.Load(state);
+        StartedNewRun = result.StartedNewRun;
+        ReturnedFromTable = result.ReturnedFromTable;
+        await SaveLocalAsync();
+        Changed?.Invoke();
+        return null;
+    }
+
+    private static readonly JsonSerializerOptions SaveJson = new(JsonSerializerDefaults.Web) { WriteIndented = true };
+
     public void DismissNotices()
     {
         StartedNewRun = false;
@@ -373,6 +411,9 @@ public sealed class PlayerService(GameServer server, BrowserStorage storage)
 
     private ValueTask SaveLocalAsync() => storage.SetAsync(LocalKey, state.ToDto());
 }
+
+/// <summary>Contents of a save file ("Spielstand sichern").</summary>
+public sealed record SaveFile(string Game, int Version, DateTimeOffset SavedAt, ProfileDto Profile);
 
 /// <param name="WinningHand">The player's hand if they won at showdown.</param>
 public readonly record struct HandOutcome(bool Won, int Pot, bool TableCleared, HandCategory? WinningHand = null)

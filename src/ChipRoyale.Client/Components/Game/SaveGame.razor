@@ -1,0 +1,49 @@
+@inject PlayerService Player
+@inject IJSRuntime JS
+
+@* Offline version: where the progress is, plus saving it to a file and loading it again. *@
+
+<div class="conn conn-offline save-game">
+    <span class="conn-dot"></span>
+    <div class="conn-text">
+        <b>@L("Save.Title")</b>
+        <small>@(message ?? L("Save.Text"))</small>
+    </div>
+    <button type="button" class="preset" title="@L("Save.ExportHint")" @onclick="ExportAsync">💾 @L("Save.Export")</button>
+    <label class="preset save-load" title="@L("Save.ImportHint")">
+        📂 @L("Save.Import")
+        <InputFile accept=".json,application/json" OnChange="ImportAsync" />
+    </label>
+</div>
+
+@code {
+    // Static: the lobby is rebuilt after loading a save file, the message should stay visible.
+    private static string? message;
+
+    private async Task ExportAsync()
+    {
+        var name = $"chip-royale-spielstand-{DateTime.Now:yyyy-MM-dd-HHmm}.json";
+        await JS.InvokeVoidAsync("chipRoyale.download", name, Player.ExportSave());
+        message = L("Save.Exported", name);
+    }
+
+    private async Task ImportAsync(InputFileChangeEventArgs e)
+    {
+        try
+        {
+            using var reader = new StreamReader(e.File.OpenReadStream(maxAllowedSize: 512 * 1024));
+            if (PlayerService.ReadSave(await reader.ReadToEndAsync()) is not { } save)
+            {
+                message = L("Save.Invalid");
+                return;
+            }
+            // Set before loading: loading rebuilds the lobby (and this component).
+            message = L("Save.Imported", save.Profile.Bankroll.Chips + save.Profile.Bankroll.TableChips);
+            if (await Player.ImportSaveAsync(save) is { } error) message = error;
+        }
+        catch (IOException)
+        {
+            message = L("Save.Invalid");
+        }
+    }
+}

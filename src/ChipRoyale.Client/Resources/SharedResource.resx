@@ -131,6 +131,7 @@
   <data name="Dev.Marked" xml:space="preserve"><value>Hinweis: Profile, die mit Dev-Befehlen verändert wurden, tragen 🛠 in der Rangliste.</value></data>
   <data name="Dev.NoAccount" xml:space="preserve"><value>nicht angemeldet</value></data>
   <data name="Dev.NotInGame" xml:space="preserve"><value>Erst den Tisch bzw. das Turnier verlassen.</value></data>
+  <data name="Dev.OfflineEdition" xml:space="preserve"><value>Die Offline-Version nutzt keinen Server.</value></data>
   <data name="Dev.ServerSet" xml:space="preserve"><value>Server: {0} → {1}</value></data>
   <data name="Dev.Status" xml:space="preserve"><value>Modus: {0} · Server: {1} · Konto: {2}</value></data>
   <data name="Dev.Target.Local" xml:space="preserve"><value>Änderungen gehen an das Profil in diesem Browser</value></data>
@@ -425,6 +426,7 @@ Passen – aussteigen. Deine Chips im Pot sind dann weg.</value></data>
   <data name="Lobby.OpponentsCount" xml:space="preserve"><value>{0} Gegner</value></data>
   <data name="Lobby.PracticeNote" xml:space="preserve"><value>Du bekommst {0:N0} Übungschips. Gegner spielen auf „Leicht“, dein Chip-Stand bleibt unberührt.</value></data>
   <data name="Lobby.Record" xml:space="preserve"><value>Rekord {0:N0}</value></data>
+  <data name="Lobby.Records" xml:space="preserve"><value>🏆 Rekorde</value></data>
   <data name="Lobby.Register" xml:space="preserve"><value>Registrieren</value></data>
   <data name="Lobby.Rename" xml:space="preserve"><value>Namen ändern</value></data>
   <data name="Lobby.Returned" xml:space="preserve"><value>Deine {0:N0} Chips vom letzten Tisch wurden ausgezahlt.</value></data>
@@ -501,6 +503,31 @@ Passen – aussteigen. Deine Chips im Pot sind dann weg.</value></data>
   <data name="Rank.Three.Plural" xml:space="preserve"><value>Dreien</value></data>
   <data name="Rank.Two" xml:space="preserve"><value>Zwei</value></data>
   <data name="Rank.Two.Plural" xml:space="preserve"><value>Zweien</value></data>
+  <data name="Records.BestPeak" xml:space="preserve"><value>Bester Chip-Stand</value></data>
+  <data name="Records.BiggestPot" xml:space="preserve"><value>Größter Pot</value></data>
+  <data name="Records.Busts" xml:space="preserve"><value>Pleiten</value></data>
+  <data name="Records.Crowns" xml:space="preserve"><value>Kronen</value></data>
+  <data name="Records.Hands" xml:space="preserve"><value>Hände</value></data>
+  <data name="Records.HandsText" xml:space="preserve"><value>{0:N0} gespielt · {1:N0} gewonnen ({2} %)</value></data>
+  <data name="Records.Note" xml:space="preserve"><value>Die Offline-Version hat keine gemeinsame Rangliste – hier stehen deine eigenen Bestwerte.</value></data>
+  <data name="Records.Run" xml:space="preserve"><value>Aktueller Run</value></data>
+  <data name="Records.RunPeak" xml:space="preserve"><value>Höchststand {0:N0}</value></data>
+  <data name="Records.TablesCleared" xml:space="preserve"><value>Tische leergeräumt</value></data>
+  <data name="Records.Title1" xml:space="preserve"><value>Deine </value></data>
+  <data name="Records.Title2" xml:space="preserve"><value>Rekorde</value></data>
+  <data name="Records.Total" xml:space="preserve"><value>Chips jetzt</value></data>
+  <data name="Records.Tournaments" xml:space="preserve"><value>Sit &amp; Go</value></data>
+  <data name="Records.TournamentsText" xml:space="preserve"><value>{0} gewonnen von {1}</value></data>
+  <data name="Save.Export" xml:space="preserve"><value>Sichern</value></data>
+  <data name="Save.ExportHint" xml:space="preserve"><value>Spielstand als Datei herunterladen (Sicherung oder für ein anderes Gerät)</value></data>
+  <data name="Save.Exported" xml:space="preserve"><value>Gesichert als {0}.</value></data>
+  <data name="Save.Import" xml:space="preserve"><value>Laden</value></data>
+  <data name="Save.ImportHint" xml:space="preserve"><value>Spielstand aus einer Datei laden (ersetzt den aktuellen)</value></data>
+  <data name="Save.Imported" xml:space="preserve"><value>Spielstand geladen: {0:N0} Chips.</value></data>
+  <data name="Save.Invalid" xml:space="preserve"><value>Das ist keine gültige Chip-Royale-Spielstand-Datei.</value></data>
+  <data name="Save.OnlyLocal" xml:space="preserve"><value>Spielstände lassen sich nur ohne Server-Konto laden.</value></data>
+  <data name="Save.Text" xml:space="preserve"><value>Kein Server, kein Konto – dein Fortschritt wird in diesem Browser gespeichert. Sichere ihn ab und zu als Datei.</value></data>
+  <data name="Save.Title" xml:space="preserve"><value>Offline-Version</value></data>
   <data name="Seat.You" xml:space="preserve"><value>Du</value></data>
   <data name="Shop.Bought" xml:space="preserve"><value>Gekauft und angelegt: {0}</value></data>
   <data name="Shop.Buy" xml:space="preserve"><value>Kaufen · {0} 👑</value></data>

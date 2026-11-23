@@ -28,6 +28,9 @@ public sealed class GameServer(HttpClient http, BrowserStorage storage, IConfigu
     /// <summary>Server address, e.g. http://localhost:5132 ("" = same address as the game, "none" = no server).</summary>
     public string BaseUrl { get; private set; } = "";
 
+    /// <summary>Offline version (appsettings "Edition": "offline"): never uses a server, no accounts.</summary>
+    public bool OfflineEdition => string.Equals(config["Edition"], "offline", StringComparison.OrdinalIgnoreCase);
+
     /// <summary>False when no server is set up: nothing is requested, the game starts offline.</summary>
     public bool HasServer => !string.Equals(BaseUrl, NoServer, StringComparison.OrdinalIgnoreCase);
 
@@ -42,6 +45,12 @@ public sealed class GameServer(HttpClient http, BrowserStorage storage, IConfigu
     {
         if (initialized) return;
         initialized = true;
+        if (OfflineEdition)
+        {
+            BaseUrl = NoServer;
+            IsOnline = false;
+            return;
+        }
         BaseUrl = (await storage.GetStringAsync(ServerKey)) ?? config["ApiBaseUrl"] ?? "";
         tokens = await storage.GetAsync<AuthTokens>(AuthKey);
         await CheckAsync();
@@ -66,6 +75,7 @@ public sealed class GameServer(HttpClient http, BrowserStorage storage, IConfigu
 
     public async Task SetBaseUrlAsync(string url)
     {
+        if (OfflineEdition) return;
         url = url.Trim().TrimEnd('/');
         // An empty field means "no server" wherever the page comes from GitHub Pages and the like.
         BaseUrl = url.Length == 0 && config["ApiBaseUrl"] == NoServer ? NoServer : url;

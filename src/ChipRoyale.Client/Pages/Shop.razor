@@ -27,7 +27,7 @@
                 <div class="wallet-item"><span>●</span><b>@Player.Bankroll.Chips.ToString("N0")</b><small>@L("Shop.Chips")</small></div>
             </div>
 
-            @if (Player.Mode != PlayerMode.Online)
+            @if (Player.Mode != PlayerMode.Online && !Player.OfflineEdition)
             {
                 <p class="note center">@L("Shop.GuestNote")</p>
             }

@@ -17,7 +17,7 @@
         <div class="hero-links">
             <a class="tool" href="lernen">@L("Lobby.Learn")</a>
             <a class="tool" href="shop">@L("Lobby.Shop")</a>
-            <a class="tool" href="rangliste">@L("Lobby.Leaderboard")</a>
+            <a class="tool" href="rangliste">@(Player.OfflineEdition ? L("Lobby.Records") : L("Lobby.Leaderboard"))</a>
             <button type="button" class="tool" @onclick="() => showRankings = true">@L("Lobby.HandRankings")</button>
             <LanguageSwitch />
         </div>
@@ -54,7 +54,10 @@
                 </div>
             </div>
             <div class="profile-links">
-                @if (Player.IsLoggedIn)
+                @if (Player.OfflineEdition)
+                {
+                }
+                else if (Player.IsLoggedIn)
                 {
                     <button type="button" class="preset" title="@Player.Email" @onclick="LogoutAsync">@L("Account.Logout")</button>
                 }
@@ -65,7 +68,14 @@
                 }
             </div>
         </div>
-        <ConnectionStatus />
+        @if (Player.OfflineEdition)
+        {
+            <SaveGame />
+        }
+        else
+        {
+            <ConnectionStatus />
+        }
         @foreach (var notice in Notices)
         {
             <p class="note highlight">@notice</p>

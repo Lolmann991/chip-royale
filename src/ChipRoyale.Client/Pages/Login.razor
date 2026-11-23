@@ -57,7 +57,12 @@
     private string? error;
     private bool busy;
 
-    protected override Task OnInitializedAsync() => Player.LoadAsync();
+    protected override async Task OnInitializedAsync()
+    {
+        await Player.LoadAsync();
+        // The offline version has no accounts.
+        if (Player.OfflineEdition) Nav.NavigateTo("", replace: true);
+    }
 
     private async Task LoginAsync()
     {

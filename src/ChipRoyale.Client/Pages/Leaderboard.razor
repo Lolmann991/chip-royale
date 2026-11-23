@@ -15,6 +15,35 @@
             </span>
         </header>
 
+        @if (Player.OfflineEdition)
+        {
+            var b = Player.Bankroll;
+            <h1 class="logo small">@L("Records.Title1")<span>@L("Records.Title2")</span></h1>
+            <ol class="leaderboard records">
+                @foreach (var (icon, label, value) in new (string, string, string)[]
+                {
+                    ("🏆", L("Records.BestPeak"), b.BestPeak.ToString("N0")),
+                    ("●", L("Records.Total"), b.Total.ToString("N0")),
+                    ("🔁", L("Records.Run"), $"#{b.Run} · {L("Records.RunPeak", b.RunPeak)}"),
+                    ("🃏", L("Records.Hands"), L("Records.HandsText", b.HandsPlayed, b.HandsWon, b.HandsPlayed == 0 ? 0 : b.HandsWon * 100 / b.HandsPlayed)),
+                    ("💰", L("Records.BiggestPot"), b.BiggestPot.ToString("N0")),
+                    ("🧹", L("Records.TablesCleared"), b.TablesCleared.ToString("N0")),
+                    ("🥇", L("Records.Tournaments"), L("Records.TournamentsText", b.TournamentsWon, b.TournamentsPlayed)),
+                    ("💥", L("Records.Busts"), b.Busts.ToString("N0")),
+                    ("👑", L("Records.Crowns"), b.Crowns.ToString("N0")),
+                })
+                {
+                    <li class="lb-row">
+                        <span class="lb-rank">@icon</span>
+                        <span class="lb-name">@label</span>
+                        <span class="lb-main">@value</span>
+                    </li>
+                }
+            </ol>
+            <p class="note center">@L("Records.Note")</p>
+        }
+        else
+        {
         <h1 class="logo small">@L("Board.Title1")<span>@L("Board.Title2")</span></h1>
 
         <nav class="tabs">
@@ -59,6 +88,7 @@
         {
             <p class="note center"><a href="login">@L("Board.LoginLink")</a>@L("Board.LoginText")</p>
         }
+        }
     </div>
 </div>
 
@@ -82,6 +112,11 @@
     protected override async Task OnParametersSetAsync()
     {
         await Player.LoadAsync();
+        if (Player.OfflineEdition)
+        {
+            loaded = true;
+            return;
+        }
         loaded = false;
         try
         {

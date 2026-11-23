@@ -6,6 +6,9 @@
     <title>Chip Royale</title>
     <base href="/" />
     <link rel="icon" type="image/png" href="favicon.png" />
+    <link rel="manifest" href="manifest.webmanifest" />
+    <link rel="apple-touch-icon" href="icon-192.png" />
+    <meta name="theme-color" content="#0d0b10" />
     <link rel="stylesheet" href="css/game.css" />
     <style>
         html, body { margin: 0; height: 100%; background: #0d0b10; color: #f4efe2; font-family: "Segoe UI", system-ui, sans-serif; }
@@ -35,6 +38,13 @@
             storageGet: (k) => { try { return localStorage.getItem(k); } catch { return null; } },
             storageSet: (k, v) => { try { localStorage.setItem(k, v); } catch { } },
             storageRemove: (k) => { try { localStorage.removeItem(k); } catch { } },
+            // Saves text as a file (offline version: "Spielstand sichern").
+            download: (name, text) => {
+                const url = URL.createObjectURL(new Blob([text], { type: "application/json" }));
+                const a = document.createElement("a");
+                a.href = url; a.download = name; document.body.appendChild(a); a.click(); a.remove();
+                setTimeout(() => URL.revokeObjectURL(url), 1000);
+            },
             // Developer console: ^ (key left of 1) or F2 opens and closes it.
             devConsole: {
                 ref: null,
@@ -67,5 +77,9 @@
         };
     </script>
     <script src="_framework/blazor.webassembly.js"></script>
+    <script>
+        // Offline version: keep all files in the browser so the game also starts without internet.
+        if ("serviceWorker" in navigator) navigator.serviceWorker.register("service-worker.js").catch(() => { });
+    </script>
 </body>
 </html>

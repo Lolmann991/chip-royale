@@ -1,15 +1,14 @@
-name: GitHub Pages
+name: GitHub Pages (Offline-Version)
 
-# Publishes the Blazor WebAssembly client as a static site.
-# The game uses the Chip Royale server on the player's own PC (http://localhost:5132) as soon as it runs
-# (accounts and values from its database); without it the game runs in offline mode (progress in the browser).
-# Setup: Settings → Pages → Source: "GitHub Actions"; Settings → Environments → github-pages: allow this branch.
-# Optional: Settings → Secrets and variables → Actions → Variables → CHIPROYALE_API_URL = another server address
-# ("none" = never look for a server).
+# Publishes the offline version of the game as a static site: no server, no accounts, progress in the
+# browser (save files for backups). A service worker keeps the app in the browser, so after the first
+# visit it also starts without internet and can be installed as an app.
+# Setup: Settings → Pages → Source: "GitHub Actions"; Settings → Environments → github-pages: allow
+# the branch "offline". Note: a repository has one Pages site – the last deployment wins.
 
 on:
   push:
-    branches: [deployment]
+    branches: [offline]
   workflow_dispatch:
 
 permissions:
@@ -36,15 +35,13 @@ jobs:
 
       - name: Prepare static site
         env:
-          API_URL: ${{ vars.CHIPROYALE_API_URL || 'http://localhost:5132' }}
           REPO: ${{ github.event.repository.name }}
         run: |
           cd publish/wwwroot
           # The site lives under https://<user>.github.io/<repo>/
           sed -i "s#<base href=\"/\" />#<base href=\"/${REPO}/\" />#" index.html
-          printf '{ "ApiBaseUrl": "%s" }\n' "$API_URL" > appsettings.json
           # Pre-compressed copies would still contain the old content.
-          rm -f index.html.br index.html.gz appsettings.json.br appsettings.json.gz
+          rm -f index.html.br index.html.gz
           # Deep links (e.g. /shop) are answered with 404.html → load the app there too.
           cp index.html 404.html
           # Let files starting with "_" (_framework) through.
