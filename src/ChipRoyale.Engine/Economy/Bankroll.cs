@@ -33,6 +33,15 @@ public sealed class Bankroll
     public int TournamentsPlayed { get; private set; }
     public int TournamentsWon { get; private set; }
 
+    public int BlackjackRounds { get; private set; }
+    public int BlackjackWon { get; private set; }
+
+    /// <summary>Blackjacks (natural 21) dealt to the player.</summary>
+    public int BlackjackNaturals { get; private set; }
+
+    /// <summary>Biggest net win of one blackjack round.</summary>
+    public int BlackjackBiggestWin { get; private set; }
+
     public int Total => Chips + TableChips;
 
     public bool IsSeated => TableChips > 0;
@@ -42,7 +51,8 @@ public sealed class Bankroll
 
     /// <summary>Plain copy of all values (for JSON: the web API and the offline profile).</summary>
     public BankrollState ToState() => new(Chips, TableChips, Run, RunPeak, BestPeak, HandsPlayed, HandsWon, BiggestPot,
-        Busts, TablesCleared, Crowns, TournamentsPlayed, TournamentsWon);
+        Busts, TablesCleared, Crowns, TournamentsPlayed, TournamentsWon,
+        BlackjackRounds, BlackjackWon, BlackjackNaturals, BlackjackBiggestWin);
 
     public static Bankroll FromState(BankrollState s) => new()
     {
@@ -77,6 +87,10 @@ public sealed class Bankroll
         Crowns = Math.Max(0, s.Crowns);
         TournamentsPlayed = Math.Max(0, s.TournamentsPlayed);
         TournamentsWon = Math.Max(0, s.TournamentsWon);
+        BlackjackRounds = Math.Max(0, s.BlackjackRounds);
+        BlackjackWon = Math.Max(0, s.BlackjackWon);
+        BlackjackNaturals = Math.Max(0, s.BlackjackNaturals);
+        BlackjackBiggestWin = Math.Max(0, s.BlackjackBiggestWin);
     }
 
     public static Bankroll New(int startingChips = TableStakes.StartingChips) => new()
@@ -163,6 +177,15 @@ public sealed class Bankroll
 
     public void RecordTableCleared() => TablesCleared++;
 
+    /// <param name="net">Chips won (positive) or lost (negative) in the round.</param>
+    public void RecordBlackjack(int net, bool natural)
+    {
+        BlackjackRounds++;
+        if (net > 0) BlackjackWon++;
+        if (natural) BlackjackNaturals++;
+        BlackjackBiggestWin = Math.Max(BlackjackBiggestWin, net);
+    }
+
     /// <summary>Leaves the table and takes the stack back.</summary>
     public void CashOut()
     {
@@ -205,4 +228,8 @@ public sealed record BankrollState(
     int TablesCleared,
     int Crowns,
     int TournamentsPlayed,
-    int TournamentsWon);
+    int TournamentsWon,
+    int BlackjackRounds = 0,
+    int BlackjackWon = 0,
+    int BlackjackNaturals = 0,
+    int BlackjackBiggestWin = 0);

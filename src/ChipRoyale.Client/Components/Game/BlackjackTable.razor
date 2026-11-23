@@ -1,0 +1,513 @@
+@using ChipRoyale.Engine.Blackjack
+@using ChipRoyale.Engine.Cards
+@implements IAsyncDisposable
+@inject IJSRuntime JS
+@inject PlayerService Player
+
+@* Blackjack against the dealer: 6 decks, dealer stands on soft 17, blackjack pays 3:2, double and split. *@
+
+<div class="game bj-game">
+    <header class="topbar">
+        <div class="brand">♠ Chip <span>Royale</span></div>
+        <div class="meta">
+            <span class="pill stake">🂡 Blackjack · @Roster.StakeName(Settings.Stake)@(Settings.IsPractice ? L("Table.PracticeSuffix") : "")</span>
+            <span class="pill">@L("Bj.Limits", MinBet, MaxBet)</span>
+            <span class="pill">@L("Bj.RoundNo", roundNo)</span>
+            @if (shuffledNotice)
+            {
+                <span class="pill bj-shuffled">🔀 @L("Bj.Shuffled")</span>
+            }
+        </div>
+        <div class="tools">
+            <button type="button" class="tool @(hints ? "on" : "")" title="@L("Bj.Tips.Title")" @onclick="() => hints = !hints">@L("Table.Tips")</button>
+            <button type="button" class="tool @(sound ? "on" : "")" title="@L("Table.Sound")" @onclick="ToggleSound">@(sound ? "🔊" : "🔇")</button>
+            <button type="button" class="tool" disabled="@InRound" title="@(InRound ? L("Bj.FinishRoundFirst") : "")" @onclick="ExitAsync">
+                @(Settings.IsPractice ? L("Table.Lobby") : L("Table.CashOut"))
+            </button>
+        </div>
+    </header>
+
+    <main class="scene bj-stage" id="scene">
+        <div class="bj-table" id="table3d">
+            <div class="felt bj-felt">
+                <div class="bj-shoe" title="@L("Bj.ShoeTitle", round.Shoe.Remaining)">
+                    <div class="bj-shoe-box"><span style="--fill:@ShoeFill%"></span></div>
+                    <small>@L("Bj.Shoe")</small>
+                </div>
+
+                <section class="bj-dealer">
+                    <div class="bj-label">
+                        <span>@L("Bj.Dealer")</span>
+                        @if (round.Dealer.Count > 0)
+                        {
+                            <b class="bj-value @(round.HoleRevealed && round.DealerTotal > 21 ? "bust" : "")">@DealerValueText</b>
+                        }
+                    </div>
+                    <div class="bj-cards">
+                        @for (var i = 0; i < round.Dealer.Count; i++)
+                        {
+                            var faceUp = i == 0 || round.HoleRevealed;
+                            <PlayingCard @key="(roundNo, 'd', i)" Card="round.Dealer[i]" FaceUp="faceUp" Size="lg" DelayMs="DealDelay(i, dealer: true)" />
+                        }
+                    </div>
+                </section>
+
+                <div class="bj-arc">
+                    <span>@L("Bj.Arc1")</span>
+                    <small>@L("Bj.Arc2")</small>
+                </div>
+
+                <section class="bj-hands @(round.Hands.Count > 1 ? "split" : "")">
+                    @if (round.Hands.Count == 0)
+                    {
+                        <div class="bj-hand betting">
+                            <div class="bj-spot @(bet > 0 ? "filled" : "")">
+                                @if (bet > 0)
+                                {
+                                    <ChipStack Amount="bet" Class="bj-chips" MaxColumns="3" MinTop="3" />
+                                    <b class="bj-bet">● @bet.ToString("N0")</b>
+                                }
+                                else
+                                {
+                                    <span>@L("Bj.PlaceBet")</span>
+                                }
+                            </div>
+                        </div>
+                    }
+                    @for (var h = 0; h < round.Hands.Count; h++)
+                    {
+                        var hand = round.Hands[h];
+                        var active = round.Active == hand && round.Hands.Count > 1;
+                        <div class="bj-hand @(active ? "active" : "") @OutcomeClass(hand)">
+                            <div class="bj-cards">
+                                @for (var i = 0; i < hand.Cards.Count; i++)
+                                {
+                                    <PlayingCard @key="(roundNo, h, i, hand.Cards[i])" Card="hand.Cards[i]" Size="lg" DelayMs="DealDelay(i, dealer: false)"
+                                                 Class="@(hand.Doubled && i == 2 ? "bj-double-card" : null)" />
+                                }
+                            </div>
+                            <div class="bj-label">
+                                <b class="bj-value @(hand.IsBust ? "bust" : hand.IsBlackjack ? "bj" : "")">@HandValueText(hand)</b>
+                                <span class="bj-bet">● @hand.Bet.ToString("N0")@(hand.Doubled ? " ×2" : "")</span>
+                                @if (hand.Outcome != BjOutcome.Pending)
+                                {
+                                    <span class="bj-outcome">@OutcomeText(hand)</span>
+                                }
+                            </div>
+                            <div class="bj-spot filled small">
+                                <ChipStack Amount="hand.Bet" Class="bj-chips" MaxColumns="3" MaxPerColumn="6" MinTop="3" />
+                            </div>
+                        </div>
+                    }
+                </section>
+
+                <div class="bj-stack" id="bj-stack" title="@L("Bj.StackTitle")">
+                    <ChipStack Amount="round.Stack" Class="bj-chips" MaxColumns="4" />
+                    <b>● @round.Stack.ToString("N0")</b>
+                </div>
+            </div>
+        </div>
+
+        @if (banner is { } b)
+        {
+            <div class="bj-banner @b.Kind" @key="roundNo">
+                <b>@b.Title</b>
+                @if (b.Text is not null)
+                {
+                    <span>@b.Text</span>
+                }
+            </div>
+        }
+    </main>
+
+    <footer class="actionbar">
+        <div class="hand-info">
+            @if (hints)
+            {
+                <div class="hero-stats bj-stats">
+                    @if (round.Active is { } hand && round.DealerUp is { } up)
+                    {
+                        var advice = BasicStrategy.Suggest(hand, up, round.CanDouble, round.CanSplit);
+                        var bust = BasicStrategy.BustChance(hand, round.Shoe.RemainingByValue(), round.HoleRevealed ? null : round.Dealer[1]);
+                        <div class="stat-row rank">
+                            <span class="stat-label">@L("Bj.Tip.Best")</span>
+                            <b>@ActionName(advice.Action)</b>
+                            <span class="stat-note">@L($"Bj.Tip.Kind.{advice.Kind}", advice.Total)</span>
+                        </div>
+                        <div class="stat-row @(bust >= 0.5 ? "bad" : bust > 0 ? "" : "good")">
+                            <span class="stat-label">@L("Bj.Tip.Bust")</span>
+                            <span>@L("Bj.Tip.BustText", Pct(bust))</span>
+                        </div>
+                        <div class="stat-row">
+                            <span class="stat-label">@L("Bj.Tip.Dealer")</span>
+                            <span>@L("Bj.Tip.DealerText", HandText.RankSymbol(up.Rank), Pct(BasicStrategy.DealerBustChance(up)))</span>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="stat-row">
+                            <span class="stat-label">@L("Bj.Tip.Shoe")</span>
+                            <span>@L("Bj.Tip.ShoeText", round.Shoe.Remaining, Decks)</span>
+                        </div>
+                    }
+                    <div class="stat-row small">
+                        <span class="stat-label">@L("Bj.Tip.Count")</span>
+                        <span>@L("Bj.Tip.CountText", round.Shoe.RunningCount.ToString("+0;−0;0"), round.Shoe.TrueCount.ToString("+0.0;−0.0;0.0"))</span>
+                        <span class="stat-note">@CountHint</span>
+                    </div>
+                </div>
+            }
+        </div>
+
+        <div class="controls">
+            @switch (round.Phase)
+            {
+                case BjPhase.Betting when round.Stack < MinBet:
+                    <div class="status">@L("Bj.NoChips")</div>
+                    break;
+                case BjPhase.Betting:
+                    <div class="raise-panel bj-chip-panel">
+                        @foreach (var value in ChipValues)
+                        {
+                            var v = value;
+                            <button type="button" class="bj-chip-btn c-@ChipColor(v)" disabled="@(bet + v > Limit)" @onclick="() => AddBet(v)">@Short(v)</button>
+                        }
+                        <button type="button" class="preset" disabled="@(bet == 0)" @onclick="() => bet = 0">@L("Bj.Clear")</button>
+                        <button type="button" class="preset" disabled="@(bet == 0 || bet * 2 > Limit)" @onclick="() => bet *= 2">×2</button>
+                        <button type="button" class="preset" @onclick="() => bet = Limit">Max</button>
+                    </div>
+                    <div class="buttons">
+                        <button type="button" class="act raise" disabled="@(bet < MinBet)" @onclick="DealAsync">
+                            @L("Bj.Deal", bet) <kbd>@L("Table.Key.Space")</kbd>
+                        </button>
+                    </div>
+                    break;
+                case BjPhase.PlayerTurn:
+                    <div class="buttons">
+                        <button type="button" class="act fold" disabled="@(!round.CanHit || busy)" @onclick="() => ActAsync(BjAction.Hit)">@L("Bj.Hit") <kbd>H</kbd></button>
+                        <button type="button" class="act call" disabled="@busy" @onclick="() => ActAsync(BjAction.Stand)">@L("Bj.Stand") <kbd>S</kbd></button>
+                        @if (round.CanDouble)
+                        {
+                            <button type="button" class="act raise" disabled="@busy" @onclick="() => ActAsync(BjAction.Double)">@L("Bj.Double") <kbd>D</kbd></button>
+                        }
+                        @if (round.CanSplit)
+                        {
+                            <button type="button" class="act raise" disabled="@busy" @onclick="() => ActAsync(BjAction.Split)">@L("Bj.Split") <kbd>P</kbd></button>
+                        }
+                    </div>
+                    break;
+                case BjPhase.DealerTurn:
+                    <div class="status">🎩 @L("Bj.DealerPlays")</div>
+                    break;
+                case BjPhase.Finished when banner is null || busy:
+                    <div class="status"></div>
+                    break;
+                case BjPhase.Finished:
+                    <button type="button" class="act next" @onclick="NextRoundAsync">@L("Bj.NextRound") <kbd>@L("Table.Key.Space")</kbd></button>
+                    break;
+            }
+        </div>
+    </footer>
+
+    @if (round.Phase == BjPhase.Betting && round.Stack < MinBet)
+    {
+        <div class="overlay">
+            <div class="overlay-card lost">
+                <div class="trophy">💸</div>
+                <h2>@L("Bj.Broke.Title")</h2>
+                <p>@(Settings.IsPractice ? L("Bj.Broke.Practice") : L("Bj.Broke.Text", MinBet))</p>
+                <div class="overlay-actions">
+                    @if (Settings.IsPractice)
+                    {
+                        <button type="button" class="act next" @onclick="Refill">@L("Bj.Refill")</button>
+                    }
+                    <button type="button" class="act fold" @onclick="ExitAsync">@L("Table.Lobby")</button>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+@code {
+    [Parameter, EditorRequired] public GameSettings Settings { get; set; } = default!;
+
+    /// <summary>Leaves the table with this stack.</summary>
+    [Parameter] public EventCallback<int> OnExit { get; set; }
+
+    /// <summary>The stack changed during a round (bet placed, doubled, split).</summary>
+    [Parameter] public EventCallback<int> OnStack { get; set; }
+
+    [Parameter] public EventCallback<BlackjackReport> OnRound { get; set; }
+
+    private const int Decks = 6;
+    private sealed record Banner(string Title, string? Text, string Kind);
+
+    private BlackjackRound round = default!;
+    private readonly CancellationTokenSource cts = new();
+    private IJSObjectReference? js;
+    private DotNetObjectReference<BlackjackTable>? selfRef;
+    private int roundNo = 1;
+    private int bet;
+    private bool busy;
+    private bool hints = true;
+    private bool sound = true;
+    private bool shuffledNotice;
+    private Banner? banner;
+
+    private int MinBet => Settings.Stake.SmallBlind;
+    private int MaxBet => Settings.Stake.BigBlind;
+
+    /// <summary>Highest bet possible right now.</summary>
+    private int Limit => Math.Min(MaxBet, round.Stack);
+
+    private bool InRound => round.Phase is BjPhase.PlayerTurn or BjPhase.DealerTurn;
+
+    private int ShoeFill => (int)Math.Round(round.Shoe.Remaining * 100.0 / round.Shoe.Count);
+
+    protected override void OnInitialized()
+    {
+        round = new BlackjackRound(new Shoe(Decks), BlackjackRules.Standard, Settings.BuyIn);
+        bet = Math.Clamp(Settings.Stake.SmallBlind * 2, MinBet, Math.Max(MinBet, Limit));
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender) return;
+        try
+        {
+            js = await JS.InvokeAsync<IJSObjectReference>("import", "./js/table.js");
+            selfRef = DotNetObjectReference.Create(this);
+            await js.InvokeVoidAsync("init", selfRef);
+            sound = await js.InvokeAsync<bool>("getSound");
+            StateHasChanged();
+        }
+        catch (Exception ex) when (ex is JSDisconnectedException or TaskCanceledException or JSException) { }
+    }
+
+    // ------------------------------------------------------------------ betting
+
+    private IEnumerable<int> ChipValues => new[] { 1, 5, 10, 25, 50, 100, 250, 500, 1000, 2500, 5000 }
+        .Where(v => v >= MinBet && v <= MaxBet).Take(5);
+
+    private void AddBet(int value)
+    {
+        bet = Math.Min(Limit, bet + value);
+        Sfx("chip");
+    }
+
+    private async Task DealAsync()
+    {
+        if (round.Phase != BjPhase.Betting || bet < MinBet || bet > Limit || busy) return;
+        busy = true;
+        banner = null;
+        shuffledNotice = false;
+        round.Deal(bet);
+        Sfx("bet");
+        await OnStack.InvokeAsync(round.Stack);
+        StateHasChanged();
+        await Delay(4 * DealStep + 250);
+        if (round.Phase == BjPhase.Finished)
+        {
+            // Blackjack for the player or the dealer: the round is over at once.
+            Sfx("turn");
+            await Delay(500);
+            await FinishAsync();
+        }
+        busy = false;
+    }
+
+    // ------------------------------------------------------------------ playing
+
+    private async Task ActAsync(BjAction action)
+    {
+        if (busy || !round.Can(action)) return;
+        busy = true;
+        var stackBefore = round.Stack;
+        round.Act(action);
+        Sfx(action is BjAction.Stand ? "check" : action is BjAction.Hit ? "card" : "bet");
+        if (round.Stack != stackBefore) await OnStack.InvokeAsync(round.Stack);
+        StateHasChanged();
+        await Delay(action == BjAction.Stand ? 150 : 450);
+
+        if (round.Phase == BjPhase.DealerTurn) await DealerAsync();
+        else if (round.Phase == BjPhase.Finished) await FinishAsync();
+        busy = false;
+    }
+
+    private async Task DealerAsync()
+    {
+        Sfx("turn");
+        StateHasChanged();
+        await Delay(700);
+        while (round.DealerMustDraw)
+        {
+            round.DealerDraw();
+            Sfx("card");
+            StateHasChanged();
+            await Delay(750);
+        }
+        if (round.Phase == BjPhase.DealerTurn) round.DealerStands();
+        await FinishAsync();
+    }
+
+    private async Task FinishAsync()
+    {
+        var result = round.Result!;
+        banner = result switch
+        {
+            { Natural: true } => new Banner(L("Bj.Result.Blackjack"), Signed(result.Net), "win big"),
+            { Net: > 0 } => new Banner(L("Bj.Result.Win"), Signed(result.Net), "win"),
+            { Net: < 0 } when round.Hands.All(h => h.Outcome == BjOutcome.Bust) => new Banner(L("Bj.Result.Bust"), Signed(result.Net), "lose"),
+            { Net: < 0 } => new Banner(L("Bj.Result.Lose"), Signed(result.Net), "lose"),
+            _ => new Banner(L("Bj.Result.Push"), L("Bj.Result.PushText"), "push"),
+        };
+        if (result.Natural) { Sfx("bigwin"); _ = JsAsync("celebrate", 2); }
+        else if (result.Net > 0) { Sfx("win"); _ = JsAsync("celebrate", result.Net >= result.Bet * 2 ? 2 : 1); }
+        else if (result.Net < 0) Sfx("lose");
+        StateHasChanged();
+        await OnRound.InvokeAsync(new BlackjackReport(round.Stack, result));
+    }
+
+    private async Task NextRoundAsync()
+    {
+        if (round.Phase != BjPhase.Finished) return;
+        round.NextRound();
+        roundNo++;
+        banner = null;
+        shuffledNotice = round.Shuffled;
+        // Keep the last bet if it is still possible.
+        bet = Math.Min(bet, Limit);
+        if (bet < MinBet) bet = Math.Min(MinBet, round.Stack);
+        StateHasChanged();
+        await Task.CompletedTask;
+    }
+
+    private void Refill()
+    {
+        round = new BlackjackRound(round.Shoe, BlackjackRules.Standard, Settings.BuyIn);
+        bet = Math.Clamp(MinBet * 2, MinBet, Limit);
+        roundNo++;
+    }
+
+    private async Task ExitAsync()
+    {
+        if (InRound || busy) return;
+        cts.Cancel();
+        await OnExit.InvokeAsync(round.Stack);
+    }
+
+    [JSInvokable]
+    public async Task Hotkey(string key)
+    {
+        switch (round.Phase, key)
+        {
+            case (BjPhase.Betting, " " or "Enter"): await DealAsync(); break;
+            case (BjPhase.Betting, "ArrowUp"): AddBet(MinBet); break;
+            case (BjPhase.Betting, "ArrowDown"): bet = Math.Max(MinBet, bet - MinBet); break;
+            case (BjPhase.PlayerTurn, "h"): await ActAsync(BjAction.Hit); break;
+            case (BjPhase.PlayerTurn, "s"): await ActAsync(BjAction.Stand); break;
+            case (BjPhase.PlayerTurn, "d"): await ActAsync(BjAction.Double); break;
+            case (BjPhase.PlayerTurn, "p"): await ActAsync(BjAction.Split); break;
+            case (BjPhase.Finished, " " or "Enter") when !busy: await NextRoundAsync(); break;
+            default: return;
+        }
+        StateHasChanged();
+    }
+
+    // ------------------------------------------------------------------ display helpers
+
+    private const int DealStep = 260;
+
+    /// <summary>Only the first four cards of a round are dealt one after another.</summary>
+    private int DealDelay(int index, bool dealer) => index >= 2 ? 0 : index * 2 * DealStep + (dealer ? DealStep : 0);
+
+    private string DealerValueText => round.HoleRevealed
+        ? ValueText(round.Dealer, round.Dealer.Count == 2 && round.DealerTotal == 21)
+        : BjValue.Of(round.Dealer[0].Rank) == 11 ? "1/11" : BjValue.Of(round.Dealer[0].Rank).ToString();
+
+    private static string HandValueText(BjHand h) => ValueText(h.Cards, h.IsBlackjack);
+
+    private static string ValueText(IEnumerable<Card> cards, bool blackjack)
+    {
+        if (blackjack) return "BJ";
+        var (total, soft) = BjValue.Of(cards);
+        return soft && total < 21 ? $"{total - 10}/{total}" : total.ToString();
+    }
+
+    private static string OutcomeClass(BjHand h) => h.Outcome switch
+    {
+        BjOutcome.Blackjack or BjOutcome.Win => "won",
+        BjOutcome.Lose or BjOutcome.Bust => "lost",
+        BjOutcome.Push => "push",
+        _ => "",
+    };
+
+    private static string OutcomeText(BjHand h) => h.Outcome switch
+    {
+        BjOutcome.Blackjack => L("Bj.Outcome.Blackjack", h.Net),
+        BjOutcome.Win => L("Bj.Outcome.Win", h.Net),
+        BjOutcome.Push => L("Bj.Outcome.Push"),
+        BjOutcome.Bust => L("Bj.Outcome.Bust"),
+        _ => L("Bj.Outcome.Lose"),
+    };
+
+    private static string ActionName(BjAction a) => L($"Bj.{a}");
+
+    private string CountHint => round.Shoe.TrueCount switch
+    {
+        >= 2 => L("Bj.Tip.CountHigh"),
+        <= -2 => L("Bj.Tip.CountLow"),
+        _ => L("Bj.Tip.CountEven"),
+    };
+
+    private static string Pct(double p) => $"{Math.Round(p * 100):0} %";
+    private static string Signed(int n) => n > 0 ? $"+{n:N0}" : n < 0 ? $"−{-n:N0}" : "±0";
+    private static string Short(int v) => v >= 1000 ? $"{v / 1000.0:0.#}k" : v.ToString();
+
+    private static string ChipColor(int v) => v switch
+    {
+        >= 5000 => "orange",
+        >= 1000 => "gold",
+        >= 500 => "purple",
+        >= 100 => "black",
+        >= 25 => "green",
+        >= 5 => "red",
+        _ => "white",
+    };
+
+    private Task Delay(int ms) => Task.Delay(ms, cts.Token).ContinueWith(_ => { }, TaskScheduler.Default);
+
+    private void Sfx(string name)
+    {
+        if (sound) _ = JsAsync("sfx", name);
+    }
+
+    private async Task ToggleSound()
+    {
+        sound = !sound;
+        await JsAsync("setSound", sound);
+    }
+
+    private async Task JsAsync(string fn, params object?[] args)
+    {
+        if (js is null) return;
+        try { await js.InvokeVoidAsync(fn, args); }
+        catch (Exception ex) when (ex is JSDisconnectedException or TaskCanceledException or JSException or ObjectDisposedException) { }
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        cts.Cancel();
+        if (js is not null)
+        {
+            try
+            {
+                await js.InvokeVoidAsync("dispose");
+                await js.DisposeAsync();
+            }
+            catch (Exception ex) when (ex is JSDisconnectedException or TaskCanceledException or JSException) { }
+        }
+        selfRef?.Dispose();
+        cts.Dispose();
+    }
+}

@@ -49,6 +49,14 @@
   <data name="Ach.Unlocked" xml:space="preserve"><value>Erfolg freigeschaltet</value></data>
   <data name="Ach.big-pot.Text" xml:space="preserve"><value>Gewinne einen Pot von mindestens 5.000 Chips.</value></data>
   <data name="Ach.big-pot.Title" xml:space="preserve"><value>Großer Fisch</value></data>
+  <data name="Ach.bj-double.Text" xml:space="preserve"><value>Gewinne eine verdoppelte Blackjack-Hand.</value></data>
+  <data name="Ach.bj-double.Title" xml:space="preserve"><value>Doppelt hält besser</value></data>
+  <data name="Ach.bj-natural.Text" xml:space="preserve"><value>Bekomme beim Blackjack ein Ass und eine Zehn.</value></data>
+  <data name="Ach.bj-natural.Title" xml:space="preserve"><value>Natural</value></data>
+  <data name="Ach.bj-rounds-100.Text" xml:space="preserve"><value>Spiele 100 Runden Blackjack.</value></data>
+  <data name="Ach.bj-rounds-100.Title" xml:space="preserve"><value>Stammgast am Blackjack-Tisch</value></data>
+  <data name="Ach.bj-split.Text" xml:space="preserve"><value>Teile beim Blackjack und gewinne alle Hände.</value></data>
+  <data name="Ach.bj-split.Title" xml:space="preserve"><value>Geteiltes Glück</value></data>
   <data name="Ach.busted.Text" xml:space="preserve"><value>Geh einmal pleite. Passiert den Besten.</value></data>
   <data name="Ach.busted.Title" xml:space="preserve"><value>Lehrgeld</value></data>
   <data name="Ach.collector.Text" xml:space="preserve"><value>Besitze 10 Artikel aus dem Shop.</value></data>
@@ -82,6 +90,62 @@
   <data name="Action.Check" xml:space="preserve"><value>Checkt</value></data>
   <data name="Action.Fold" xml:space="preserve"><value>Passt</value></data>
   <data name="Action.Raise" xml:space="preserve"><value>Erhöht auf {0:N0}</value></data>
+  <data name="Bj.Arc1" xml:space="preserve"><value>Blackjack zahlt 3 zu 2</value></data>
+  <data name="Bj.Arc2" xml:space="preserve"><value>Dealer zieht bis 16 und steht auf allen 17</value></data>
+  <data name="Bj.Broke.Practice" xml:space="preserve"><value>Am Übungstisch kannst du einfach neu auffüllen.</value></data>
+  <data name="Bj.Broke.Text" xml:space="preserve"><value>Für den Mindesteinsatz von {0:N0} reicht es nicht mehr. Zurück in die Lobby?</value></data>
+  <data name="Bj.Broke.Title" xml:space="preserve"><value>Keine Chips mehr</value></data>
+  <data name="Bj.Clear" xml:space="preserve"><value>Löschen</value></data>
+  <data name="Bj.Deal" xml:space="preserve"><value>Geben · {0:N0}</value></data>
+  <data name="Bj.Dealer" xml:space="preserve"><value>Dealer</value></data>
+  <data name="Bj.DealerPlays" xml:space="preserve"><value>Dealer spielt …</value></data>
+  <data name="Bj.Double" xml:space="preserve"><value>Verdoppeln</value></data>
+  <data name="Bj.FinishRoundFirst" xml:space="preserve"><value>Erst die Runde zu Ende spielen</value></data>
+  <data name="Bj.Hit" xml:space="preserve"><value>Karte</value></data>
+  <data name="Bj.Limits" xml:space="preserve"><value>Einsatz {0:N0}–{1:N0}</value></data>
+  <data name="Bj.Lobby.Bets" xml:space="preserve"><value>Einsatz {0:N0}–{1:N0}</value></data>
+  <data name="Bj.Lobby.BuyInNote" xml:space="preserve"><value>{0} Mindesteinsätze · danach bleiben dir {1:N0} Chips</value></data>
+  <data name="Bj.Lobby.Rules" xml:space="preserve"><value>6 Decks · Dealer steht auf Soft 17 · Blackjack zahlt 3 : 2 · Verdoppeln auf alle zwei Karten, auch nach dem Teilen · bis zu 4 Hände</value></data>
+  <data name="Bj.Lobby.StartPractice" xml:space="preserve"><value>Blackjack üben – kostenlos</value></data>
+  <data name="Bj.Lobby.Table" xml:space="preserve"><value>Blackjack-Tisch</value></data>
+  <data name="Bj.NextRound" xml:space="preserve"><value>Nächste Runde</value></data>
+  <data name="Bj.NoChips" xml:space="preserve"><value>Zu wenig Chips für den Mindesteinsatz.</value></data>
+  <data name="Bj.Outcome.Blackjack" xml:space="preserve"><value>Blackjack +{0:N0}</value></data>
+  <data name="Bj.Outcome.Bust" xml:space="preserve"><value>Überkauft</value></data>
+  <data name="Bj.Outcome.Lose" xml:space="preserve"><value>Verloren</value></data>
+  <data name="Bj.Outcome.Push" xml:space="preserve"><value>Push</value></data>
+  <data name="Bj.Outcome.Win" xml:space="preserve"><value>+{0:N0}</value></data>
+  <data name="Bj.PlaceBet" xml:space="preserve"><value>Einsatz setzen</value></data>
+  <data name="Bj.Refill" xml:space="preserve"><value>Neu auffüllen</value></data>
+  <data name="Bj.Result.Blackjack" xml:space="preserve"><value>Blackjack!</value></data>
+  <data name="Bj.Result.Bust" xml:space="preserve"><value>Überkauft</value></data>
+  <data name="Bj.Result.Lose" xml:space="preserve"><value>Dealer gewinnt</value></data>
+  <data name="Bj.Result.Push" xml:space="preserve"><value>Unentschieden</value></data>
+  <data name="Bj.Result.PushText" xml:space="preserve"><value>Einsatz zurück</value></data>
+  <data name="Bj.Result.Win" xml:space="preserve"><value>Gewonnen</value></data>
+  <data name="Bj.RoundNo" xml:space="preserve"><value>Runde #{0}</value></data>
+  <data name="Bj.Shoe" xml:space="preserve"><value>Schuh</value></data>
+  <data name="Bj.ShoeTitle" xml:space="preserve"><value>Kartenschuh: noch {0} Karten</value></data>
+  <data name="Bj.Shuffled" xml:space="preserve"><value>Neu gemischt</value></data>
+  <data name="Bj.Split" xml:space="preserve"><value>Teilen</value></data>
+  <data name="Bj.StackTitle" xml:space="preserve"><value>Deine Chips am Tisch</value></data>
+  <data name="Bj.Stand" xml:space="preserve"><value>Stehen</value></data>
+  <data name="Bj.Tip.Best" xml:space="preserve"><value>Beste Wahl</value></data>
+  <data name="Bj.Tip.Bust" xml:space="preserve"><value>Überkaufen</value></data>
+  <data name="Bj.Tip.BustText" xml:space="preserve"><value>{0} mit der nächsten Karte</value></data>
+  <data name="Bj.Tip.Count" xml:space="preserve"><value>Zählung</value></data>
+  <data name="Bj.Tip.CountEven" xml:space="preserve"><value>ausgeglichen</value></data>
+  <data name="Bj.Tip.CountHigh" xml:space="preserve"><value>viele hohe Karten übrig – gut für dich</value></data>
+  <data name="Bj.Tip.CountLow" xml:space="preserve"><value>viele kleine Karten übrig – eher vorsichtig setzen</value></data>
+  <data name="Bj.Tip.CountText" xml:space="preserve"><value>Hi-Lo {0} (pro Deck {1})</value></data>
+  <data name="Bj.Tip.Dealer" xml:space="preserve"><value>Dealer</value></data>
+  <data name="Bj.Tip.DealerText" xml:space="preserve"><value>zeigt {0} – überkauft sich in {1} der Fälle</value></data>
+  <data name="Bj.Tip.Kind.Hard" xml:space="preserve"><value>harte {0}</value></data>
+  <data name="Bj.Tip.Kind.Pair" xml:space="preserve"><value>Paar – Teilen lohnt sich</value></data>
+  <data name="Bj.Tip.Kind.Soft" xml:space="preserve"><value>weiche {0} (Ass zählt 11)</value></data>
+  <data name="Bj.Tip.Shoe" xml:space="preserve"><value>Schuh</value></data>
+  <data name="Bj.Tip.ShoeText" xml:space="preserve"><value>noch {0} Karten von {1} Decks</value></data>
+  <data name="Bj.Tips.Title" xml:space="preserve"><value>Tipps: Basisstrategie, Überkauf-Risiko und Kartenzählen</value></data>
   <data name="Board.Back" xml:space="preserve"><value>← Zum Spiel</value></data>
   <data name="Board.DevTools" xml:space="preserve"><value>Mit Entwickler-Befehlen verändert</value></data>
   <data name="Board.Empty" xml:space="preserve"><value>Noch niemand auf der Liste. Melde dich an und spiel eine Runde – dann stehst du hier ganz oben!</value></data>
@@ -91,10 +155,12 @@
   <data name="Board.LoginText" xml:space="preserve"><value>, um in der Rangliste zu erscheinen.</value></data>
   <data name="Board.Offline" xml:space="preserve"><value>Die Rangliste gibt es nur, wenn der Server erreichbar ist.</value></data>
   <data name="Board.PageTitle" xml:space="preserve"><value>Rangliste – Chip Royale</value></data>
+  <data name="Board.Sub.Blackjack" xml:space="preserve"><value>größter Gewinn · {0:N0} Runden · {1}× Blackjack</value></data>
   <data name="Board.Sub.Current" xml:space="preserve"><value>Run #{0} · Rekord {1:N0}</value></data>
   <data name="Board.Sub.Record" xml:space="preserve"><value>Aktuell {0:N0} · {1}</value></data>
   <data name="Board.Sub.Tables" xml:space="preserve"><value>{0:N0} von {1} gewonnen</value></data>
   <data name="Board.Sub.Tournaments" xml:space="preserve"><value>{0:N0} Turniere gespielt</value></data>
+  <data name="Board.Tab.Blackjack" xml:space="preserve"><value>Blackjack</value></data>
   <data name="Board.Tab.Current" xml:space="preserve"><value>Aktueller Stand</value></data>
   <data name="Board.Tab.Record" xml:space="preserve"><value>Höchster Stand (Run)</value></data>
   <data name="Board.Tab.Tables" xml:space="preserve"><value>Abgeräumte Tische</value></data>
@@ -416,6 +482,7 @@ Passen – aussteigen. Deine Chips im Pot sind dann weg.</value></data>
   <data name="Lobby.Learn" xml:space="preserve"><value>🎓 Lernen</value></data>
   <data name="Lobby.LockedFrom" xml:space="preserve"><value>🔒 ab {0:N0}</value></data>
   <data name="Lobby.Login" xml:space="preserve"><value>Anmelden</value></data>
+  <data name="Lobby.Mode.Blackjack" xml:space="preserve"><value>🂡 Blackjack</value></data>
   <data name="Lobby.Mode.Cash" xml:space="preserve"><value>💵 Cash Game</value></data>
   <data name="Lobby.Mode.Sng" xml:space="preserve"><value>🏆 Sit &amp; Go</value></data>
   <data name="Lobby.NameAria" xml:space="preserve"><value>Spielername</value></data>
@@ -505,6 +572,9 @@ Passen – aussteigen. Deine Chips im Pot sind dann weg.</value></data>
   <data name="Rank.Two.Plural" xml:space="preserve"><value>Zweien</value></data>
   <data name="Records.BestPeak" xml:space="preserve"><value>Bester Chip-Stand</value></data>
   <data name="Records.BiggestPot" xml:space="preserve"><value>Größter Pot</value></data>
+  <data name="Records.Blackjack" xml:space="preserve"><value>Blackjack</value></data>
+  <data name="Records.BlackjackBest" xml:space="preserve"><value>Größter Blackjack-Gewinn</value></data>
+  <data name="Records.BlackjackText" xml:space="preserve"><value>{0:N0} Runden · {1:N0} gewonnen · {2}× Blackjack</value></data>
   <data name="Records.Busts" xml:space="preserve"><value>Pleiten</value></data>
   <data name="Records.Crowns" xml:space="preserve"><value>Kronen</value></data>
   <data name="Records.Hands" xml:space="preserve"><value>Hände</value></data>
@@ -578,6 +648,10 @@ Passen – aussteigen. Deine Chips im Pot sind dann weg.</value></data>
   <data name="Sng.Tier.silver" xml:space="preserve"><value>Silber</value></data>
   <data name="Sng.Title" xml:space="preserve"><value>Turnier</value></data>
   <data name="Sng.Won" xml:space="preserve"><value>Turniersieg! 🏆</value></data>
+  <data name="Stake.bj-casino" xml:space="preserve"><value>Casino</value></data>
+  <data name="Stake.bj-practice" xml:space="preserve"><value>Übungstisch</value></data>
+  <data name="Stake.bj-pub" xml:space="preserve"><value>Kneipe</value></data>
+  <data name="Stake.bj-vip" xml:space="preserve"><value>VIP-Salon</value></data>
   <data name="Stake.casino" xml:space="preserve"><value>Casino</value></data>
   <data name="Stake.highroller" xml:space="preserve"><value>High Roller</value></data>
   <data name="Stake.practice" xml:space="preserve"><value>Übungstisch</value></data>

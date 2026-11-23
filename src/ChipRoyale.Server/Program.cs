@@ -88,6 +88,8 @@ api.MapPost(ApiRoutes.BuyIn, (BuyInRequest r, ClaimsPrincipal user, ApplicationD
     Mutate(user, db, s => ProfileOperations.BuyIn(s, r.StakeId, r.Amount)));
 api.MapPost(ApiRoutes.Table, (TableRequest r, ClaimsPrincipal user, ApplicationDbContext db) =>
     Mutate(user, db, s => ProfileOperations.Table(s, r.Stack, r.Hand)));
+api.MapPost(ApiRoutes.Blackjack, (BlackjackRequest r, ClaimsPrincipal user, ApplicationDbContext db) =>
+    Mutate(user, db, s => ProfileOperations.Blackjack(s, r.Stack, r.Round)));
 api.MapPost(ApiRoutes.CashOut, (CashOutRequest r, ClaimsPrincipal user, ApplicationDbContext db) =>
     Mutate(user, db, s => ProfileOperations.CashOut(s, r.Stack)));
 api.MapPost(ApiRoutes.TournamentEnter, (TournamentEnterRequest r, ClaimsPrincipal user, ApplicationDbContext db) =>
@@ -135,6 +137,7 @@ app.MapGet(ApiRoutes.Leaderboard, async (string? sort, ClaimsPrincipal user, App
         "aktuell" => p => p.Bankroll.Chips + p.Bankroll.TableChips,
         "tische" => p => p.Bankroll.TablesCleared,
         "turniere" => p => p.Bankroll.TournamentsWon,
+        "blackjack" => p => p.Bankroll.BlackjackBiggestWin,
         _ => p => p.Bankroll.BestPeak,
     };
     var value = key.Compile();
@@ -192,7 +195,8 @@ static LeaderboardEntry Entry(PlayerProfile p, int rank, bool isMe)
     var b = p.Bankroll;
     return new LeaderboardEntry(rank, p.DisplayName, b.BestPeak, b.Total, b.Run, b.HandsPlayed, b.HandsWon,
         b.TablesCleared, b.TournamentsPlayed, b.TournamentsWon, isMe,
-        DevTools: (p.UnlockedAchievements ?? "").Split(',').Contains(PlayerCollection.DevToolsMarker));
+        DevTools: (p.UnlockedAchievements ?? "").Split(',').Contains(PlayerCollection.DevToolsMarker),
+        BlackjackRounds: b.BlackjackRounds, BlackjackNaturals: b.BlackjackNaturals, BlackjackBiggestWin: b.BlackjackBiggestWin);
 }
 
 /// <summary>Marker for integration tests (WebApplicationFactory).</summary>

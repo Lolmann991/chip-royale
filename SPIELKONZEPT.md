@@ -136,6 +136,16 @@ Reihenfolge = Umsetzungsreihenfolge.
 - [x] Windows-ZIP mit Server + Datenbank (Datenbank neben dem Server, übersteht Updates)
 - [ ] Server ins Internet stellen (dann auch für Freunde ohne eigenen Server) – Ergebnisse vom Server prüfen lassen
 
+### Blackjack (umgesetzt)
+- [x] Eigener Modus in der Lobby (Reiter „Blackjack“), online und offline – gleiche Chips wie beim Poker
+- [x] Tische: Übungstisch (kostenlos), Kneipe (Einsatz 5–100), Casino (25–500), VIP-Salon (100–2.000); Buy-in wie beim Poker
+- [x] Regeln: 6 Decks, Dealer steht auf Soft 17, Blackjack zahlt 3 : 2, Dealer schaut bei Ass/Zehn nach Blackjack,
+      Verdoppeln auf zwei Karten (auch nach dem Teilen), bis zu 4 Hände, geteilte Asse bekommen eine Karte
+- [x] Tipps: Basisstrategie, Überkauf-Risiko der nächsten Karte, Dealer-Bust-Chance, Hi-Lo-Kartenzählung
+- [x] Tasten: H Karte, S Stehen, D Verdoppeln, P Teilen, Leertaste Geben/Nächste Runde, ↑/↓ Einsatz
+- [x] Statistik (Runden, gewonnen, Blackjacks, größter Gewinn) in der Datenbank, Rangliste „Blackjack“, 4 neue Erfolge
+- [ ] Ideen: Versicherung, Aufgeben (Surrender), mehrere Boxen gleichzeitig, Nebenwetten (Perfect Pairs, 21+3)
+
 ### Entwickler-Konsole (umgesetzt)
 - [x] Öffnen mit `^` (Taste links neben der 1) oder `F2`, auf jeder Seite; Tab ergänzt, ↑/↓ Verlauf, Esc schließt
 - [x] Befehle: `chips`, `crowns`, `unlock`, `lock`, `equip`, `items`, `achieve`, `unachieve`, `achievements`, `stats`, `reset confirm`, dazu `help`, `clear`, `status`, `server`

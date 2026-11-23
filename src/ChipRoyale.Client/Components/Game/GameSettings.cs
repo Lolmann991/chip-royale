@@ -6,10 +6,19 @@ using static ChipRoyale.Client.Localization.Loc;
 
 namespace ChipRoyale.Client.Components.Game;
 
+public enum GameKind
+{
+    Poker,
+    Blackjack,
+}
+
 /// <param name="BuyIn">Chips the player brings to the table.</param>
 /// <param name="Tournament">Set for a Sit &amp; Go; then <see cref="BuyIn"/> is the tournament buy-in.</param>
-public sealed record GameSettings(Difficulty Difficulty, int Opponents, TableStake Stake, int BuyIn, SitAndGoConfig? Tournament = null)
+public sealed record GameSettings(Difficulty Difficulty, int Opponents, TableStake Stake, int BuyIn, SitAndGoConfig? Tournament = null,
+    GameKind Game = GameKind.Poker)
 {
+    public bool IsBlackjack => Game == GameKind.Blackjack;
+
     public int SmallBlind => Stake.SmallBlind;
     public int BigBlind => Stake.BigBlind;
     public bool IsPractice => Stake.IsPractice;
@@ -29,6 +38,9 @@ public readonly record struct TournamentResult(int Place, int Prize);
 /// <param name="Stack">The player's chips at the table right now.</param>
 /// <param name="Hand">Set when a hand the player was dealt into has finished.</param>
 public readonly record struct TableReport(int Stack, HandOutcome? Hand);
+
+/// <param name="Stack">Chips at the blackjack table after the round.</param>
+public readonly record struct BlackjackReport(int Stack, Engine.Blackjack.BjRoundResult Round);
 
 /// <summary>Look and personality of a seat at the table.</summary>
 /// <param name="AvatarClass">CSS class for avatars drawn without an emoji (pixel art).</param>

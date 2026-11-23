@@ -15,7 +15,7 @@ namespace ChipRoyale.Server.Migrations
         protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
-            modelBuilder.HasAnnotation("ProductVersion", "10.0.12");
+            modelBuilder.HasAnnotation("ProductVersion", "10.0.15");
 
             modelBuilder.Entity("ChipRoyale.Server.Data.ApplicationUser", b =>
                 {
@@ -281,6 +281,18 @@ namespace ChipRoyale.Server.Migrations
                                 .HasColumnType("INTEGER");
 
                             b1.Property<int>("BiggestPot")
+                                .HasColumnType("INTEGER");
+
+                            b1.Property<int>("BlackjackBiggestWin")
+                                .HasColumnType("INTEGER");
+
+                            b1.Property<int>("BlackjackNaturals")
+                                .HasColumnType("INTEGER");
+
+                            b1.Property<int>("BlackjackRounds")
+                                .HasColumnType("INTEGER");
+
+                            b1.Property<int>("BlackjackWon")
                                 .HasColumnType("INTEGER");
 
                             b1.Property<int>("Busts")

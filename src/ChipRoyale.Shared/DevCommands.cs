@@ -178,6 +178,7 @@ public static class DevCommands
                     $"  {T("Hände", "Hands")}: {N(st.HandsPlayed)} ({N(st.HandsWon)} {T("gewonnen", "won")})   {T("Größter Pot", "Biggest pot")}: {N(st.BiggestPot)}",
                     $"  {T("Tische geleert", "Tables cleared")}: {st.TablesCleared}   {T("Pleiten", "Busts")}: {st.Busts}",
                     $"  {T("Turniere", "Tournaments")}: {st.TournamentsPlayed} ({st.TournamentsWon} {T("gewonnen", "won")})",
+                    $"  Blackjack: {N(st.BlackjackRounds)} {T("Runden", "rounds")} ({N(st.BlackjackWon)} {T("gewonnen", "won")}, {st.BlackjackNaturals}× Blackjack)   {T("Größter Gewinn", "Biggest win")}: {N(st.BlackjackBiggestWin)}",
                     $"  Items: {c.Owned.Count}/{ShopCatalog.All.Count(i => !i.IsDefault)}   {T("Erfolge", "Achievements")}: {Achievements.All.Count(a => c.Achievements.Contains(a.Id))}/{Achievements.All.Count}",
                     $"  {T("Dev-Befehle benutzt", "Developer commands used")}: {(c.UsedDevTools ? T("ja 🛠", "yes 🛠") : T("nein", "no"))}",
                 ]);
