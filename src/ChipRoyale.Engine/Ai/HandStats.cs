@@ -121,13 +121,20 @@ public static class HandStats
 
 /// <summary>
 /// Ranking of the 169 distinct starting hands (pairs, suited, offsuit) by their chance to win
-/// heads-up against a random hand. Computed once with a fixed seed, so it is the same everywhere.
+/// heads-up against a random hand. The order was computed once with 30,000 samples per hand
+/// and is stored here, so nothing has to be simulated at runtime (important in the browser).
 /// </summary>
 public static class StartingHands
 {
     public const int Count = 169;
 
-    private static readonly Lazy<Dictionary<string, int>> Ranks = new(Build);
+    private const string Order =
+        "AA KK QQ JJ TT 99 88 AKs AQs 77 AKo AJs ATs AQo AJo KQs 66 A9s KJs ATo A8s KTs KQo A7s 55 A9o KJo QJs A5s A6s K9s A8o KTo QTs A4s A7o QJo K8s A3s A6o JTs Q9s K7s A2s K9o A5o QTo A4o 44 K6s K8o Q8s J9s A3o K5s Q9o JTo K7o K4s A2o J8s T9s Q7s K6o K3s Q8o 33 K5o K2s Q6s J9o K4o J7s Q5s Q7o T8s Q4s Q6o K3o T9o J8o Q3s 98s T7s J6s J5s T8o 22 Q5o K2o Q2s J4s J7o Q4o 97s T6s 98o Q3o J3s J6o T7o Q2o 87s J5o 96s J2s T4s T5s 86s 97o J4o 76s 95s T3s T6o J3o T2s 87o J2o T5o 85s 96o 75s 94s T4o 93s T3o 92s 86o 65s 84s 76o 95o 85o T2o 74s 83s 54s 64s 65o 75o 94o 82s 53s 93o 73s 63s 84o 92o 74o 54o 43s 64o 72s 52s 42s 62s 83o 73o 82o 63o 53o 32s 72o 43o 52o 62o 42o 32o";
+
+    private static readonly Dictionary<string, int> Ranks = Order
+        .Split(' ', StringSplitOptions.RemoveEmptyEntries)
+        .Select((key, i) => (key, rank: i + 1))
+        .ToDictionary(x => x.key, x => x.rank);
 
     /// <summary>Key like "AKs", "QJo" or "77".</summary>
     public static string Key(Card a, Card b)
@@ -139,7 +146,7 @@ public static class StartingHands
     }
 
     /// <summary>1 = best (AA) … 169 = worst.</summary>
-    public static int RankOf(Card a, Card b) => Ranks.Value[Key(a, b)];
+    public static int RankOf(Card a, Card b) => Ranks[Key(a, b)];
 
     /// <summary>Share of starting hands that are at least as good, e.g. 0.05 = top 5 %.</summary>
     public static double TopPercent(Card a, Card b)
@@ -147,35 +154,10 @@ public static class StartingHands
         var rank = RankOf(a, b);
         // Weight by how many card combinations each class has (pairs 6, suited 4, offsuit 12).
         var combos = 0;
-        foreach (var (key, r) in Ranks.Value)
+        foreach (var (key, r) in Ranks)
             if (r <= rank) combos += key.Length == 2 ? 6 : key[2] == 's' ? 4 : 12;
         return combos / 1326.0;
     }
 
     private static char RankChar(Rank r) => "23456789TJQKA"[(int)r - 2];
-
-    private static Dictionary<string, int> Build()
-    {
-        var random = new Random(169);
-        var equities = new List<(string Key, double Equity)>();
-        for (var hi = Rank.Two; hi <= Rank.Ace; hi++)
-            for (var lo = Rank.Two; lo <= hi; lo++)
-            {
-                if (hi == lo)
-                {
-                    equities.Add((Key(new(hi, Suit.Spades), new(lo, Suit.Hearts)),
-                        EquityCalculator.Estimate([new(hi, Suit.Spades), new(lo, Suit.Hearts)], [], 1, 1500, random)));
-                    continue;
-                }
-                equities.Add((Key(new(hi, Suit.Spades), new(lo, Suit.Spades)),
-                    EquityCalculator.Estimate([new(hi, Suit.Spades), new(lo, Suit.Spades)], [], 1, 1500, random)));
-                equities.Add((Key(new(hi, Suit.Spades), new(lo, Suit.Hearts)),
-                    EquityCalculator.Estimate([new(hi, Suit.Spades), new(lo, Suit.Hearts)], [], 1, 1500, random)));
-            }
-
-        return equities
-            .OrderByDescending(e => e.Equity)
-            .Select((e, i) => (e.Key, Rank: i + 1))
-            .ToDictionary(e => e.Key, e => e.Rank);
-    }
 }

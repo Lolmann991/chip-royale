@@ -40,6 +40,27 @@ public sealed class Bankroll
     /// <summary>Nothing on a table and not enough for the cheapest buy-in.</summary>
     public bool IsBroke => TableChips == 0 && Chips < TableStakes.SmallestMinBuyIn;
 
+    /// <summary>Plain copy of all values (for JSON: the web API and the offline profile).</summary>
+    public BankrollState ToState() => new(Chips, TableChips, Run, RunPeak, BestPeak, HandsPlayed, HandsWon, BiggestPot,
+        Busts, TablesCleared, Crowns, TournamentsPlayed, TournamentsWon);
+
+    public static Bankroll FromState(BankrollState s) => new()
+    {
+        Chips = s.Chips,
+        TableChips = s.TableChips,
+        Run = s.Run,
+        RunPeak = s.RunPeak,
+        BestPeak = s.BestPeak,
+        HandsPlayed = s.HandsPlayed,
+        HandsWon = s.HandsWon,
+        BiggestPot = s.BiggestPot,
+        Busts = s.Busts,
+        TablesCleared = s.TablesCleared,
+        Crowns = s.Crowns,
+        TournamentsPlayed = s.TournamentsPlayed,
+        TournamentsWon = s.TournamentsWon,
+    };
+
     public static Bankroll New(int startingChips = TableStakes.StartingChips) => new()
     {
         Chips = startingChips,
@@ -151,3 +172,19 @@ public sealed class Bankroll
         BestPeak = Math.Max(BestPeak, RunPeak);
     }
 }
+
+/// <summary>Serializable snapshot of a <see cref="Bankroll"/>.</summary>
+public sealed record BankrollState(
+    int Chips,
+    int TableChips,
+    int Run,
+    int RunPeak,
+    int BestPeak,
+    int HandsPlayed,
+    int HandsWon,
+    int BiggestPot,
+    int Busts,
+    int TablesCleared,
+    int Crowns,
+    int TournamentsPlayed,
+    int TournamentsWon);

@@ -53,10 +53,12 @@ Browser-Pokerspiel (Blazor Server) gegen KI-Gegner mit Chip-Progression, freisch
 
 | Thema | Entscheidung |
 |---|---|
-| Framework | .NET 10, Blazor Web App (Interactive Server) |
-| Struktur | `ChipRoyale.Web` (UI), `ChipRoyale.Engine` (Poker-Logik, UI-unabhängig), `ChipRoyale.Engine.Tests` (xUnit) |
+| Framework | .NET 10, Blazor WebAssembly (Client) + ASP.NET Core Web-API (Server) |
+| Struktur | `ChipRoyale.Client` (UI im Browser), `ChipRoyale.Server` (API + Datenbank), `ChipRoyale.Shared` (Verträge, Konto-Regeln), `ChipRoyale.Engine` (Poker-Logik), Tests (xUnit) |
 | Datenbank | SQLite + EF Core |
-| Login | ASP.NET Core Identity (Benutzerkonten) |
+| Login | ASP.NET Core Identity API (Bearer-Token) |
+| Hosting | Client auf GitHub Pages oder vom Server; Server + Datenbank lokal (ZIP) |
+| Offline-Modus | ohne Server läuft das Spiel weiter, Profil im Browser (localStorage) |
 | Sprache | Deutsch + Englisch (Ressourcendateien) |
 | Plattform | nur Desktop |
 | Grafik | eigener Pixel-Art-Stil (keine fremden Assets) |
@@ -125,6 +127,14 @@ Reihenfolge = Umsetzungsreihenfolge.
 - [ ] Tägliche Herausforderung mit Kronen-Belohnung (z. B. „Gewinne 3 Pots mit Zwei Paaren oder besser“)
 - [ ] Verlauf der letzten Hände mit Karten und Replay
 - [ ] Statistik-Seite: Gewinnrate, gespielte Starthände, Lieblingshand, Turnier-Bilanz
+
+### Deployment (Branch `deployment`)
+- [x] Umbau auf Blazor WebAssembly: das Spiel läuft komplett im Browser
+- [x] Server als Web-API (Konten, Chips, Shop, Erfolge, Rangliste) mit SQLite-Datenbank
+- [x] GitHub Pages: Client wird per GitHub Actions veröffentlicht
+- [x] Offline-Modus: ohne Server weiterspielen, Profil im Browser; Statusanzeige Online/Gast/Offline
+- [x] Windows-ZIP mit Server + Datenbank (Datenbank neben dem Server, übersteht Updates)
+- [ ] Server ins Internet stellen (dann auch für Freunde ohne eigenen Server) – Ergebnisse vom Server prüfen lassen
 
 ### V3
 - Mehrspieler: gemeinsame Tische, private Tische, Turniere, Seed-Challenge

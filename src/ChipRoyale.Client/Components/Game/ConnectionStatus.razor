@@ -1,0 +1,61 @@
+@implements IDisposable
+@inject PlayerService Player
+
+@* Shows whether progress is saved on the server (database) or only in this browser, and lets the
+   player retry the connection or change the server address. *@
+
+<div class="conn conn-@Player.Mode.ToString().ToLowerInvariant() @(Player.ConnectionLost ? "lost" : "")">
+    <span class="conn-dot"></span>
+    <div class="conn-text">
+        <b>@L($"Conn.{Player.Mode}")</b>
+        <small>@(Player.ConnectionLost ? L("Conn.Lost") : L($"Conn.{Player.Mode}.Text"))</small>
+    </div>
+    @if (Player.Mode != PlayerMode.Online)
+    {
+        <button type="button" class="preset" disabled="@busy" @onclick="RetryAsync">@(busy ? "…" : L("Conn.Retry"))</button>
+    }
+    <button type="button" class="icon-btn" title="@L("Conn.Server")" @onclick="() => editing = !editing">⚙️</button>
+</div>
+@if (editing)
+{
+    <form class="conn-edit" @onsubmit="SaveAsync" @onsubmit:preventDefault="true">
+        <label>
+            <span>@L("Conn.Server")</span>
+            <input @bind="url" placeholder="http://localhost:5132" aria-label="@L("Conn.Server")" />
+        </label>
+        <button type="submit" class="preset">@L("Common.Save")</button>
+        <small>@L("Conn.ServerHint")</small>
+    </form>
+}
+
+@code {
+    private bool busy;
+    private bool editing;
+    private string url = "";
+
+    protected override void OnInitialized()
+    {
+        url = Player.ServerUrl;
+        Player.Changed += OnChanged;
+    }
+
+    private void OnChanged() => InvokeAsync(StateHasChanged);
+
+    private async Task RetryAsync()
+    {
+        busy = true;
+        await Player.ReconnectAsync();
+        busy = false;
+    }
+
+    private async Task SaveAsync()
+    {
+        busy = true;
+        await Player.SetServerAsync(url);
+        url = Player.ServerUrl;
+        busy = false;
+        editing = false;
+    }
+
+    public void Dispose() => Player.Changed -= OnChanged;
+}

@@ -52,6 +52,7 @@ public class HandStatsTests
         Assert.Equal("AKs", StartingHands.Key(Card.Parse("Kh"), Card.Parse("Ah")));
         Assert.Equal("T9o", StartingHands.Key(Card.Parse("9c"), Card.Parse("Td")));
         Assert.InRange(StartingHands.TopPercent(Card.Parse("As"), Card.Parse("Ad")), 0.004, 0.005);
-        Assert.Equal(1.0, StartingHands.TopPercent(Card.Parse("7c"), Card.Parse("2d")) > 0.9 ? 1.0 : 0.0);
+        Assert.True(StartingHands.TopPercent(Card.Parse("7c"), Card.Parse("2d")) > 0.9);
+        Assert.Equal(169, StartingHands.RankOf(Card.Parse("3c"), Card.Parse("2d")));
     }
 }

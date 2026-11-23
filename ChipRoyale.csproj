@@ -2,7 +2,7 @@
 
   <!--
     Starter, damit im Hauptordner ein einfaches `dotnet run` das Spiel startet.
-    Er baut nur ein winziges Programm und ruft dann `dotnet run` für src/ChipRoyale.Web auf.
+    Er baut nur ein winziges Programm und ruft dann `dotnet run` für src/ChipRoyale.Server auf.
     `dotnet build` und `dotnet test` im Hauptordner nehmen weiterhin ChipRoyale.slnx
     (MSBuild bevorzugt die Solution, wenn Projekt und Solution gleich heißen).
   -->
@@ -12,7 +12,7 @@
     <EnableDefaultItems>false</EnableDefaultItems>
     <IsPackable>false</IsPackable>
     <RunCommand>dotnet</RunCommand>
-    <RunArguments>run --project "$(MSBuildThisFileDirectory)src/ChipRoyale.Web/ChipRoyale.Web.csproj"</RunArguments>
+    <RunArguments>run --project "$(MSBuildThisFileDirectory)src/ChipRoyale.Server/ChipRoyale.Server.csproj"</RunArguments>
     <RunWorkingDirectory>$(MSBuildThisFileDirectory)</RunWorkingDirectory>
   </PropertyGroup>
 

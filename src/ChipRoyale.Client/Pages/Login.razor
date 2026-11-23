@@ -1,0 +1,86 @@
+@page "/login"
+@using System.ComponentModel.DataAnnotations
+@using ChipRoyale.Client.Localization
+@inject PlayerService Player
+@inject NavigationManager Nav
+
+<PageTitle>@L("Account.Login")</PageTitle>
+
+<div class="game-root account-root @Player.ThemeClasses">
+    <div class="account-shell">
+        <header class="board-head">
+            <a class="brand" href="">♠ Chip <span>Royale</span></a>
+            <span class="head-tools">
+                <LanguageSwitch />
+                <a class="tool" href="">@L("Board.Back")</a>
+            </span>
+        </header>
+        <main class="account-main">
+            <div class="auth-card">
+                <div class="auth-cards" aria-hidden="true"><span>A♠</span><span class="red">K♥</span></div>
+                <nav class="auth-tabs">
+                    <a class="on" href="login">@L("Account.Login")</a>
+                    <a href="register">@L("Account.Register")</a>
+                </nav>
+                <h1 class="auth-title">@L("Account.Login.Title")</h1>
+                <p class="auth-sub">@L("Account.Login.Sub")</p>
+
+                @if (error is not null)
+                {
+                    <div class="alert alert-danger" role="alert">@error</div>
+                }
+                <EditForm Model="input" OnValidSubmit="LoginAsync" class="auth-form">
+                    <DataAnnotationsValidator />
+                    <ValidationSummary class="auth-errors" role="alert" />
+                    <label class="field">
+                        <span>@L("Account.Email")</span>
+                        <InputText @bind-Value="input.Email" autocomplete="username" placeholder="name@beispiel.de" />
+                    </label>
+                    <label class="field">
+                        <span>@L("Account.Password")</span>
+                        <InputText type="password" @bind-Value="input.Password" autocomplete="current-password" placeholder="••••••" />
+                    </label>
+                    <button type="submit" class="play-btn" disabled="@busy"><span>@(busy ? "…" : L("Account.Login"))</span></button>
+                </EditForm>
+                <div class="auth-links">
+                    <a href="register">@L("Account.Login.RegisterNew")</a>
+                    <a href="">@L("Account.PlayAsGuest")</a>
+                </div>
+                <p class="note">@L("Account.ServerNote", Player.ServerUrl)</p>
+            </div>
+        </main>
+    </div>
+</div>
+
+@code {
+    private readonly LoginInput input = new();
+    private string? error;
+    private bool busy;
+
+    protected override Task OnInitializedAsync() => Player.LoadAsync();
+
+    private async Task LoginAsync()
+    {
+        busy = true;
+        error = null;
+        if (await Player.LoginAsync(input.Email.Trim(), input.Password))
+        {
+            Nav.NavigateTo("");
+            return;
+        }
+        error = Player.Mode == PlayerMode.Offline ? L("Account.ServerOffline") : L("Account.Login.Invalid");
+        busy = false;
+    }
+
+    private sealed class LoginInput
+    {
+        [Required(ErrorMessageResourceType = typeof(ValidationTexts), ErrorMessageResourceName = nameof(ValidationTexts.Required))]
+        [EmailAddress(ErrorMessageResourceType = typeof(ValidationTexts), ErrorMessageResourceName = nameof(ValidationTexts.EmailAddress))]
+        [Display(ResourceType = typeof(ValidationTexts), Name = nameof(ValidationTexts.EmailName))]
+        public string Email { get; set; } = "";
+
+        [Required(ErrorMessageResourceType = typeof(ValidationTexts), ErrorMessageResourceName = nameof(ValidationTexts.Required))]
+        [Display(ResourceType = typeof(ValidationTexts), Name = nameof(ValidationTexts.PasswordName))]
+        public string Password { get; set; } = "";
+    }
+}

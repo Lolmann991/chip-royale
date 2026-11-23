@@ -487,4 +487,6 @@ $RECYCLE.BIN/
 *.db-wal
 
 # Local SQLite database
-src/ChipRoyale.Web/Data/app.db*
+src/ChipRoyale.Server/Data/app.db*
+src/ChipRoyale.Server/Datenbank/
+src/ChipRoyale.Server/app.db*

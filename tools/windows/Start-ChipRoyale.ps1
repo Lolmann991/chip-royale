@@ -25,4 +25,4 @@ Start-Process powershell.exe -WindowStyle Hidden -ArgumentList @(
 )
 
 Set-Location $Path
-dotnet run --project src\ChipRoyale.Web --launch-profile http
+dotnet run --project src\ChipRoyale.Server --launch-profile http
