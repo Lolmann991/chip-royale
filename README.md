@@ -53,8 +53,9 @@ Das Spiel (Client) läuft komplett im Browser. Gespeichert wird je nach Lage:
 | ● Gast | Server erreichbar, nicht angemeldet | im Browser (localStorage) |
 | ● Offline | kein Server erreichbar | im Browser (localStorage) – das Spiel läuft weiter |
 
-Die Lobby zeigt den Modus an; „Erneut verbinden“ prüft den Server erneut, über ⚙️ lässt sich die
-Server-Adresse ändern. Beide Wege nutzen dieselben Regeln (`ChipRoyale.Shared/ProfileOperations.cs`).
+Die Lobby zeigt den Modus an. Das Spiel prüft den Server alle 8 Sekunden: Ein später gestarteter
+Server wird automatisch genutzt, ein gestoppter schaltet in den Offline-Modus (nie mitten an einem
+Tisch, erst zurück in der Lobby). Über ⚙️ lässt sich die Server-Adresse ändern. Beide Wege nutzen dieselben Regeln (`ChipRoyale.Shared/ProfileOperations.cs`).
 
 ## GitHub Pages
 
@@ -62,8 +63,10 @@ Der Workflow `.github/workflows/pages.yml` veröffentlicht den Client bei jedem 
 als statische Seite: **https://lolmann991.github.io/chip-royale/**
 
 Einmalig einrichten: *Settings → Pages → Source: GitHub Actions*; unter *Settings → Environments →
-github-pages* den Branch `deployment` erlauben. Die Server-Adresse kommt aus der Repository-Variable
-`CHIPROYALE_API_URL` (Standard `http://localhost:5132`, also der Server auf dem eigenen PC). Erlaubte
+github-pages* den Branch `deployment` erlauben. Die Seite nutzt den Server auf dem eigenen PC
+(`http://localhost:5132`), sobald er läuft; andere Adresse über die Repository-Variable
+`CHIPROYALE_API_URL` (`none` = nie nach einem Server suchen). Chrome/Edge fragen einmal, ob die
+Seite auf Geräte im lokalen Netzwerk zugreifen darf – erlauben. Erlaubte
 Seiten für den Server stehen in `src/ChipRoyale.Server/appsettings.json` unter `Cors:Origins`.
 
 ## Server + Datenbank als ZIP (Windows)

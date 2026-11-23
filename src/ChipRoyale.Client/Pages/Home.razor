@@ -2,6 +2,7 @@
 @layout GameLayout
 @using ChipRoyale.Client.Components.Game
 @using ChipRoyale.Client.Services
+@implements IDisposable
 @inject PlayerService Player
 
 <PageTitle>Chip Royale</PageTitle>
@@ -35,8 +36,19 @@
     protected override async Task OnInitializedAsync()
     {
         await Player.LoadAsync();
+        Player.Changed += OnPlayerChanged;
         loaded = true;
     }
+
+    /// <summary>Server found or lost, login, logout: show the lobby with the new profile.</summary>
+    private void OnPlayerChanged()
+    {
+        if (settings is not null) return;
+        lobbyKey++;
+        InvokeAsync(StateHasChanged);
+    }
+
+    public void Dispose() => Player.Changed -= OnPlayerChanged;
 
     private async Task StartAsync(GameSettings s)
     {
@@ -48,6 +60,7 @@
         notice = null;
         tableKey++;
         settings = s;
+        Player.InGame = true;
     }
 
     private async Task ExitAsync(int stack)
@@ -66,6 +79,7 @@
             };
         }
         settings = null;
+        Player.InGame = false;
         lobbyKey++;
     }
 
