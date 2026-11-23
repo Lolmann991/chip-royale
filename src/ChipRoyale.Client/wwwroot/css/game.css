@@ -2111,3 +2111,16 @@
     padding: .35rem .55rem; border-radius: 8px; border: 1px solid rgba(255, 255, 255, .25); background: rgba(0, 0, 0, .35); color: inherit;
 }
 .conn-edit small { flex-basis: 100%; opacity: .7; }
+
+/* ---------------------------------------------------------------- steady action bar
+   The bar always reserves the height of the player's own controls, so bot turns ("… is thinking"),
+   "Next hand" and the betting controls swap in place instead of pushing the table up and down. */
+.controls { min-height: 6.5rem; justify-content: flex-end; }
+.controls > .status, .controls > .act.next { animation: bar-swap .25s ease both; }
+.controls > .raise-panel, .controls > .act-row, .controls > .buttons { animation: bar-swap .2s ease both; }
+.status { min-height: 3.1rem; padding: 0; }
+@keyframes bar-swap { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+.stat-row.pot b { flex-basis: 100%; padding-left: 6.7rem; line-height: 1.2; }
+.stat-row.pot.idle { color: var(--ink-dim); }
+.tip { animation: bar-swap .2s ease both; }
+.tip.idle { visibility: hidden; animation: none; }
