@@ -7,9 +7,9 @@ name: GitHub Pages
 # Optional: Settings → Secrets and variables → Actions → Variables → CHIPROYALE_API_URL = another server address
 # ("none" = never look for a server).
 
+# Only started by hand (Actions → GitHub Pages → Run workflow): the repository has one Pages site and it
+# currently shows the offline version (branch "offline"); an automatic deploy here would replace it.
 on:
-  push:
-    branches: [deployment]
   workflow_dispatch:
 
 permissions:
