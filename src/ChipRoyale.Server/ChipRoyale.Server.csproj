@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <!-- Game server: accounts (token login), SQLite database with chips/crowns/items, game API.
+       Also serves the WebAssembly game (ChipRoyale.Client), so http://localhost:5132 is all you need. -->
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="10.0.15" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="10.0.15" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="10.0.15" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.15" PrivateAssets="all" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ChipRoyale.Engine\ChipRoyale.Engine.csproj" />
+    <ProjectReference Include="..\ChipRoyale.Shared\ChipRoyale.Shared.csproj" />
+    <ProjectReference Include="..\ChipRoyale.Client\ChipRoyale.Client.csproj" />
+  </ItemGroup>
+
+</Project>

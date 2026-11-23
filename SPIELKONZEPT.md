@@ -22,8 +22,8 @@ Browser-Pokerspiel (Blazor Server) gegen KI-Gegner mit Chip-Progression, freisch
 - **Style-Shop** (mit Kronen; der 3D-Look ist der Grundstil, Pixel-Art-Designs sind freischaltbare Extras):
   - Kartenrückseiten
   - Kartenvorderseiten / Deck-Designs
-  - Tisch / Spielfeld
-  - Avatare & Chip-Designs
+  - Filz, Tischrand und Raum (Hintergrund)
+  - Glücksbringer, Avatare & Chip-Designs
 
 ## 3. KI & Schwierigkeit
 
@@ -53,10 +53,12 @@ Browser-Pokerspiel (Blazor Server) gegen KI-Gegner mit Chip-Progression, freisch
 
 | Thema | Entscheidung |
 |---|---|
-| Framework | .NET 10, Blazor Web App (Interactive Server) |
-| Struktur | `ChipRoyale.Web` (UI), `ChipRoyale.Engine` (Poker-Logik, UI-unabhängig), `ChipRoyale.Engine.Tests` (xUnit) |
+| Framework | .NET 10, Blazor WebAssembly (Client) + ASP.NET Core Web-API (Server) |
+| Struktur | `ChipRoyale.Client` (UI im Browser), `ChipRoyale.Server` (API + Datenbank), `ChipRoyale.Shared` (Verträge, Konto-Regeln), `ChipRoyale.Engine` (Poker-Logik), Tests (xUnit) |
 | Datenbank | SQLite + EF Core |
-| Login | ASP.NET Core Identity (Benutzerkonten) |
+| Login | ASP.NET Core Identity API (Bearer-Token) |
+| Hosting | Client auf GitHub Pages oder vom Server; Server + Datenbank lokal (ZIP) |
+| Offline-Modus | ohne Server läuft das Spiel weiter, Profil im Browser (localStorage) |
 | Sprache | Deutsch + Englisch (Ressourcendateien) |
 | Plattform | nur Desktop |
 | Grafik | eigener Pixel-Art-Stil (keine fremden Assets) |
@@ -106,10 +108,33 @@ Reihenfolge = Umsetzungsreihenfolge.
 - [ ] Karten zum Tauschen anklicken; KI-Tauschstrategie
 
 **Außerdem in V2**
-- [x] Deployment: GitHub Actions spielt `main` automatisch auf Azure App Service aus (Anleitung im README)
+- [x] Live-Statistik bei aktiven Tipps: Rang der Hand (1–10), Starthand-Rang (1–169, Top-%), Sieg/Split/Niederlage, Pot-Odds, Outs, Chancen bis zum River
+- [x] Karten liegen auf dem Filz: Austeilen vom Deck, Passen in den Ablagestapel, Aufdecken am Tisch, Einsammeln vor jeder Hand
+- [x] Vollere Chipstapel, Spieler-Stacks und Chip-Ablage auf dem Tisch; Gewinn-Anzeige länger und per Maus pausierbar
 - [ ] KI „Schwer“ nachschärfen (in Simulationen gewinnt ein Spieler der Stufe „Mittel“ noch gegen „Schwer“)
 - [ ] Statistik-Seite (Hände, Siege, größter Pot, Turniere) und Replay der letzten Hand
 - [ ] Tutorial-Fortschritt im Konto speichern; restliche Kontoseiten übersetzen
+
+**Erledigt außer der Reihe**
+- [x] Konto-Seiten (Anmelden, Registrieren, Kontoverwaltung) im Spiel-Design, Fehlermeldungen DE/EN, einfache Passwortregeln (mind. 6 Zeichen)
+- [x] Datenbank im Benutzerordner (Windows: `%LOCALAPPDATA%\ChipRoyale`), damit ein Update Konten nicht löscht; alte `Data\app.db` wird beim ersten Start übernommen
+
+- [x] Mehr Deko im Shop (80 Artikel): 22 Kartenrückseiten (u. a. Art déco, Bauhaus, Japanische Wellen, Mandala, Synthwave, Marmor, Line Art, Pixel), 8 Kartendecks (Vier-Farben-Poker-Deck, Jumbo, Vintage, Noir, Neon, Gold, Pixel), 8 Filze, 6 Tischränder, 6 Räume, 11 Glücksbringer neben dem eigenen Platz, 15 Avatare, 6 Chip-Designs; Erfolge „Sammler“ und „Trendsetter“
+
+**Ideen für V2.x** (nach Omaha / Five Card Draw)
+- [ ] Gegner mit Persönlichkeit: Spielstil-Etikett (z. B. „Calling Station“, „Bluffer“) und kurze Sprüche in der Sprechblase
+- [ ] Vor-Aktionen („Check/Fold“, „Jeden Einsatz mitgehen“) und Tempo-Einstellung (normal / schnell)
+- [ ] Tägliche Herausforderung mit Kronen-Belohnung (z. B. „Gewinne 3 Pots mit Zwei Paaren oder besser“)
+- [ ] Verlauf der letzten Hände mit Karten und Replay
+- [ ] Statistik-Seite: Gewinnrate, gespielte Starthände, Lieblingshand, Turnier-Bilanz
+
+### Deployment (Branch `deployment`)
+- [x] Umbau auf Blazor WebAssembly: das Spiel läuft komplett im Browser
+- [x] Server als Web-API (Konten, Chips, Shop, Erfolge, Rangliste) mit SQLite-Datenbank
+- [x] GitHub Pages: Client wird per GitHub Actions veröffentlicht
+- [x] Offline-Modus: ohne Server weiterspielen, Profil im Browser; Statusanzeige Online/Gast/Offline
+- [x] Windows-ZIP mit Server + Datenbank (Datenbank neben dem Server, übersteht Updates)
+- [ ] Server ins Internet stellen (dann auch für Freunde ohne eigenen Server) – Ergebnisse vom Server prüfen lassen
 
 ### V3
 - Mehrspieler: gemeinsame Tische, private Tische, Turniere, Seed-Challenge

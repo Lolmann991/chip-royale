@@ -1,0 +1,118 @@
+@using ChipRoyale.Engine.Ai
+@using ChipRoyale.Engine.Cards
+@using ChipRoyale.Engine.Evaluation
+@using ChipRoyale.Engine.Holdem
+
+@* Live statistics for the player's hand (shown when tips are on). *@
+
+<div class="hero-stats">
+    @if (Board.Count >= 3 && current is not null)
+    {
+        <div class="stat-row rank">
+            <span class="stat-label">@L("Stats.HandRank")</span>
+            <b>@L("Stats.RankOf", CategoryRank(current), 10)</b>
+            <span class="stat-note">@HandText.Category(current.Category)</span>
+        </div>
+    }
+    @if (StartingRank is { } sr)
+    {
+        <div class="stat-row rank">
+            <span class="stat-label">@L("Stats.Starting")</span>
+            <b>@L("Stats.StartingRank", sr, StartingHands.Count)</b>
+            <span class="stat-note">@L("Stats.Top", Pct(StartingTop ?? 1))</span>
+        </div>
+    }
+
+    <div class="stat-row">
+        <span class="stat-label">@L("Table.WinChance")</span>
+        <div class="odds-bar" title="@L("Stats.OddsTitle")">
+            <span class="win" style="width:@W(Odds.Win)%"></span>
+            <span class="tie" style="width:@W(Odds.Tie)%"></span>
+            <span class="lose" style="width:@W(Odds.Lose)%"></span>
+        </div>
+        <b>@Pct(Odds.Equity)</b>
+    </div>
+    <div class="stat-row small">
+        <span class="dot win"></span>@L("Stats.Win", Pct(Odds.Win))
+        <span class="dot tie"></span>@L("Stats.Tie", Pct(Odds.Tie))
+        <span class="dot lose"></span>@L("Stats.Lose", Pct(Odds.Lose))
+        <span class="stat-note">@L(Opponents == 1 ? "Stats.VsOne" : "Stats.VsMany", Opponents)</span>
+    </div>
+
+    @if (Legal is { ToCall: > 0 } legal)
+    {
+        var potOdds = legal.ToCall / (double)(legal.Pot + legal.ToCall);
+        var worth = Odds.Equity >= potOdds;
+        <div class="stat-row @(worth ? "good" : "bad")">
+            <span class="stat-label">@L("Stats.PotOdds")</span>
+            <span>@L("Stats.PotOddsText", legal.ToCall, Pct(potOdds))</span>
+            <b>@(worth ? L("Stats.Worth") : L("Stats.NotWorth"))</b>
+        </div>
+    }
+
+    @if (outs is { Count: > 0 } o)
+    {
+        <div class="stat-row">
+            <span class="stat-label">@L("Stats.Outs")</span>
+            <span>@L(Board.Count == 3 ? "Stats.OutsTextFlop" : "Stats.OutsTextTurn", o.Count, Pct(o.HitChance))</span>
+            <span class="stat-note">@L("Stats.OutsBest", HandText.Category(o.Best))</span>
+        </div>
+    }
+
+    @if (Board.Count < 5 && Improvements.Count > 0)
+    {
+        <div class="stat-row">
+            <span class="stat-label">@L("Stats.ByRiver")</span>
+        </div>
+        <div class="improve-list">
+            @foreach (var (category, p) in Improvements)
+            {
+                <div class="improve">
+                    <span>@HandText.Category(category)</span>
+                    <div class="improve-bar"><span style="width:@W(Math.Max(p, 0.02))%"></span></div>
+                    <b>@Pct(p)</b>
+                </div>
+            }
+        </div>
+    }
+</div>
+
+@code {
+    [Parameter, EditorRequired] public IReadOnlyList<Card> Hole { get; set; } = [];
+    [Parameter, EditorRequired] public IReadOnlyList<Card> Board { get; set; } = [];
+    [Parameter, EditorRequired] public HandOdds Odds { get; set; } = default!;
+    [Parameter] public int Opponents { get; set; } = 1;
+
+    /// <summary>Set while the player has to act (for pot odds).</summary>
+    [Parameter] public LegalActions? Legal { get; set; }
+
+    [Parameter] public int? StartingRank { get; set; }
+    [Parameter] public double? StartingTop { get; set; }
+
+    private HandValue? current;
+    private Outs? outs;
+
+    /// <summary>Better hand categories the player can still make by the river.</summary>
+    private List<(HandCategory Category, double P)> Improvements = [];
+
+    protected override void OnParametersSet()
+    {
+        current = Hole.Count == 2 && Board.Count >= 3 ? HandEvaluator.EvaluateBest([.. Hole, .. Board]) : null;
+        outs = HandStats.CountOuts(Hole, Board);
+        var now = current?.Category ?? (Hole.Count == 2 && Hole[0].Rank == Hole[1].Rank ? HandCategory.OnePair : HandCategory.HighCard);
+        Improvements = Odds.FinalCategory
+            .Where(kv => kv.Key > now && kv.Value >= 0.005)
+            .OrderByDescending(kv => kv.Key)
+            .Take(4)
+            .Select(kv => (kv.Key, kv.Value))
+            .ToList();
+    }
+
+    /// <summary>Position in the hand ranking list: 1 = royal flush … 10 = high card.</summary>
+    private static int CategoryRank(HandValue v) =>
+        v.Category == HandCategory.StraightFlush && v.Kickers[0] == Rank.Ace ? 1 : 10 - (int)v.Category;
+
+    private static string Pct(double p) => p >= 0.995 ? "100 %" : p < 0.005 && p > 0 ? "<1 %" : $"{p * 100:0} %";
+
+    private static string W(double p) => (p * 100).ToString("0.#", System.Globalization.CultureInfo.InvariantCulture);
+}

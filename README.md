@@ -1,16 +1,18 @@
 # Chip Royale
 
-Pokerspiel im Browser (Blazor Server, .NET 10): Spiele gegen KI-Gegner, verdiene Chips und schalte Pixel-Art-Styles frei.
+Pokerspiel im Browser (Blazor WebAssembly + ASP.NET-Core-Server, .NET 10): Spiele gegen KI-Gegner, verdiene Chips und schalte Pixel-Art-Styles frei.
 
 Das vollständige Konzept steht in [SPIELKONZEPT.md](SPIELKONZEPT.md).
 
 ## Projektstruktur
 
 ```
-src/ChipRoyale.Web            Blazor-Web-App (Interactive Server, Identity, SQLite)
-src/ChipRoyale.Engine         Poker-Logik (Karten, Deck, Hand-Bewertung, ...)
-tests/ChipRoyale.Engine.Tests xUnit-Tests für die Engine
-tests/ChipRoyale.Web.Tests    Tests für Texte (DE/EN vollständig) und Tutorial-Inhalte
+src/ChipRoyale.Client          Das Spiel: Blazor WebAssembly (läuft komplett im Browser, auch auf GitHub Pages)
+src/ChipRoyale.Server          ASP.NET-Core-Server: Web-API, Konten (Identity), SQLite-Datenbank; liefert den Client aus
+src/ChipRoyale.Shared          API-Verträge + Spielregeln fürs Konto (gemeinsam für Server und Offline-Modus)
+src/ChipRoyale.Engine          Poker-Logik (Karten, Deck, Hand-Bewertung, KI, Wirtschaft)
+tests/ChipRoyale.Engine.Tests  xUnit-Tests für die Engine
+tests/ChipRoyale.Client.Tests  Tests für Texte (DE/EN), Tutorial und Konto-Regeln
 ```
 
 ## Spielen
@@ -18,58 +20,84 @@ tests/ChipRoyale.Web.Tests    Tests für Texte (DE/EN vollständig) und Tutorial
 - Lobby: Tisch (Übungstisch, Kneipe, Casino, High Roller, VIP-Salon), Buy-in, Schwierigkeit und 1–5 Gegner wählen.
 - Sit & Go: Turnier zu sechst (Bronze 200, Silber 1.000, Gold 5.000 Buy-in), Blinds steigen alle 8 Hände, Platz 1 und 2 bekommen 65 % bzw. 35 % des Preisgelds.
 - Konto: Angemeldete Spieler behalten ihren Chip-Stand (Start 1.000). Buy-in geht vom Konto an den Tisch, „Auszahlen“ bringt den Stapel zurück. Wer pleite ist, startet einen neuen Run mit 1.000 Chips; der Rekord bleibt.
-- Rangliste unter `/rangliste`. Gäste können spielen, werden aber nicht gespeichert.
+- Rangliste unter `/rangliste` (nur mit Server). Gäste spielen mit einem Profil, das im Browser gespeichert wird.
 - Shop unter `/shop`: Chips über dem Startkapital in Kronen tauschen (100 : 1, nur eine Richtung), damit Kartenrückseiten, Filz, Avatare und Chip-Designs kaufen (auch Pixel-Art). Erfolge bringen zusätzliche Kronen.
 - Tutorial unter `/lernen`: vier Lektionen mit vorbereiteten Karten und Quizfragen, danach geht's zum Übungstisch.
-- Sprache: Deutsch oder Englisch (Umschalter DE/EN, sonst Browser-Sprache). Texte stehen in `src/ChipRoyale.Web/Resources/SharedResource(.en).resx`.
+- Sprache: Deutsch oder Englisch (Umschalter DE/EN, sonst Browser-Sprache). Texte stehen in `src/ChipRoyale.Client/Resources/SharedResource(.en).resx`.
 - Tastatur: `F` passen, `C` checken/mitgehen, `R` setzen/erhöhen, `A` All-in vorwählen, `↑`/`↓` Einsatz ändern, `Leertaste` nächste Hand.
 - 💡 Tipps zeigen die aktuelle Hand, die Gewinnchance und einen Hinweis (auf „Leicht“ standardmäßig an).
 - Mausbewegung kippt den Tisch leicht; Klick auf die eigenen Karten verdeckt sie.
 
 ## Starten
 
+Voraussetzung: [.NET 10 SDK](https://dotnet.microsoft.com/download/dotnet/10.0)
+(Windows: `winget install Microsoft.DotNet.SDK.10`). Dann im Hauptordner des Projekts:
+
 ```bash
-dotnet run --project src/ChipRoyale.Web
+dotnet run
 ```
 
-Die SQLite-Datenbank (`src/ChipRoyale.Web/Data/app.db`) wird beim Start automatisch angelegt bzw. migriert.
+und im Browser **http://localhost:5132** öffnen. (`dotnet run --project src/ChipRoyale.Server` geht weiterhin;
+der kleine Starter `ChipRoyale.csproj` im Hauptordner leitet `dotnet run` dorthin weiter.)
+
+Die SQLite-Datenbank (`src/ChipRoyale.Server/Datenbank/app.db`) wird beim Start automatisch angelegt bzw. migriert.
+Eine ältere Datenbank (`%LOCALAPPDATA%\ChipRoyale\app.db`) wird beim ersten Start übernommen.
+
+## Online, Gast und Offline
+
+Das Spiel (Client) läuft komplett im Browser. Gespeichert wird je nach Lage:
+
+| Modus | Wann | Speicherung |
+|---|---|---|
+| ● Online | Server erreichbar und angemeldet | Datenbank auf dem Server (Konto, Rangliste) |
+| ● Gast | Server erreichbar, nicht angemeldet | im Browser (localStorage) |
+| ● Offline | kein Server erreichbar | im Browser (localStorage) – das Spiel läuft weiter |
+
+Die Lobby zeigt den Modus an; „Erneut verbinden“ prüft den Server erneut, über ⚙️ lässt sich die
+Server-Adresse ändern. Beide Wege nutzen dieselben Regeln (`ChipRoyale.Shared/ProfileOperations.cs`).
+
+## GitHub Pages
+
+Der Workflow `.github/workflows/pages.yml` veröffentlicht den Client bei jedem Push auf `deployment`
+als statische Seite: **https://lolmann991.github.io/chip-royale/**
+
+Einmalig einrichten: *Settings → Pages → Source: GitHub Actions*; unter *Settings → Environments →
+github-pages* den Branch `deployment` erlauben. Die Server-Adresse kommt aus der Repository-Variable
+`CHIPROYALE_API_URL` (Standard `http://localhost:5132`, also der Server auf dem eigenen PC). Erlaubte
+Seiten für den Server stehen in `src/ChipRoyale.Server/appsettings.json` unter `Cors:Origins`.
+
+## Server + Datenbank als ZIP (Windows)
+
+```bash
+dotnet publish src/ChipRoyale.Server -c Release -r win-x64 --self-contained -o publish/ChipRoyale-Server
+```
+
+Im ZIP liegen `Server starten.cmd`, der Ordner `ChipRoyale-Server` (ohne .NET-Installation lauffähig)
+und daneben `Datenbank\app.db` (`Storage:DataDirectory` = `../Datenbank`), damit ein Update des
+Servers die Daten nicht anfasst.
 
 ## Tests
 
 ```bash
-dotnet test
+dotnet test ChipRoyale.slnx
 ```
 
-## Deployment (Azure App Service)
+## Auf dem eigenen PC (Windows): immer die neueste Version
 
-GitHub Pages kann nur statische Seiten ausliefern – Chip Royale braucht einen laufenden .NET-Server
-(Live-Verbindung für den Spieltisch, SQLite-Datenbank). Deshalb baut GitHub Actions bei jedem Push auf
-`main` die App, lässt alle Tests laufen und spielt sie auf **Azure App Service** aus
-(`.github/workflows/deploy.yml`).
+Einmal in PowerShell ausführen (braucht [Git](https://git-scm.com), z. B. `winget install --id Git.Git -e`):
 
-### Einmalig einrichten
+```powershell
+$ziel = Join-Path ([Environment]::GetFolderPath('MyDocuments')) 'ChipRoyale'
+git clone -b claude/gallant-mayer-y2wk82 https://github.com/Lolmann991/chip-royale.git $ziel
+powershell -ExecutionPolicy Bypass -File "$ziel\tools\windows\Install-ChipRoyale.ps1"
+```
 
-1. Kostenloses Konto auf [portal.azure.com](https://portal.azure.com) anlegen.
-2. **Ressource erstellen → Web-App**
-   - Name: z. B. `chip-royale-deinname` (die genaue Adresse zeigt Azure nach dem Erstellen an)
-   - Veröffentlichen: **Code** · Runtimestapel: **.NET 10 (LTS)** · Betriebssystem: **Linux**
-   - Region: z. B. Germany West Central · Tarif: **Free F1**
-3. In der Web-App unter **Einstellungen → Konfiguration → Allgemeine Einstellungen**:
-   - **SCM Basic Auth Publishing Credentials**: Ein (sonst lässt sich kein Veröffentlichungsprofil herunterladen)
-   - **Websockets** und **Sitzungsaffinität (ARR-Affinität)**: Ein, falls angezeigt
-4. In der **Übersicht** der Web-App: **Veröffentlichungsprofil herunterladen**.
-5. Auf GitHub im Repo: **Settings → Secrets and variables → Actions**
-   - Reiter *Secrets*: `AZURE_WEBAPP_PUBLISH_PROFILE` = kompletter Inhalt der heruntergeladenen Datei
-   - Reiter *Variables*: `AZURE_WEBAPP_NAME` = Name der Web-App
-6. Fertig: Jeder Push bzw. Merge auf `main` deployt automatisch. Manuell geht es unter
-   **Actions → Deploy to Azure → Run workflow**. Solange Secret oder Variable fehlen, wird das
-   Deployment mit einem Hinweis übersprungen (der Build läuft trotzdem).
+Danach liegt das Spiel unter `Dokumente\ChipRoyale` und
+- die geplante Aufgabe **„Chip Royale aktualisieren“** holt jede Stunde den neuesten Stand
+  (verpasste Läufe werden nach dem Hochfahren nachgeholt) – immer den zuletzt geänderten Branch,
+  also `main` oder den aktuellen Entwicklungs-Branch,
+- die Desktop-Verknüpfung **„Chip Royale“** aktualisiert, startet das Spiel und öffnet es im Browser
+  (`http://localhost:5132`). Dafür wird das .NET 10 SDK gebraucht: `winget install Microsoft.DotNet.SDK.10`.
 
-### Gut zu wissen
-
-- Datenbank (`app.db`) und Login-Schlüssel liegen auf Azure unter `$HOME/data` und bleiben bei
-  Neustarts und Deployments erhalten.
-- Der Free-Tarif schläft nach ca. 20 Minuten ohne Besucher ein (der erste Aufruf dauert dann einige
-  Sekunden), hat ein CPU-Tageslimit und nur wenige gleichzeitige Verbindungen. Für mehr Spieler: Tarif B1.
-- Anderer Hoster oder Docker: Mit `Storage__DataDirectory=/pfad` als Umgebungsvariable legt die App
-  Datenbank und Schlüssel in diesem Ordner ab.
+Dein Konto und deine Chips (lokale Datenbank) bleiben bei Updates erhalten. Protokoll: `update.log`
+im Spielordner. Entfernen: `tools\windows\Uninstall-ChipRoyale.ps1`.

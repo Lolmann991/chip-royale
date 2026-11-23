@@ -1,0 +1,63 @@
+name: GitHub Pages
+
+# Publishes the Blazor WebAssembly client as a static site.
+# The game talks to a Chip Royale server (database) at CHIPROYALE_API_URL; without one it runs in offline mode.
+# Setup: Settings → Pages → Source: "GitHub Actions". Optional: Settings → Secrets and variables → Actions →
+# Variables → CHIPROYALE_API_URL (default http://localhost:5132 = the server from the ZIP on your own PC).
+
+on:
+  push:
+    branches: [deployment]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "10.0.x"
+
+      - name: Publish client
+        run: dotnet publish src/ChipRoyale.Client/ChipRoyale.Client.csproj -c Release -o publish
+
+      - name: Prepare static site
+        env:
+          API_URL: ${{ vars.CHIPROYALE_API_URL || 'http://localhost:5132' }}
+          REPO: ${{ github.event.repository.name }}
+        run: |
+          cd publish/wwwroot
+          # The site lives under https://<user>.github.io/<repo>/
+          sed -i "s#<base href=\"/\" />#<base href=\"/${REPO}/\" />#" index.html
+          printf '{ "ApiBaseUrl": "%s" }\n' "$API_URL" > appsettings.json
+          # Pre-compressed copies would still contain the old content.
+          rm -f index.html.br index.html.gz appsettings.json.br appsettings.json.gz
+          # Deep links (e.g. /shop) are answered with 404.html → load the app there too.
+          cp index.html 404.html
+          # Let files starting with "_" (_framework) through.
+          touch .nojekyll
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: publish/wwwroot
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
