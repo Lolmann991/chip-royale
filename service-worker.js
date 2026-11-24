@@ -1,4 +1,4 @@
-/* Manifest version: HxjBCWQ6 */
+/* Manifest version: fjcT0NWL */
 // Offline support: on install all files of the app are stored in the browser cache, afterwards the
 // game starts from the cache – also without internet. A new version is fetched in the background and
 // used from the next start on (see https://aka.ms/blazor-offline-considerations).
