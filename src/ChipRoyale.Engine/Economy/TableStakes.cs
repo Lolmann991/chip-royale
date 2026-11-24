@@ -1,11 +1,25 @@
 namespace ChipRoyale.Engine.Economy;
 
-/// <summary>A table level. Buy-in range is <see cref="MinBuyIn"/> to 20 × <see cref="MinBuyIn"/>.</summary>
-public sealed record TableStake(string Id, string Name, int SmallBlind, int BigBlind, int MinBuyIn, bool IsPractice = false)
+/// <summary>
+/// A table level. Buy-in range is <see cref="MinBuyIn"/> to 20 × <see cref="MinBuyIn"/>; "no limit" tables (VIP) take any
+/// buy-in and any bet the player can afford (up to <see cref="NoLimitCap"/> where a table needs one).
+/// </summary>
+/// <param name="NoLimitCap">Highest buy-in of a no-limit poker table: six stacks must still add up to a valid number.</param>
+public sealed record TableStake(string Id, string Name, int SmallBlind, int BigBlind, int MinBuyIn, bool IsPractice = false,
+    bool NoLimit = false, int? NoLimitCap = null)
 {
     public const int MaxBuyInFactor = 20;
 
-    public int MaxBuyIn => MinBuyIn * MaxBuyInFactor;
+    public int MaxBuyIn => NoLimit ? NoLimitCap ?? int.MaxValue : MinBuyIn * MaxBuyInFactor;
+
+    /// <summary>Biggest bet at blackjack and casino tables (<see cref="BigBlind"/>, or unlimited).</summary>
+    public int MaxBet => NoLimit ? int.MaxValue : BigBlind;
+}
+
+/// <summary>Adding chips without running over the largest number an account can hold.</summary>
+public static class Chips
+{
+    public static int Add(int stack, long amount) => (int)Math.Clamp(stack + amount, 0, int.MaxValue);
 }
 
 public static class TableStakes
@@ -22,7 +36,7 @@ public static class TableStakes
         new("pub", "Kneipe", 5, 10, 200),
         new("casino", "Casino", 25, 50, 1000),
         new("highroller", "High Roller", 100, 200, 4000),
-        new("vip", "VIP-Salon", 500, 1000, 20000),
+        new("vip", "VIP-Salon", 500, 1000, 20000, NoLimit: true, NoLimitCap: 250_000_000),
     ];
 
     public static IEnumerable<TableStake> Real => All.Where(s => !s.IsPractice);
@@ -49,7 +63,7 @@ public static class BlackjackTables
         Practice,
         new("bj-pub", "Kneipe", 5, 100, 100),
         new("bj-casino", "Casino", 25, 500, 500),
-        new("bj-vip", "VIP-Salon", 100, 2000, 2000),
+        new("bj-vip", "VIP-Salon", 100, 2000, 2000, NoLimit: true),
     ];
 
     public static TableStake? Find(string id) => All.FirstOrDefault(s => s.Id == id);
@@ -77,7 +91,8 @@ public static class CasinoTables
 
     public static readonly IReadOnlyList<TableStake> All =
     [
-        .. Games.SelectMany(g => Levels.Select(l => new TableStake($"{g}-{l.Level}", l.Level, l.MinBet, l.MaxBet, l.MinBuyIn, l.Practice))),
+        .. Games.SelectMany(g => Levels.Select(l => new TableStake($"{g}-{l.Level}", l.Level, l.MinBet, l.MaxBet, l.MinBuyIn, l.Practice,
+            NoLimit: l.Level == "vip"))),
     ];
 
     public static IEnumerable<TableStake> For(string game) => All.Where(t => t.Id.StartsWith(game + "-", StringComparison.Ordinal));

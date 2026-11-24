@@ -8,9 +8,9 @@ public class BankrollTests
     private static TableStake Casino => TableStakes.Find("casino")!;
 
     [Fact]
-    public void Max_buy_in_is_twenty_times_min()
+    public void Max_buy_in_is_twenty_times_min_except_no_limit_tables()
     {
-        Assert.All(TableStakes.Real, s => Assert.Equal(s.MinBuyIn * 20, s.MaxBuyIn));
+        Assert.All(TableStakes.Real.Where(s => !s.NoLimit), s => Assert.Equal(s.MinBuyIn * 20, s.MaxBuyIn));
     }
 
     [Fact]

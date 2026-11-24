@@ -11,7 +11,7 @@
         <div class="brand">♠ Chip <span>Royale</span></div>
         <div class="meta">
             <span class="pill stake">🎰 Slots · @Roster.StakeName(Settings.Stake)@(Settings.IsPractice ? L("Table.PracticeSuffix") : "")</span>
-            <span class="pill">@L("Casino.Limits", MinBet, MaxBet)</span>
+            <span class="pill">@(Settings.Stake.NoLimit ? L("Casino.LimitsNoLimit", MinBet) : L("Casino.Limits", MinBet, MaxBet))</span>
             <span class="pill">@L("Sl.SpinNo", spinNo)</span>
         </div>
         <div class="tools">
@@ -161,7 +161,7 @@
                                 <td class="sl-pt-sym">@Glyph(sym)</td>
                                 @foreach (var m in pays)
                                 {
-                                    <td>@Fmt(bet * m / 10.0)</td>
+                                    <td>@Fmt(bet * (double)m / 10.0)</td>
                                 }
                             </tr>
                         }
@@ -169,7 +169,7 @@
                             <td class="sl-pt-sym">@Glyph(SlotSymbol.Star)</td>
                             @foreach (var m in SlotMachine.StarPays)
                             {
-                                <td>@Fmt(bet * m) <small>+10 🌟</small></td>
+                                <td>@Fmt((double)bet * m) <small>+10 🌟</small></td>
                             }
                         </tr>
                     </tbody>
@@ -218,13 +218,13 @@
     private int stack;
     private int bet;
     private int spinNo = 1;
-    private int shownWin;
+    private long shownWin;
     private int freeLeft;
-    private int freeTotal;
+    private long freeTotal;
     private int auto;
     private int sessionSpins;
-    private int sessionNet;
-    private int sessionBest;
+    private long sessionNet;
+    private long sessionBest;
     private bool busy;
     private bool hints = true;
     private bool sound = true;
@@ -232,19 +232,19 @@
     private Banner? banner;
 
     private int MinBet => Settings.Stake.SmallBlind;
-    private int MaxBet => Settings.Stake.BigBlind;
+    private int MaxBet => Settings.Stake.MaxBet;
     /// <summary>Reels spinning, free spins running or the round still being saved.</summary>
     private bool Busy => busy || roundActive;
     private bool roundActive;
 
-    private IReadOnlyList<int> BetSteps => [.. new[] { 1, 2, 5, 10, 20, 25, 50, 100, 200, 250, 500, 1000 }.Where(v => v >= MinBet && v <= MaxBet)];
-    private int BetIndex => BetSteps.ToList().IndexOf(bet);
+    private IReadOnlyList<int> BetSteps => BetSizes.Steps(MinBet, Math.Min(MaxBet, Math.Max(MinBet, stack)));
+    private int BetIndex => Math.Max(0, BetSteps.ToList().FindLastIndex(v => v <= bet));
     private int NextBet => BetIndex + 1 < BetSteps.Count ? BetSteps[BetIndex + 1] : int.MaxValue;
 
     protected override void OnInitialized()
     {
         stack = Settings.BuyIn;
-        bet = BetSteps.LastOrDefault(v => v * 50 <= stack, BetSteps[0]);
+        bet = BetSteps.LastOrDefault(v => v * 50L <= stack, BetSteps[0]);
         // A nice first screen: a random stop on every reel.
         lastSpin = null;
         var first = machine.Spin(bet);
@@ -349,9 +349,9 @@
             }
         }
 
-        stack += total;
+        stack = ChipRoyale.Engine.Economy.Chips.Add(stack, total);
         var net = total - bet;
-        if (total >= bet * 50) highlights.Add("bigwin");
+        if (total >= bet * 50L) highlights.Add("bigwin");
         sessionSpins++;
         sessionNet += net;
         sessionBest = Math.Max(sessionBest, net);
@@ -388,13 +388,13 @@
         }
         lastSpin = spin;
         if (spin.Win > 0 && !free) shownWin = spin.Win;
-        if (spin.Win > 0) Sfx(spin.Win >= bet * 10 ? "bigwin" : "win");
+        if (spin.Win > 0) Sfx(spin.Win >= bet * 10L ? "bigwin" : "win");
         busy = false;
         StateHasChanged();
         return spin;
     }
 
-    private async Task ShowResultAsync(int total, List<string> highlights)
+    private async Task ShowResultAsync(long total, List<string> highlights)
     {
         shownWin = total;
         if (highlights.Contains("jackpot"))
@@ -402,12 +402,12 @@
             banner = new Banner("JACKPOT!", $"+{total:N0}", "win big");
             _ = JsAsync("celebrate", 3);
         }
-        else if (total >= bet * 50)
+        else if (total >= bet * 50L)
         {
             banner = new Banner(L("Sl.MegaWin"), $"+{total:N0}", "win big");
             _ = JsAsync("celebrate", 3);
         }
-        else if (total >= bet * 10)
+        else if (total >= bet * 10L)
         {
             banner = new Banner(L("Sl.BigWin"), $"+{total:N0}", "win");
             _ = JsAsync("celebrate", 2);
@@ -474,7 +474,7 @@
     };
 
     private static string Fmt(double v) => v.ToString(v % 1 == 0 ? "N0" : "N1", CultureInfo.CurrentCulture);
-    private static string Signed(int n) => n > 0 ? $"+{n:N0}" : n < 0 ? $"−{-n:N0}" : "±0";
+    private static string Signed(long n) => n > 0 ? $"+{n:N0}" : n < 0 ? $"−{-n:N0}" : "±0";
 
     private Task Delay(int ms) => Task.Delay(ms, cts.Token).ContinueWith(_ => { }, TaskScheduler.Default);
 

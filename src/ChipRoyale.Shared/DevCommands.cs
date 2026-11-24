@@ -21,7 +21,7 @@ public sealed record DevResult(OperationResult Operation, string[] Output, bool 
 /// </summary>
 public static class DevCommands
 {
-    public const int MaxValue = 1_000_000_000;
+    public const int MaxValue = int.MaxValue;
 
     /// <summary>Commands with arguments and help texts (German, English).</summary>
     public static readonly IReadOnlyList<(string Name, string Args, string De, string En)> Help =

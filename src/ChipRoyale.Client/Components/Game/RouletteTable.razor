@@ -12,7 +12,7 @@
         <div class="brand">♠ Chip <span>Royale</span></div>
         <div class="meta">
             <span class="pill stake">🎡 Roulette · @Roster.StakeName(Settings.Stake)@(Settings.IsPractice ? L("Table.PracticeSuffix") : "")</span>
-            <span class="pill">@L("Casino.Limits", MinBet, MaxBet)</span>
+            <span class="pill">@(Settings.Stake.NoLimit ? L("Casino.LimitsNoLimit", MinBet) : L("Casino.Limits", MinBet, MaxBet))</span>
             <span class="pill">@L("Rl.SpinNo", spinNo)</span>
         </div>
         <div class="tools">
@@ -270,14 +270,13 @@
     private Banner? banner;
 
     private int MinBet => Settings.Stake.SmallBlind;
-    private int MaxBet => Settings.Stake.BigBlind;
+    private int MaxBet => Settings.Stake.MaxBet;
     private int TotalBet => bets.Values.Sum(b => b.Amount);
     private int Chip => chip > 0 ? chip : ChipValues.First();
     private int Covered => bets.Values.SelectMany(b => b.Numbers).Distinct().Count();
     private double WinChance => European.WinChance(bets.Values);
 
-    private IEnumerable<int> ChipValues => new[] { 1, 5, 10, 25, 50, 100, 250, 500, 1000 }
-        .Where(v => v >= MinBet && v <= MaxBet).Take(6);
+    private IEnumerable<int> ChipValues => BetSizes.Chips(MinBet, Math.Min(MaxBet, Math.Max(MinBet, stack)), 6);
 
     protected override void OnInitialized()
     {
@@ -312,7 +311,7 @@
             message = L("Rl.SpotMax", MaxBet);
             return;
         }
-        if (TotalBet + add > stack)
+        if ((long)TotalBet + add > stack)
         {
             message = L("Rl.NotEnough");
             return;
@@ -341,7 +340,7 @@
 
     private void Repeat()
     {
-        if (lastBets.Sum(b => b.Amount) > stack)
+        if (lastBets.Sum(b => (long)b.Amount) > stack)
         {
             message = L("Rl.NotEnough");
             return;
@@ -357,7 +356,7 @@
 
     private void Double()
     {
-        if (bets.Values.Any(b => b.Amount * 2 > MaxBet) || TotalBet * 2 > stack)
+        if (bets.Values.Any(b => b.Amount * 2L > MaxBet) || TotalBet * 2L > stack)
         {
             message = L("Rl.NotEnough");
             return;
@@ -397,7 +396,7 @@
         result = number;
 
         var payout = European.Payout(placed, number);
-        stack += payout;
+        stack = ChipRoyale.Engine.Economy.Chips.Add(stack, payout);
         var net = payout - total;
         history.Insert(0, number);
         lastBets = placed;
@@ -417,8 +416,8 @@
         };
         if (net > 0)
         {
-            Sfx(net >= total * 10 ? "bigwin" : "win");
-            _ = JsAsync("celebrate", net >= total * 10 ? 3 : net >= total * 2 ? 2 : 1);
+            Sfx(net >= total * 10L ? "bigwin" : "win");
+            _ = JsAsync("celebrate", net >= total * 10L ? 3 : net >= total * 2L ? 2 : 1);
         }
         else Sfx("lose");
         spinNo++;
@@ -495,18 +494,9 @@
     }
 
     private static string Pct(double p) => $"{Math.Round(p * 100):0} %";
-    private static string Short(int v) => v >= 1000 ? $"{v / 1000.0:0.#}k" : v.ToString();
+    private static string Short(long v) => BetSizes.Short(v);
 
-    private static string ChipColor(int v) => v switch
-    {
-        >= 5000 => "orange",
-        >= 1000 => "gold",
-        >= 500 => "purple",
-        >= 100 => "black",
-        >= 25 => "green",
-        >= 5 => "red",
-        _ => "white",
-    };
+    private static string ChipColor(long v) => BetSizes.Color(v);
 
     private Task Delay(int ms) => Task.Delay(ms, cts.Token).ContinueWith(_ => { }, TaskScheduler.Default);
 

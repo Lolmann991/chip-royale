@@ -164,19 +164,19 @@ public sealed class BjHand
     public BjOutcome Outcome { get; internal set; }
 
     /// <summary>Chips paid back for this hand (bet included); 0 when lost.</summary>
-    public int Payout { get; internal set; }
+    public long Payout { get; internal set; }
 
     public int Total => BjValue.Of(Cards).Total;
     public bool IsSoft => BjValue.Of(Cards).Soft;
     public bool IsBlackjack => Cards.Count == 2 && Total == 21 && !FromSplit;
     public bool IsBust => Total > 21;
-    public int Net => Payout - Bet;
+    public long Net => Payout - Bet;
 }
 
 /// <summary>Summary of a finished round (for statistics and achievements).</summary>
-public sealed record BjRoundResult(int Bet, int Payout, bool Natural, bool DoubleWon, bool SplitWon)
+public sealed record BjRoundResult(long Bet, long Payout, bool Natural, bool DoubleWon, bool SplitWon)
 {
-    public int Net => Payout - Bet;
+    public long Net => Payout - Bet;
     public bool Won => Net > 0;
 }
 
@@ -384,19 +384,19 @@ public sealed class BlackjackRound(Shoe shoe, BlackjackRules rules, int stack)
             {
                 { IsBust: true } => (BjOutcome.Bust, 0),
                 { IsBlackjack: true } when dealerBlackjack => (BjOutcome.Push, h.Bet),
-                { IsBlackjack: true } => (BjOutcome.Blackjack, h.Bet + h.Bet * 3 / 2),
+                { IsBlackjack: true } => (BjOutcome.Blackjack, h.Bet + h.Bet * 3L / 2),
                 _ when dealerBlackjack => (BjOutcome.Lose, 0),
-                _ when dealer > 21 || h.Total > dealer => (BjOutcome.Win, h.Bet * 2),
+                _ when dealer > 21 || h.Total > dealer => (BjOutcome.Win, h.Bet * 2L),
                 _ when h.Total == dealer => (BjOutcome.Push, h.Bet),
                 _ => (BjOutcome.Lose, 0),
             };
             h.Done = true;
-            Stack += h.Payout;
+            Stack = Economy.Chips.Add(Stack, h.Payout);
         }
         Phase = BjPhase.Finished;
         var split = _hands.Count > 1;
         Result = new BjRoundResult(
-            TotalBet,
+            _hands.Sum(h => (long)h.Bet),
             _hands.Sum(h => h.Payout),
             Natural: _hands.Any(h => h.Outcome == BjOutcome.Blackjack),
             DoubleWon: _hands.Any(h => h.Doubled && h.Outcome == BjOutcome.Win),

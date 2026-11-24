@@ -11,7 +11,7 @@
         <div class="brand">♠ Chip <span>Royale</span></div>
         <div class="meta">
             <span class="pill stake">🃏 Video Poker · @Roster.StakeName(Settings.Stake)@(Settings.IsPractice ? L("Table.PracticeSuffix") : "")</span>
-            <span class="pill">@L("Casino.Limits", MinBet, MaxBet)</span>
+            <span class="pill">@(Settings.Stake.NoLimit ? L("Casino.LimitsNoLimit", MinBet) : L("Casino.Limits", MinBet, MaxBet))</span>
             <span class="pill">@L("Vp.HandNo", handNo)</span>
         </div>
         <div class="tools">
@@ -29,7 +29,7 @@
                     {
                         <tr class="@(ShownHand == vpHand ? "on" : "")">
                             <td>@L($"Vp.Hand.{vpHand}")</td>
-                            <td>@((bet * pays).ToString("N0"))</td>
+                            <td>@(((long)bet * pays).ToString("N0"))</td>
                         </tr>
                     }
                 </tbody>
@@ -171,20 +171,20 @@
     private int stack;
     private int bet;
     private int handNo = 1;
-    private int lastWin;
+    private long lastWin;
     private int sessionHands;
-    private int sessionNet;
+    private long sessionNet;
     private bool busy;
     private bool dealt;
     private bool hints = true;
     private bool sound = true;
 
     private int MinBet => Settings.Stake.SmallBlind;
-    private int MaxBet => Settings.Stake.BigBlind;
+    private int MaxBet => Settings.Stake.MaxBet;
     private bool InHand => hand is { Drawn: false };
 
-    private IReadOnlyList<int> BetSteps => [.. new[] { 1, 2, 5, 10, 20, 25, 50, 100, 200, 250, 500, 1000 }.Where(v => v >= MinBet && v <= MaxBet)];
-    private int BetIndex => BetSteps.ToList().IndexOf(bet);
+    private IReadOnlyList<int> BetSteps => BetSizes.Steps(MinBet, Math.Min(MaxBet, Math.Max(MinBet, stack)));
+    private int BetIndex => Math.Max(0, BetSteps.ToList().FindLastIndex(v => v <= bet));
     private int NextBet => BetIndex + 1 < BetSteps.Count ? BetSteps[BetIndex + 1] : int.MaxValue;
 
     /// <summary>Hand shown in the pay table: the current one while holding, the final one after the draw.</summary>
@@ -193,7 +193,7 @@
     protected override void OnInitialized()
     {
         stack = Settings.BuyIn;
-        bet = BetSteps.LastOrDefault(v => v * 40 <= stack, BetSteps[0]);
+        bet = BetSteps.LastOrDefault(v => v * 40L <= stack, BetSteps[0]);
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -282,7 +282,7 @@
         dealt = false;
 
         var payout = hand.Payout;
-        stack += payout;
+        stack = ChipRoyale.Engine.Economy.Chips.Add(stack, payout);
         lastWin = payout;
         var net = payout - bet;
         sessionHands++;
@@ -330,7 +330,7 @@
         StateHasChanged();
     }
 
-    private static string Signed(int n) => n > 0 ? $"+{n:N0}" : n < 0 ? $"−{-n:N0}" : "±0";
+    private static string Signed(long n) => n > 0 ? $"+{n:N0}" : n < 0 ? $"−{-n:N0}" : "±0";
 
     private Task Delay(int ms) => Task.Delay(ms, cts.Token).ContinueWith(_ => { }, TaskScheduler.Default);
 
