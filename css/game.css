@@ -2602,3 +2602,20 @@
 .st-ach b { grid-row: 1 / span 2; grid-column: 3; color: #ffe7a6; font-size: .8rem; }
 @media (max-width: 800px) { .st-overview { grid-template-columns: repeat(2, 1fr); } }
 .speed-picker .preset.on { border-color: rgba(245, 196, 81, .7); background: rgba(245, 196, 81, .18); color: #ffe7a6; }
+
+/* ---------------------------------------------------------------- no-limit tables and big chips */
+.chip3d.c-blue { --c: #1f6fd0; --edge: #0d3a78; }
+.chip3d.c-pink { --c: #e0458f; --edge: #861f50; }
+.chip3d.c-teal { --c: #12b3a8; --edge: #0a625c; }
+.bj-chip-btn.c-blue, .rl-chip.c-blue { --c: #1f6fd0; }
+.bj-chip-btn.c-pink, .rl-chip.c-pink { --c: #e0458f; }
+.bj-chip-btn.c-teal, .rl-chip.c-teal { --c: #12b3a8; }
+.stake-choice { position: relative; }
+.nolimit-badge {
+    position: absolute; top: -.55rem; right: -.4rem; padding: .1rem .45rem; border-radius: 999px; font-size: .62rem; font-weight: 800;
+    letter-spacing: .04em; color: #2a1a00; background: linear-gradient(135deg, #fff3c4, #f5c451); box-shadow: 0 2px 8px rgba(245, 196, 81, .45);
+}
+.chip3d.c-navy { --c: #283593; --edge: #121a52; --chip-stripe: #ffe7a6; }
+.chip3d.c-ruby { --c: #9b111e; --edge: #4f070e; --chip-stripe: #ffd35a; }
+.bj-chip-btn.c-navy, .rl-chip.c-navy { --c: #283593; }
+.bj-chip-btn.c-ruby, .rl-chip.c-ruby { --c: #9b111e; }

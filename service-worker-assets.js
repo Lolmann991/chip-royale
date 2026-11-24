@@ -1,17 +1,17 @@
 self.assetsManifest = {
-  "version": "fjcT0NWL",
+  "version": "wa6ieC5C",
   "assets": [
     {
-      "hash": "sha256-xs6VM061eya9IiP1ZxqVYYxD2C49MAPuRpgODlynobs=",
-      "url": "_framework/ChipRoyale.Client.imd1an77rn.wasm"
+      "hash": "sha256-uo4W/LPPTRbTEyAPo2L3DrFrFHssaKx94ZBkO+K18Ec=",
+      "url": "_framework/ChipRoyale.Client.21q6cbhggy.wasm"
     },
     {
-      "hash": "sha256-7gEU/yjlKqLsu4Jq7XwFSYHX1MbskC6xcR3Mjg0FG2I=",
-      "url": "_framework/ChipRoyale.Engine.28jv3y2jep.wasm"
+      "hash": "sha256-ZLA9MftwwtAs/eB0lc41Rcwwr50VWcwYEWlpooAcVWw=",
+      "url": "_framework/ChipRoyale.Engine.syos38gxsh.wasm"
     },
     {
-      "hash": "sha256-K/wZPDjzX0EhpO1E+FWQxewhlRQJwHpXFb9+Fne4fDI=",
-      "url": "_framework/ChipRoyale.Shared.z6v5722wva.wasm"
+      "hash": "sha256-mfwTTjuHIn7ROklNVz8hzgkloTjmnb5E+vpjeBIOA/Y=",
+      "url": "_framework/ChipRoyale.Shared.jdwe4tdend.wasm"
     },
     {
       "hash": "sha256-OsqX4+2uG2so+y+gf+tbI1iH/d8eauu5qSXcqHCZ0Rg=",
@@ -130,8 +130,8 @@ self.assetsManifest = {
       "url": "_framework/System.Linq.Expressions.sbgbyw6ao8.wasm"
     },
     {
-      "hash": "sha256-bkjR5x7efLv7LJ0zCVQdc7g8kUGM8VHc8acedteCTag=",
-      "url": "_framework/System.Linq.e51vk3q63u.wasm"
+      "hash": "sha256-wW8XJWjbjJxKd7hwO9vWH9ynLbf+cJBFg58cQzB4P7o=",
+      "url": "_framework/System.Linq.p6hn5lqmq7.wasm"
     },
     {
       "hash": "sha256-69M81JAOfML7lgL1+PwPD+tFJUeXFGv+V6tJn5wi4VI=",
@@ -154,8 +154,8 @@ self.assetsManifest = {
       "url": "_framework/System.ObjectModel.w18jimhwzq.wasm"
     },
     {
-      "hash": "sha256-ApHXoFKFhKfqtwDAxxnwlRivi3WM3gZ59F/XSv7cImo=",
-      "url": "_framework/System.Private.CoreLib.6624jazsi1.wasm"
+      "hash": "sha256-EGoubHGrMZVamRdknRIYoSAI1Gdgun4MuvciCTZVNUU=",
+      "url": "_framework/System.Private.CoreLib.wka6jvexwg.wasm"
     },
     {
       "hash": "sha256-NAvtoTbIgj4ldFUoJdOIByxl40YXrIMqey0mW5dE4BM=",
@@ -206,7 +206,7 @@ self.assetsManifest = {
       "url": "_framework/blazor.webassembly.js"
     },
     {
-      "hash": "sha256-/n085PseQMKHkbJihAkayfK6VSn25Txr7lNzoPo/DIk=",
+      "hash": "sha256-1CQ/f4d3uEn9Jpe4Rajr91LsMe4CZx7KxdSvF4DQpUU=",
       "url": "_framework/dotnet.js"
     },
     {
@@ -222,8 +222,8 @@ self.assetsManifest = {
       "url": "_framework/dotnet.runtime.v2rwe8u38b.js"
     },
     {
-      "hash": "sha256-lkRS05EAoUWtJ8hUyJ39SoeJimvEU3NYV4Cb1jFsEJQ=",
-      "url": "_framework/en/ChipRoyale.Client.resources.m5q0bf3u32.wasm"
+      "hash": "sha256-oBfW+qBfsDcfwQ/YdxPBs1K0XQSkRdRKGvXmNMlS1OA=",
+      "url": "_framework/en/ChipRoyale.Client.resources.cxfgnj07nm.wasm"
     },
     {
       "hash": "sha256-tO5O5YzMTVSaKBboxAqezOQL9ewmupzV2JrB5Rkc8a4=",
@@ -234,7 +234,7 @@ self.assetsManifest = {
       "url": "appsettings.json"
     },
     {
-      "hash": "sha256-umlwwjkBRGBhdnqVpH5pu6A3dpw6PTcGSDu/KK+kZPo=",
+      "hash": "sha256-7m454WPwhodGg71uy2BTaLEvZy5kK9JKkSUJZKpQwfk=",
       "url": "css/game.css"
     },
     {
