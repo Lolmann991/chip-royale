@@ -31,6 +31,12 @@ public sealed class PlayerService(GameServer server, BrowserStorage storage)
     private bool loaded;
     private bool connectionLost;
     private int pending;
+
+    /// <summary>
+    /// Operations run one after another: two requests at the same time would both read the old
+    /// profile on the server and the later one would overwrite the other's changes.
+    /// </summary>
+    private readonly SemaphoreSlim gate = new(1, 1);
     private PlayerState state = PlayerState.New("");
 
     public PlayerMode Mode => UsesServer ? PlayerMode.Online : server.IsOnline ? PlayerMode.Guest : PlayerMode.Offline;
@@ -236,8 +242,9 @@ public sealed class PlayerService(GameServer server, BrowserStorage storage)
     /// <returns>The wheel segment and the chips won, or an error.</returns>
     public async Task<(int Segment, int Chips, string? Error)> DailyBonusAsync()
     {
-        var chipsBefore = state.Bankroll.Chips;
         pending++;
+        await gate.WaitAsync();
+        var chipsBefore = state.Bankroll.Chips;
         try
         {
             if (UsesServer)
@@ -270,6 +277,7 @@ public sealed class PlayerService(GameServer server, BrowserStorage storage)
         }
         finally
         {
+            gate.Release();
             pending--;
         }
     }
@@ -320,6 +328,7 @@ public sealed class PlayerService(GameServer server, BrowserStorage storage)
     {
         var german = System.Globalization.CultureInfo.CurrentUICulture.TwoLetterISOLanguageName == "de";
         pending++;
+        await gate.WaitAsync();
         try
         {
             if (UsesServer)
@@ -352,6 +361,7 @@ public sealed class PlayerService(GameServer server, BrowserStorage storage)
         }
         finally
         {
+            gate.Release();
             pending--;
         }
     }
@@ -367,12 +377,14 @@ public sealed class PlayerService(GameServer server, BrowserStorage storage)
     private async Task<string?> RunAsync(Func<PlayerState, OperationResult> local, string route, object? body)
     {
         pending++;
+        await gate.WaitAsync();
         try
         {
             return await RunCoreAsync(local, route, body);
         }
         finally
         {
+            gate.Release();
             pending--;
         }
     }

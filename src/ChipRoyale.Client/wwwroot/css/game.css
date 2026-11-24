@@ -2420,3 +2420,85 @@
 }
 .rl-game .bj-banner { left: 66%; top: 11%; }
 @media (max-width: 1000px) { .rl-game .bj-banner { left: 50%; top: 30%; } }
+
+/* ================================================================ Slots */
+
+.sl-stage { position: relative; display: grid; place-items: center; padding: .6rem 1rem 1rem; min-height: 0; }
+.sl-cabinet {
+    --cell: min(9.5rem, calc((100vw - 8rem) / 5.6), calc((100vh - 400px) / 3));
+    position: relative; padding: 1rem 1.4rem 1.2rem; border-radius: 28px;
+    background:
+        linear-gradient(180deg, rgba(255, 255, 255, .12), transparent 18%),
+        linear-gradient(180deg, #4a1218, #2a080c 60%, #1a0507);
+    border: 3px solid #e8b23a;
+    box-shadow: 0 0 0 6px #2a1205, 0 0 0 8px #8f6512, 0 30px 80px rgba(0, 0, 0, .8), inset 0 0 40px rgba(0, 0, 0, .6);
+}
+.sl-cabinet.free { border-color: #9fd8ff; box-shadow: 0 0 0 6px #0f2140, 0 0 0 8px #4b8fd6, 0 0 60px rgba(111, 182, 255, .45), 0 30px 80px rgba(0, 0, 0, .8); }
+.sl-cabinet.jackpot { animation: sl-jackpot .5s ease-in-out 6 alternate; }
+@keyframes sl-jackpot { to { box-shadow: 0 0 0 6px #2a1205, 0 0 0 8px #ffe7a6, 0 0 120px rgba(255, 215, 90, .9); } }
+
+.sl-marquee { display: flex; align-items: center; gap: 1rem; justify-content: center; margin-bottom: .7rem; }
+.sl-marquee h2 {
+    margin: 0; font-family: Georgia, serif; font-size: calc(var(--cell) * .32); letter-spacing: .08em; text-transform: uppercase;
+    background: linear-gradient(180deg, #fff3c4, #f5c451 55%, #b07a1a); -webkit-background-clip: text; background-clip: text; color: transparent;
+    filter: drop-shadow(0 2px 0 rgba(0, 0, 0, .6));
+}
+.sl-marquee h2 b { color: #ff5a4e; -webkit-text-fill-color: #ff5a4e; }
+.sl-lights {
+    flex: 1; height: .7rem; border-radius: 999px; max-width: 12rem;
+    background: radial-gradient(circle, #ffe7a6 0 35%, transparent 40%) 0 50% / 1.1rem 100% repeat-x;
+    animation: sl-chase 1s steps(2) infinite; filter: drop-shadow(0 0 4px #f5c451);
+}
+@keyframes sl-chase { 50% { background-position-x: .55rem; } }
+
+.sl-window {
+    position: relative; display: grid; grid-template-columns: repeat(5, var(--cell)); gap: .35rem; padding: .45rem;
+    border-radius: 14px; background: #0b0508; box-shadow: inset 0 0 0 2px rgba(255, 215, 120, .4), inset 0 10px 30px rgba(0, 0, 0, .9);
+}
+.sl-reel {
+    position: relative; height: calc(var(--cell) * 3); overflow: hidden; border-radius: 8px;
+    background: linear-gradient(180deg, #d9d3c4, #fffdf5 20%, #fffdf5 80%, #cfc8b6);
+    display: flex; flex-direction: column;
+}
+.sl-reel::after { content: ""; position: absolute; inset: 0; pointer-events: none; background: linear-gradient(180deg, rgba(0, 0, 0, .35), transparent 22%, transparent 78%, rgba(0, 0, 0, .35)); }
+.sl-sym { height: var(--cell); flex: none; display: grid; place-items: center; font-size: calc(var(--cell) * .58); line-height: 1; transition: opacity .3s, transform .3s; }
+.sl-reel.stopped .sl-sym { animation: sl-stop .32s cubic-bezier(.3, 1.6, .5, 1); }
+@keyframes sl-stop { from { transform: translateY(-18%); } }
+.sl-strip { display: flex; flex-direction: column; animation: sl-roll .28s linear infinite; filter: blur(2.5px); }
+@keyframes sl-roll { from { transform: translateY(calc(var(--cell) * -9)); } to { transform: translateY(0); } }
+.sl-sym.win { animation: sl-win .6s ease-in-out infinite alternate; position: relative; z-index: 1; }
+.sl-sym.win::before { content: ""; position: absolute; inset: 6%; border-radius: 14px; background: radial-gradient(circle, rgba(255, 215, 90, .55), transparent 70%); z-index: -1; }
+@keyframes sl-win { to { transform: scale(1.12); filter: drop-shadow(0 0 10px rgba(255, 200, 60, .9)); } }
+.sl-sym.dim { opacity: .35; }
+.sl-sym.sym-Seven { font-size: calc(var(--cell) * .62); }
+.sl-lines { position: absolute; inset: .45rem; width: calc(100% - .9rem); height: calc(100% - .9rem); pointer-events: none; z-index: 2; }
+.sl-line { fill: none; stroke: #ffd35a; stroke-width: 5; stroke-linecap: round; stroke-linejoin: round; opacity: .85; filter: drop-shadow(0 0 4px rgba(255, 200, 60, .9)); stroke-dasharray: 1400; animation: sl-draw .7s ease-out both; }
+.sl-line.l1, .sl-line.l5, .sl-line.l7 { stroke: #ff6f61; }
+.sl-line.l2, .sl-line.l6, .sl-line.l8 { stroke: #6fd3ff; }
+.sl-line.l3, .sl-line.l9 { stroke: #9ff07a; }
+@keyframes sl-draw { from { stroke-dashoffset: 1400; } to { stroke-dashoffset: 0; } }
+
+.sl-display { display: grid; grid-template-columns: 1fr 1.3fr 1fr; gap: .6rem; margin-top: .8rem; }
+.sl-lcd {
+    display: flex; flex-direction: column; align-items: center; padding: .35rem .6rem; border-radius: 10px;
+    background: #050304; border: 1px solid rgba(255, 90, 78, .35); box-shadow: inset 0 0 12px rgba(255, 60, 40, .25);
+}
+.sl-lcd small { font-size: .65rem; letter-spacing: .16em; text-transform: uppercase; color: rgba(255, 170, 160, .7); }
+.sl-lcd b { font-family: "Cascadia Mono", Consolas, monospace; font-size: 1.35rem; color: #ff5a4e; text-shadow: 0 0 8px rgba(255, 80, 60, .8); }
+.sl-lcd.win.on b { color: #ffe36a; text-shadow: 0 0 10px rgba(255, 220, 90, .9); animation: pop-in .4s ease; }
+.sl-banner { top: 45%; }
+.sl-free-badge {
+    position: absolute; top: .4rem; left: 50%; transform: translateX(-50%); z-index: 6; padding: .35rem 1rem; border-radius: 999px;
+    background: linear-gradient(135deg, #1d3d6b, #0f2140); border: 1px solid #6fb6ff; color: #dff1ff; font-weight: 700; animation: bar-swap .3s ease both;
+}
+.sl-bet-panel { align-items: center; }
+.sl-bet-label { color: var(--ink-dim); font-size: .8rem; text-transform: uppercase; letter-spacing: .1em; }
+.sl-bet-value { min-width: 5rem; text-align: center; color: #ffe7a6; font-size: 1.1rem; }
+.sl-spin-btn { min-width: 12rem; font-size: 1.15rem; }
+.sl-paytable { max-width: 560px; }
+.sl-paytable table { width: 100%; border-collapse: collapse; margin: .6rem 0; }
+.sl-paytable th, .sl-paytable td { padding: .3rem .5rem; text-align: right; border-bottom: 1px solid rgba(255, 255, 255, .08); font-variant-numeric: tabular-nums; }
+.sl-paytable th { color: var(--ink-dim); font-weight: 600; }
+.sl-pt-sym { font-size: 1.6rem; text-align: center !important; }
+.sl-paytable tr.star td { color: #9fd8ff; }
+.sl-paytable small { color: var(--ink-dim); }

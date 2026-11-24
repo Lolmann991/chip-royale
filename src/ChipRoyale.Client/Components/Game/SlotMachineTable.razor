@@ -1,0 +1,515 @@
+@using System.Globalization
+@using ChipRoyale.Engine.Casino
+@using ChipRoyale.Shared
+@implements IAsyncDisposable
+@inject IJSRuntime JS
+
+@* Slot machine "Royal Sevens": 5 reels, 3 rows, 10 paylines, wilds, star scatters with free spins. *@
+
+<div class="game sl-game">
+    <header class="topbar">
+        <div class="brand">♠ Chip <span>Royale</span></div>
+        <div class="meta">
+            <span class="pill stake">🎰 Slots · @Roster.StakeName(Settings.Stake)@(Settings.IsPractice ? L("Table.PracticeSuffix") : "")</span>
+            <span class="pill">@L("Casino.Limits", MinBet, MaxBet)</span>
+            <span class="pill">@L("Sl.SpinNo", spinNo)</span>
+        </div>
+        <div class="tools">
+            <button type="button" class="tool @(showPays ? "on" : "")" @onclick="() => showPays = !showPays">📋 @L("Sl.PayTable")</button>
+            <button type="button" class="tool @(hints ? "on" : "")" title="@L("Sl.Tips.Title")" @onclick="() => hints = !hints">@L("Table.Tips")</button>
+            <button type="button" class="tool @(sound ? "on" : "")" title="@L("Table.Sound")" @onclick="ToggleSound">@(sound ? "🔊" : "🔇")</button>
+            <button type="button" class="tool" disabled="@(Busy || freeLeft > 0)" @onclick="ExitAsync">@(Settings.IsPractice ? L("Table.Lobby") : L("Table.CashOut"))</button>
+        </div>
+    </header>
+
+    <main class="sl-stage">
+        <div class="sl-cabinet @(freeLeft > 0 || freeTotal > 0 && Busy ? "free" : "") @(lastSpin?.Jackpot == true && !Busy ? "jackpot" : "")">
+            <div class="sl-marquee">
+                <span class="sl-lights"></span>
+                <h2>Royal <b>7</b>evens</h2>
+                <span class="sl-lights"></span>
+            </div>
+
+            <div class="sl-window">
+                @for (var reel = 0; reel < 5; reel++)
+                {
+                    var r = reel;
+                    <div class="sl-reel @(spinningReels[r] ? "spinning" : "stopped")" @key="(r, spinNo, spinningReels[r])">
+                        @if (spinningReels[r])
+                        {
+                            <div class="sl-strip" style="animation-delay:-@(r * 70)ms">
+                                @foreach (var sym in blurStrip[r])
+                                {
+                                    <span class="sl-sym">@Glyph(sym)</span>
+                                }
+                            </div>
+                        }
+                        else
+                        {
+                            for (var row = 0; row < 3; row++)
+                            {
+                                var sym = grid[r, row];
+                                <span class="sl-sym @(IsWinning(r, row) ? "win" : "") @(lastSpin is not null && !busy && !IsWinning(r, row) && lastSpin.Win > 0 ? "dim" : "") sym-@sym">@Glyph(sym)</span>
+                            }
+                        }
+                    </div>
+                }
+                @if (!busy && lastSpin is { Lines.Count: > 0 } ls)
+                {
+                    <svg class="sl-lines" viewBox="0 0 500 300" preserveAspectRatio="none">
+                        @foreach (var w in ls.Lines)
+                        {
+                            <polyline points="@LinePoints(w.Line)" class="sl-line l@(w.Line)" />
+                        }
+                    </svg>
+                }
+            </div>
+
+            <div class="sl-display">
+                <div class="sl-lcd">
+                    <small>@L("Sl.Credit")</small>
+                    <b>@stack.ToString("N0")</b>
+                </div>
+                <div class="sl-lcd win @(shownWin > 0 ? "on" : "")">
+                    <small>@(freeLeft > 0 || freeTotal > 0 ? L("Sl.FreeWin") : L("Sl.Win"))</small>
+                    <b>@shownWin.ToString("N0")</b>
+                </div>
+                <div class="sl-lcd">
+                    <small>@L("Sl.Bet")</small>
+                    <b>@bet.ToString("N0")</b>
+                </div>
+            </div>
+        </div>
+
+        @if (banner is { } b)
+        {
+            <div class="bj-banner @b.Kind sl-banner" @key="spinNo">
+                <b>@b.Title</b>
+                @if (b.Text is not null)
+                {
+                    <span>@b.Text</span>
+                }
+            </div>
+        }
+        @if (freeLeft > 0)
+        {
+            <div class="sl-free-badge">🌟 @L("Sl.FreeLeft", freeLeft)</div>
+        }
+    </main>
+
+    <footer class="actionbar">
+        <div class="hand-info">
+            @if (hints)
+            {
+                <div class="hero-stats">
+                    <div class="stat-row rank">
+                        <span class="stat-label">@L("Sl.Tip.Session")</span>
+                        <b>@L("Sl.Tip.SessionText", sessionSpins, Signed(sessionNet))</b>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-label">@L("Sl.Tip.Best")</span>
+                        <span>@(sessionBest > 0 ? $"+{sessionBest:N0}" : "–")</span>
+                    </div>
+                    <div class="stat-row small">
+                        <span class="stat-label">@L("Sl.Tip.Rtp")</span>
+                        <span class="stat-note">@L("Sl.Tip.RtpText")</span>
+                    </div>
+                </div>
+            }
+        </div>
+
+        <div class="controls">
+            @if (freeLeft > 0 || Busy || auto > 0)
+            {
+                <div class="status">@(freeLeft > 0 ? $"🌟 {L("Sl.FreeRunning", freeLeft)}" : $"🎰 {L("Sl.Spinning")}")</div>
+                @if (auto > 0)
+                {
+                    <button type="button" class="preset" @onclick="() => auto = 0">⏹ @L("Sl.AutoStop", auto)</button>
+                }
+            }
+            else
+            {
+                <div class="raise-panel sl-bet-panel">
+                    <span class="sl-bet-label">@L("Sl.Bet")</span>
+                    <button type="button" class="step" disabled="@(BetIndex <= 0)" @onclick="() => StepBet(-1)">−</button>
+                    <b class="sl-bet-value">● @bet.ToString("N0")</b>
+                    <button type="button" class="step" disabled="@(BetIndex >= BetSteps.Count - 1 || NextBet > stack)" @onclick="() => StepBet(1)">+</button>
+                    <button type="button" class="preset" @onclick="MaxBetClick">Max</button>
+                    <button type="button" class="preset" disabled="@(bet > stack)" title="@L("Sl.AutoTitle")" @onclick="() => StartAutoAsync(10)">↻ Auto 10</button>
+                </div>
+                <div class="buttons">
+                    <button type="button" class="act raise sl-spin-btn" disabled="@(bet > stack)" @onclick="SpinAsync">
+                        @L("Sl.Spin") <kbd>@L("Table.Key.Space")</kbd>
+                    </button>
+                </div>
+            }
+        </div>
+    </footer>
+
+    @if (showPays)
+    {
+        <div class="overlay soft" @onclick="() => showPays = false">
+            <div class="overlay-card sl-paytable" @onclick:stopPropagation="true">
+                <h2>📋 @L("Sl.PayTable")</h2>
+                <p>@L("Sl.PayNote", bet)</p>
+                <table>
+                    <thead><tr><th></th><th>3×</th><th>4×</th><th>5×</th></tr></thead>
+                    <tbody>
+                        @foreach (var (sym, pays) in SlotMachine.PayTable.OrderByDescending(p => p.Value[2]))
+                        {
+                            <tr>
+                                <td class="sl-pt-sym">@Glyph(sym)</td>
+                                @foreach (var m in pays)
+                                {
+                                    <td>@Fmt(bet * m / 10.0)</td>
+                                }
+                            </tr>
+                        }
+                        <tr class="star">
+                            <td class="sl-pt-sym">@Glyph(SlotSymbol.Star)</td>
+                            @foreach (var m in SlotMachine.StarPays)
+                            {
+                                <td>@Fmt(bet * m) <small>+10 🌟</small></td>
+                            }
+                        </tr>
+                    </tbody>
+                </table>
+                <p class="note">@L("Sl.PayRules")</p>
+                <button type="button" class="act next" @onclick="() => showPays = false">@L("Common.Close")</button>
+            </div>
+        </div>
+    }
+
+    @if (!Busy && freeLeft == 0 && stack < MinBet)
+    {
+        <div class="overlay">
+            <div class="overlay-card lost">
+                <div class="trophy">💸</div>
+                <h2>@L("Bj.Broke.Title")</h2>
+                <p>@(Settings.IsPractice ? L("Bj.Broke.Practice") : L("Bj.Broke.Text", MinBet))</p>
+                <div class="overlay-actions">
+                    @if (Settings.IsPractice)
+                    {
+                        <button type="button" class="act next" @onclick="() => stack = Settings.BuyIn">@L("Bj.Refill")</button>
+                    }
+                    <button type="button" class="act fold" @onclick="ExitAsync">@L("Table.Lobby")</button>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+@code {
+    [Parameter, EditorRequired] public GameSettings Settings { get; set; } = default!;
+    [Parameter] public EventCallback<int> OnExit { get; set; }
+    [Parameter] public EventCallback<int> OnStack { get; set; }
+    [Parameter] public EventCallback<CasinoReport> OnRound { get; set; }
+
+    private sealed record Banner(string Title, string? Text, string Kind);
+
+    private readonly SlotMachine machine = new();
+    private readonly CancellationTokenSource cts = new();
+    private readonly bool[] spinningReels = new bool[5];
+    private readonly SlotSymbol[][] blurStrip = new SlotSymbol[5][];
+    private SlotSymbol[,] grid = new SlotSymbol[5, 3];
+    private SlotSpin? lastSpin;
+    private IJSObjectReference? js;
+    private DotNetObjectReference<SlotMachineTable>? selfRef;
+    private int stack;
+    private int bet;
+    private int spinNo = 1;
+    private int shownWin;
+    private int freeLeft;
+    private int freeTotal;
+    private int auto;
+    private int sessionSpins;
+    private int sessionNet;
+    private int sessionBest;
+    private bool busy;
+    private bool hints = true;
+    private bool sound = true;
+    private bool showPays;
+    private Banner? banner;
+
+    private int MinBet => Settings.Stake.SmallBlind;
+    private int MaxBet => Settings.Stake.BigBlind;
+    /// <summary>Reels spinning, free spins running or the round still being saved.</summary>
+    private bool Busy => busy || roundActive;
+    private bool roundActive;
+
+    private IReadOnlyList<int> BetSteps => [.. new[] { 1, 2, 5, 10, 20, 25, 50, 100, 200, 250, 500, 1000 }.Where(v => v >= MinBet && v <= MaxBet)];
+    private int BetIndex => BetSteps.ToList().IndexOf(bet);
+    private int NextBet => BetIndex + 1 < BetSteps.Count ? BetSteps[BetIndex + 1] : int.MaxValue;
+
+    protected override void OnInitialized()
+    {
+        stack = Settings.BuyIn;
+        bet = BetSteps.LastOrDefault(v => v * 50 <= stack, BetSteps[0]);
+        // A nice first screen: a random stop on every reel.
+        lastSpin = null;
+        var first = machine.Spin(bet);
+        grid = first.Grid;
+        for (var r = 0; r < 5; r++) blurStrip[r] = RandomStrip();
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender) return;
+        try
+        {
+            js = await JS.InvokeAsync<IJSObjectReference>("import", "./js/table.js");
+            selfRef = DotNetObjectReference.Create(this);
+            await js.InvokeVoidAsync("init", selfRef);
+            sound = await js.InvokeAsync<bool>("getSound");
+            StateHasChanged();
+        }
+        catch (Exception ex) when (ex is JSDisconnectedException or TaskCanceledException or JSException) { }
+    }
+
+    private void StepBet(int dir)
+    {
+        var i = Math.Clamp(BetIndex + dir, 0, BetSteps.Count - 1);
+        if (BetSteps[i] <= stack || dir < 0) bet = BetSteps[i];
+        Sfx("chip");
+    }
+
+    private void MaxBetClick()
+    {
+        bet = BetSteps.LastOrDefault(v => v <= stack, BetSteps[0]);
+        Sfx("chip");
+    }
+
+    private async Task StartAutoAsync(int spins)
+    {
+        auto = spins;
+        while (auto > 0 && !cts.IsCancellationRequested && bet <= stack)
+        {
+            auto--;
+            await SpinAsync();
+            await Delay(450);
+        }
+        auto = 0;
+        StateHasChanged();
+    }
+
+    private async Task SpinAsync()
+    {
+        if (Busy || freeLeft > 0) return;
+        if (bet > stack) return;
+        roundActive = true;
+        try
+        {
+            await PlayRoundAsync();
+        }
+        finally
+        {
+            roundActive = false;
+            StateHasChanged();
+        }
+    }
+
+    private async Task PlayRoundAsync()
+    {
+        stack -= bet;
+        await OnStack.InvokeAsync(stack);
+        var spin = await PlaySpinAsync(free: false);
+
+        var total = spin.Win;
+        var highlights = new List<string>();
+        if (spin.FreeSpinsWon > 0) highlights.Add("freespins");
+        if (spin.Jackpot) highlights.Add("jackpot");
+
+        // Free spins: played right away, wins doubled.
+        if (spin.FreeSpinsWon > 0)
+        {
+            freeLeft = spin.FreeSpinsWon;
+            freeTotal = total;
+            Sfx("bigwin");
+            _ = JsAsync("celebrate", 2);
+            banner = new Banner(L("Sl.FreeStart"), L("Sl.FreeStartText", SlotMachine.FreeSpins), "win big");
+            StateHasChanged();
+            await Delay(1800);
+            while (freeLeft > 0 && !cts.IsCancellationRequested)
+            {
+                freeLeft--;
+                banner = null;
+                var f = await PlaySpinAsync(free: true);
+                total += f.Win;
+                freeTotal = total;
+                shownWin = total;
+                if (f.Jackpot && !highlights.Contains("jackpot")) highlights.Add("jackpot");
+                if (f.FreeSpinsWon > 0)
+                {
+                    freeLeft += f.FreeSpinsWon;
+                    banner = new Banner(L("Sl.FreeMore"), L("Sl.FreeStartText", f.FreeSpinsWon), "win");
+                    Sfx("bigwin");
+                }
+                StateHasChanged();
+                await Delay(f.Win > 0 ? 900 : 450);
+            }
+        }
+
+        stack += total;
+        var net = total - bet;
+        if (total >= bet * 50) highlights.Add("bigwin");
+        sessionSpins++;
+        sessionNet += net;
+        sessionBest = Math.Max(sessionBest, net);
+        await ShowResultAsync(total, highlights);
+        freeTotal = 0;
+        spinNo++;
+        StateHasChanged();
+        await OnRound.InvokeAsync(new CasinoReport(stack, new CasinoRoundDto("slots", bet, net, [.. highlights])));
+    }
+
+    /// <summary>Spins the reels (animated) and shows the result.</summary>
+    private async Task<SlotSpin> PlaySpinAsync(bool free)
+    {
+        busy = true;
+        banner = null;
+        if (!free) shownWin = 0;
+        lastSpin = null;
+        var spin = machine.Spin(bet, free);
+        for (var r = 0; r < 5; r++)
+        {
+            spinningReels[r] = true;
+            blurStrip[r] = RandomStrip();
+        }
+        Sfx("turn");
+        StateHasChanged();
+        await Delay(free ? 450 : 650);
+        grid = spin.Grid;
+        for (var r = 0; r < 5; r++)
+        {
+            spinningReels[r] = false;
+            Sfx("card");
+            StateHasChanged();
+            await Delay(r == 3 && StarsBefore(spin, 4) >= 2 ? 700 : 200); // a little suspense before the last reel
+        }
+        lastSpin = spin;
+        if (spin.Win > 0 && !free) shownWin = spin.Win;
+        if (spin.Win > 0) Sfx(spin.Win >= bet * 10 ? "bigwin" : "win");
+        busy = false;
+        StateHasChanged();
+        return spin;
+    }
+
+    private async Task ShowResultAsync(int total, List<string> highlights)
+    {
+        shownWin = total;
+        if (highlights.Contains("jackpot"))
+        {
+            banner = new Banner("JACKPOT!", $"+{total:N0}", "win big");
+            _ = JsAsync("celebrate", 3);
+        }
+        else if (total >= bet * 50)
+        {
+            banner = new Banner(L("Sl.MegaWin"), $"+{total:N0}", "win big");
+            _ = JsAsync("celebrate", 3);
+        }
+        else if (total >= bet * 10)
+        {
+            banner = new Banner(L("Sl.BigWin"), $"+{total:N0}", "win");
+            _ = JsAsync("celebrate", 2);
+        }
+        else if (highlights.Contains("freespins"))
+        {
+            banner = new Banner(L("Sl.FreeDone"), total > 0 ? $"+{total:N0}" : null, total > 0 ? "win" : "push");
+        }
+        StateHasChanged();
+        await Task.CompletedTask;
+    }
+
+    private static int StarsBefore(SlotSpin spin, int reels)
+    {
+        var n = 0;
+        for (var r = 0; r < reels; r++)
+            for (var row = 0; row < 3; row++)
+                if (spin.Grid[r, row] == SlotSymbol.Star) n++;
+        return n;
+    }
+
+    private async Task ExitAsync()
+    {
+        if (Busy || freeLeft > 0) return;
+        auto = 0;
+        cts.Cancel();
+        await OnExit.InvokeAsync(stack);
+    }
+
+    [JSInvokable]
+    public async Task Hotkey(string key)
+    {
+        switch (key)
+        {
+            case " " or "Enter" when !Busy && freeLeft == 0: await SpinAsync(); break;
+            case "ArrowUp" when !Busy: StepBet(1); break;
+            case "ArrowDown" when !Busy: StepBet(-1); break;
+            default: return;
+        }
+        StateHasChanged();
+    }
+
+    // ------------------------------------------------------------------ display helpers
+
+    private bool IsWinning(int reel, int row) => !busy && lastSpin is not null && lastSpin.WinningCells().Contains((reel, row));
+
+    private static string LinePoints(int line) => string.Join(' ',
+        SlotMachine.Paylines[line].Select((row, reel) => $"{reel * 100 + 50},{row * 100 + 50}"));
+
+    private static SlotSymbol[] RandomStrip() =>
+        [.. Enumerable.Range(0, 12).Select(_ => SlotMachine.Reels[0][Random.Shared.Next(SlotMachine.Reels[0].Length)])];
+
+    public static string Glyph(SlotSymbol s) => s switch
+    {
+        SlotSymbol.Cherry => "🍒",
+        SlotSymbol.Lemon => "🍋",
+        SlotSymbol.Grape => "🍇",
+        SlotSymbol.Bell => "🔔",
+        SlotSymbol.Clover => "🍀",
+        SlotSymbol.Diamond => "💎",
+        SlotSymbol.Seven => "7️⃣",
+        SlotSymbol.Wild => "🃏",
+        _ => "⭐",
+    };
+
+    private static string Fmt(double v) => v.ToString(v % 1 == 0 ? "N0" : "N1", CultureInfo.CurrentCulture);
+    private static string Signed(int n) => n > 0 ? $"+{n:N0}" : n < 0 ? $"−{-n:N0}" : "±0";
+
+    private Task Delay(int ms) => Task.Delay(ms, cts.Token).ContinueWith(_ => { }, TaskScheduler.Default);
+
+    private void Sfx(string name)
+    {
+        if (sound) _ = JsAsync("sfx", name);
+    }
+
+    private async Task ToggleSound()
+    {
+        sound = !sound;
+        await JsAsync("setSound", sound);
+    }
+
+    private async Task JsAsync(string fn, params object?[] args)
+    {
+        if (js is null) return;
+        try { await js.InvokeVoidAsync(fn, args); }
+        catch (Exception ex) when (ex is JSDisconnectedException or TaskCanceledException or JSException or ObjectDisposedException) { }
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        auto = 0;
+        cts.Cancel();
+        if (js is not null)
+        {
+            try
+            {
+                await js.InvokeVoidAsync("dispose");
+                await js.DisposeAsync();
+            }
+            catch (Exception ex) when (ex is JSDisconnectedException or TaskCanceledException or JSException) { }
+        }
+        selfRef?.Dispose();
+        cts.Dispose();
+    }
+}

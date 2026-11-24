@@ -21,6 +21,10 @@
     {
         <RouletteTable @key="tableKey" Settings="settings" OnExit="ExitAsync" OnStack="StackAsync" OnRound="CasinoRoundAsync" />
     }
+    else if (settings.Game == GameKind.Slots)
+    {
+        <SlotMachineTable @key="tableKey" Settings="settings" OnExit="ExitAsync" OnStack="StackAsync" OnRound="CasinoRoundAsync" />
+    }
     else if (settings.IsBlackjack)
     {
         <BlackjackTable @key="tableKey" Settings="settings" OnExit="ExitAsync" OnStack="StackAsync" OnRound="BlackjackRoundAsync" />

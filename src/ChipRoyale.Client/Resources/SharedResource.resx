@@ -704,6 +704,32 @@ Passen – aussteigen. Deine Chips im Pot sind dann weg.</value></data>
   <data name="Shop.Tab.Room" xml:space="preserve"><value>🏛️ Raum</value></data>
   <data name="Shop.Title1" xml:space="preserve"><value>Style-</value></data>
   <data name="Shop.Title2" xml:space="preserve"><value>Shop</value></data>
+  <data name="Sl.AutoStop" xml:space="preserve"><value>Auto stoppen ({0})</value></data>
+  <data name="Sl.AutoTitle" xml:space="preserve"><value>10 Drehs hintereinander mit diesem Einsatz</value></data>
+  <data name="Sl.Bet" xml:space="preserve"><value>Einsatz</value></data>
+  <data name="Sl.BigWin" xml:space="preserve"><value>Großer Gewinn!</value></data>
+  <data name="Sl.Credit" xml:space="preserve"><value>Guthaben</value></data>
+  <data name="Sl.FreeDone" xml:space="preserve"><value>Freispiele vorbei</value></data>
+  <data name="Sl.FreeLeft" xml:space="preserve"><value>Noch {0} Freispiele · Gewinne ×2</value></data>
+  <data name="Sl.FreeMore" xml:space="preserve"><value>Noch mehr Freispiele!</value></data>
+  <data name="Sl.FreeRunning" xml:space="preserve"><value>Freispiele laufen – noch {0}</value></data>
+  <data name="Sl.FreeStart" xml:space="preserve"><value>Freispiele!</value></data>
+  <data name="Sl.FreeStartText" xml:space="preserve"><value>{0} Freispiele · Gewinne ×2</value></data>
+  <data name="Sl.FreeWin" xml:space="preserve"><value>Freispiel-Gewinn</value></data>
+  <data name="Sl.MegaWin" xml:space="preserve"><value>Mega-Gewinn!</value></data>
+  <data name="Sl.PayNote" xml:space="preserve"><value>Gewinne in Chips bei {0:N0} Einsatz pro Dreh (10 Linien, von links nach rechts).</value></data>
+  <data name="Sl.PayRules" xml:space="preserve"><value>🃏 ersetzt alle Symbole außer ⭐. Sterne zählen überall: ab 3 gibt es 10 Freispiele mit doppelten Gewinnen, auch erneut. Fünf 7️⃣ auf einer Linie = Jackpot.</value></data>
+  <data name="Sl.PayTable" xml:space="preserve"><value>Gewinntabelle</value></data>
+  <data name="Sl.Spin" xml:space="preserve"><value>Drehen</value></data>
+  <data name="Sl.SpinNo" xml:space="preserve"><value>Dreh #{0}</value></data>
+  <data name="Sl.Spinning" xml:space="preserve"><value>Die Walzen drehen …</value></data>
+  <data name="Sl.Tip.Best" xml:space="preserve"><value>Bester Dreh</value></data>
+  <data name="Sl.Tip.Rtp" xml:space="preserve"><value>Gut zu wissen</value></data>
+  <data name="Sl.Tip.RtpText" xml:space="preserve"><value>Der Automat zahlt auf lange Sicht etwa 95 % der Einsätze zurück – Freispiele kommen etwa alle 60 Drehs.</value></data>
+  <data name="Sl.Tip.Session" xml:space="preserve"><value>Sitzung</value></data>
+  <data name="Sl.Tip.SessionText" xml:space="preserve"><value>{0} Drehs · {1}</value></data>
+  <data name="Sl.Tips.Title" xml:space="preserve"><value>Tipps: Bilanz der Sitzung und Auszahlungsquote</value></data>
+  <data name="Sl.Win" xml:space="preserve"><value>Gewinn</value></data>
   <data name="Sng.BuyIn" xml:space="preserve"><value>Buy-in {0:N0}</value></data>
   <data name="Sng.InTheMoney" xml:space="preserve"><value>Platz {0} – im Geld!</value></data>
   <data name="Sng.KnockedOut" xml:space="preserve"><value>{0} scheidet aus (Platz {1})</value></data>

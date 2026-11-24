@@ -704,6 +704,32 @@ Fold – give up. Your chips in the pot are gone.</value></data>
   <data name="Shop.Tab.Room" xml:space="preserve"><value>🏛️ Room</value></data>
   <data name="Shop.Title1" xml:space="preserve"><value>Style </value></data>
   <data name="Shop.Title2" xml:space="preserve"><value>shop</value></data>
+  <data name="Sl.AutoStop" xml:space="preserve"><value>Stop auto ({0})</value></data>
+  <data name="Sl.AutoTitle" xml:space="preserve"><value>10 spins in a row with this bet</value></data>
+  <data name="Sl.Bet" xml:space="preserve"><value>Bet</value></data>
+  <data name="Sl.BigWin" xml:space="preserve"><value>Big win!</value></data>
+  <data name="Sl.Credit" xml:space="preserve"><value>Credit</value></data>
+  <data name="Sl.FreeDone" xml:space="preserve"><value>Free spins over</value></data>
+  <data name="Sl.FreeLeft" xml:space="preserve"><value>{0} free spins left · wins ×2</value></data>
+  <data name="Sl.FreeMore" xml:space="preserve"><value>More free spins!</value></data>
+  <data name="Sl.FreeRunning" xml:space="preserve"><value>Free spins running – {0} left</value></data>
+  <data name="Sl.FreeStart" xml:space="preserve"><value>Free spins!</value></data>
+  <data name="Sl.FreeStartText" xml:space="preserve"><value>{0} free spins · wins ×2</value></data>
+  <data name="Sl.FreeWin" xml:space="preserve"><value>Free spin win</value></data>
+  <data name="Sl.MegaWin" xml:space="preserve"><value>Mega win!</value></data>
+  <data name="Sl.PayNote" xml:space="preserve"><value>Wins in chips at a bet of {0:N0} per spin (10 lines, left to right).</value></data>
+  <data name="Sl.PayRules" xml:space="preserve"><value>🃏 replaces every symbol except ⭐. Stars count anywhere: 3 or more give 10 free spins with double wins, also again. Five 7️⃣ on a line = jackpot.</value></data>
+  <data name="Sl.PayTable" xml:space="preserve"><value>Pay table</value></data>
+  <data name="Sl.Spin" xml:space="preserve"><value>Spin</value></data>
+  <data name="Sl.SpinNo" xml:space="preserve"><value>Spin #{0}</value></data>
+  <data name="Sl.Spinning" xml:space="preserve"><value>The reels are spinning …</value></data>
+  <data name="Sl.Tip.Best" xml:space="preserve"><value>Best spin</value></data>
+  <data name="Sl.Tip.Rtp" xml:space="preserve"><value>Good to know</value></data>
+  <data name="Sl.Tip.RtpText" xml:space="preserve"><value>In the long run the machine pays back about 95 % of the bets – free spins come about every 60 spins.</value></data>
+  <data name="Sl.Tip.Session" xml:space="preserve"><value>Session</value></data>
+  <data name="Sl.Tip.SessionText" xml:space="preserve"><value>{0} spins · {1}</value></data>
+  <data name="Sl.Tips.Title" xml:space="preserve"><value>Tips: session result and return to player</value></data>
+  <data name="Sl.Win" xml:space="preserve"><value>Win</value></data>
   <data name="Sng.BuyIn" xml:space="preserve"><value>Buy-in {0:N0}</value></data>
   <data name="Sng.InTheMoney" xml:space="preserve"><value>Place {0} – in the money!</value></data>
   <data name="Sng.KnockedOut" xml:space="preserve"><value>{0} is knocked out ({1}. place)</value></data>
