@@ -244,6 +244,21 @@
 
         }
 
+        @if (!IsCasino)
+        {
+            <section>
+                <h2>@L("Lobby.Speed")</h2>
+                <div class="seat-picker speed-picker">
+                    @foreach (var (factor, key) in Speeds)
+                    {
+                        var f = factor;
+                        <button type="button" class="preset @(speed == f ? "on" : "")" @onclick="() => speed = lastSpeed = f">@L(key)</button>
+                    }
+                    <span class="seat-picker-label">@L("Lobby.SpeedNote")</span>
+                </div>
+            </section>
+        }
+
         @if (error is not null)
         {
             <p class="form-error">@error</p>
@@ -299,6 +314,10 @@
     private static GameKind lastGame = GameKind.Poker;
 
     private bool IsCasino => game != GameKind.Poker;
+
+    private static readonly (double Factor, string Key)[] Speeds = [(1.0, "Lobby.Speed.Normal"), (0.55, "Lobby.Speed.Fast"), (0.3, "Lobby.Speed.Turbo")];
+    private static double lastSpeed = 1.0;
+    private double speed = lastSpeed;
 
     private static readonly (GameKind Kind, string Icon)[] Games =
     [
@@ -460,7 +479,7 @@
                 error = L("Lobby.NotEnough");
                 return;
             }
-            await OnStart.InvokeAsync(GameSettings.ForSitAndGo(EffectiveDifficulty, tier));
+            await OnStart.InvokeAsync(GameSettings.ForSitAndGo(EffectiveDifficulty, tier) with { Speed = speed });
             return;
         }
         if (!Player.Bankroll.CanSit(stake))
@@ -473,6 +492,6 @@
             await OnStart.InvokeAsync(new GameSettings(Difficulty.Easy, 0, stake, stake.IsPractice ? stake.MinBuyIn : buyIn, Game: game));
             return;
         }
-        await OnStart.InvokeAsync(new GameSettings(EffectiveDifficulty, opponents, stake, buyIn));
+        await OnStart.InvokeAsync(new GameSettings(EffectiveDifficulty, opponents, stake, buyIn, Speed: speed));
     }
 }

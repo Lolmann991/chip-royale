@@ -2594,3 +2594,4 @@
 .st-ach small { grid-column: 2; color: var(--ink-dim); font-size: .75rem; }
 .st-ach b { grid-row: 1 / span 2; grid-column: 3; color: #ffe7a6; font-size: .8rem; }
 @media (max-width: 800px) { .st-overview { grid-template-columns: repeat(2, 1fr); } }
+.speed-picker .preset.on { border-color: rgba(245, 196, 81, .7); background: rgba(245, 196, 81, .18); color: #ffe7a6; }

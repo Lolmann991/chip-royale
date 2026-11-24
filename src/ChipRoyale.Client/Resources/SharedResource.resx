@@ -551,6 +551,11 @@ Passen – aussteigen. Deine Chips im Pot sind dann weg.</value></data>
   <data name="Lobby.Returned" xml:space="preserve"><value>Deine {0:N0} Chips vom letzten Tisch wurden ausgezahlt.</value></data>
   <data name="Lobby.Run" xml:space="preserve"><value>Run #{0}</value></data>
   <data name="Lobby.Shop" xml:space="preserve"><value>🛍️ Shop</value></data>
+  <data name="Lobby.Speed" xml:space="preserve"><value>Tempo</value></data>
+  <data name="Lobby.Speed.Fast" xml:space="preserve"><value>🐇 Schnell</value></data>
+  <data name="Lobby.Speed.Normal" xml:space="preserve"><value>🐢 Normal</value></data>
+  <data name="Lobby.Speed.Turbo" xml:space="preserve"><value>⚡ Turbo</value></data>
+  <data name="Lobby.SpeedNote" xml:space="preserve"><value>wie schnell die Gegner ziehen</value></data>
   <data name="Lobby.StartPractice" xml:space="preserve"><value>Übungstisch starten</value></data>
   <data name="Lobby.Stats" xml:space="preserve"><value>📊 Statistik</value></data>
   <data name="Lobby.Table" xml:space="preserve"><value>Tisch</value></data>

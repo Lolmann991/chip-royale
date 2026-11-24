@@ -551,6 +551,11 @@ Fold – give up. Your chips in the pot are gone.</value></data>
   <data name="Lobby.Returned" xml:space="preserve"><value>Your {0:N0} chips from the last table were cashed out.</value></data>
   <data name="Lobby.Run" xml:space="preserve"><value>Run #{0}</value></data>
   <data name="Lobby.Shop" xml:space="preserve"><value>🛍️ Shop</value></data>
+  <data name="Lobby.Speed" xml:space="preserve"><value>Speed</value></data>
+  <data name="Lobby.Speed.Fast" xml:space="preserve"><value>🐇 Fast</value></data>
+  <data name="Lobby.Speed.Normal" xml:space="preserve"><value>🐢 Normal</value></data>
+  <data name="Lobby.Speed.Turbo" xml:space="preserve"><value>⚡ Turbo</value></data>
+  <data name="Lobby.SpeedNote" xml:space="preserve"><value>how fast the opponents act</value></data>
   <data name="Lobby.StartPractice" xml:space="preserve"><value>Start practice table</value></data>
   <data name="Lobby.Stats" xml:space="preserve"><value>📊 Statistics</value></data>
   <data name="Lobby.Table" xml:space="preserve"><value>Table</value></data>
