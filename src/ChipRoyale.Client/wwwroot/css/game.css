@@ -2502,3 +2502,30 @@
 .sl-pt-sym { font-size: 1.6rem; text-align: center !important; }
 .sl-paytable tr.star td { color: #9fd8ff; }
 .sl-paytable small { color: var(--ink-dim); }
+
+/* ================================================================ Video poker */
+
+.vp-stage { position: relative; display: grid; place-items: center; padding: .6rem 1rem 1rem; min-height: 0; }
+.vp-machine {
+    --vp-card: min(9rem, calc((100vw - 10rem) / 6.2), calc((100vh - 470px) / 1.41));
+    padding: 1rem 1.3rem 1.1rem; border-radius: 22px;
+    background: linear-gradient(180deg, #13246b, #0a1442 70%, #070d2c);
+    border: 3px solid #e8b23a; box-shadow: 0 0 0 6px #10153a, 0 0 0 8px #8f6512, 0 30px 80px rgba(0, 0, 0, .8), inset 0 0 40px rgba(0, 0, 0, .5);
+}
+.vp-pays { width: 100%; border-collapse: collapse; margin-bottom: .8rem; font-family: "Segoe UI", system-ui, sans-serif; }
+.vp-pays td { padding: .12rem .7rem; color: #ffe36a; font-weight: 800; letter-spacing: .04em; text-transform: uppercase; font-size: .82rem; text-shadow: 0 1px 0 #000; }
+.vp-pays td:last-child { text-align: right; font-variant-numeric: tabular-nums; }
+.vp-pays tr.on td { background: #b3241f; color: #fff; }
+.vp-cards { display: flex; gap: .7rem; justify-content: center; font-size: calc(var(--vp-card) / 5.9); }
+.vp-card { position: relative; display: flex; flex-direction: column; align-items: center; gap: .4rem; background: none; border: none; padding: .35rem; border-radius: 12px; cursor: pointer; color: inherit; }
+.vp-card:disabled { cursor: default; }
+.vp-card .card3d { transition: transform .15s ease; }
+.vp-card.held .card3d { transform: translateY(-.6em); }
+.vp-card.suggest { box-shadow: inset 0 0 0 2px rgba(159, 240, 193, .7); }
+.vp-card.win .card3d { filter: drop-shadow(0 0 .6em rgba(255, 215, 90, .9)); }
+.vp-held { min-height: 1.4rem; font: 800 .8rem "Segoe UI", system-ui, sans-serif; letter-spacing: .12em; color: rgba(255, 255, 255, .45); }
+.vp-card.held .vp-held { color: #ffe36a; text-shadow: 0 0 6px rgba(255, 220, 90, .8); }
+.vp-status { text-align: center; margin: .5rem 0 .2rem; min-height: 1.6rem; color: #dfe6ff; font-weight: 600; }
+.vp-status b.win { color: #ffe36a; font-size: 1.2rem; }
+.vp-display { margin-top: .4rem; }
+.vp-banner { top: 38%; }

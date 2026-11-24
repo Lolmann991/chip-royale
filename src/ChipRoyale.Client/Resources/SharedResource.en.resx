@@ -838,4 +838,44 @@ Fold – give up. Your chips in the pot are gone.</value></data>
   <data name="Validation.PasswordCompare" xml:space="preserve"><value>The passwords do not match.</value></data>
   <data name="Validation.PasswordLength" xml:space="preserve"><value>The password must be at least {2} characters long.</value></data>
   <data name="Validation.Required" xml:space="preserve"><value>Please enter {0}.</value></data>
+  <data name="Vp.Deal" xml:space="preserve"><value>Deal</value></data>
+  <data name="Vp.Draw" xml:space="preserve"><value>Draw</value></data>
+  <data name="Vp.Hand.Flush" xml:space="preserve"><value>Flush</value></data>
+  <data name="Vp.Hand.FourOfAKind" xml:space="preserve"><value>Four of a kind</value></data>
+  <data name="Vp.Hand.FullHouse" xml:space="preserve"><value>Full house</value></data>
+  <data name="Vp.Hand.JacksOrBetter" xml:space="preserve"><value>Jacks or better</value></data>
+  <data name="Vp.Hand.Nothing" xml:space="preserve"><value>Nothing</value></data>
+  <data name="Vp.Hand.RoyalFlush" xml:space="preserve"><value>Royal flush</value></data>
+  <data name="Vp.Hand.Straight" xml:space="preserve"><value>Straight</value></data>
+  <data name="Vp.Hand.StraightFlush" xml:space="preserve"><value>Straight flush</value></data>
+  <data name="Vp.Hand.ThreeOfAKind" xml:space="preserve"><value>Three of a kind</value></data>
+  <data name="Vp.Hand.TwoPair" xml:space="preserve"><value>Two pair</value></data>
+  <data name="Vp.HandNo" xml:space="preserve"><value>Game #{0}</value></data>
+  <data name="Vp.Held" xml:space="preserve"><value>HELD</value></data>
+  <data name="Vp.NoWin" xml:space="preserve"><value>No win – next game!</value></data>
+  <data name="Vp.PickHold" xml:space="preserve"><value>Click cards to hold (or 1–5), then draw</value></data>
+  <data name="Vp.PlaceBet" xml:space="preserve"><value>Choose your bet and deal</value></data>
+  <data name="Vp.Tip.Apply" xml:space="preserve"><value>Use the tip (H)</value></data>
+  <data name="Vp.Tip.Hold" xml:space="preserve"><value>Hold</value></data>
+  <data name="Vp.Tip.None" xml:space="preserve"><value>nothing – swap all</value></data>
+  <data name="Vp.Tip.RtpText" xml:space="preserve"><value>Following the tips pays back about 99 % in the long run – almost no house edge.</value></data>
+  <data name="Vp.Tip.SessionText" xml:space="preserve"><value>{0} games · {1}</value></data>
+  <data name="Vp.Tip.Why" xml:space="preserve"><value>Why</value></data>
+  <data name="Vp.Tips.Title" xml:space="preserve"><value>Tips: which cards to hold and why</value></data>
+  <data name="Vp.Why.FourToFlush" xml:space="preserve"><value>four to a flush – 9 of 47 cards hit</value></data>
+  <data name="Vp.Why.FourToOutsideStraight" xml:space="preserve"><value>four in a row, open at both ends – 8 cards make the straight</value></data>
+  <data name="Vp.Why.FourToRoyal" xml:space="preserve"><value>four to a royal flush – the 800 : 1 shot is worth even more than a made straight or flush</value></data>
+  <data name="Vp.Why.FourToStraightFlush" xml:space="preserve"><value>four to a straight flush</value></data>
+  <data name="Vp.Why.HighPair" xml:space="preserve"><value>a pair of jacks or better already pays – draw for more</value></data>
+  <data name="Vp.Why.LowPair" xml:space="preserve"><value>a low pair – better than anything else here</value></data>
+  <data name="Vp.Why.MadeHand" xml:space="preserve"><value>a made winning hand – keep it</value></data>
+  <data name="Vp.Why.Nothing" xml:space="preserve"><value>nothing useful – swap all five</value></data>
+  <data name="Vp.Why.OneHigh" xml:space="preserve"><value>one high card – it can become a paying pair</value></data>
+  <data name="Vp.Why.SuitedTenHigh" xml:space="preserve"><value>ten with a suited high card – a small royal chance</value></data>
+  <data name="Vp.Why.ThreeToRoyal" xml:space="preserve"><value>three to a royal flush</value></data>
+  <data name="Vp.Why.ThreeToStraightFlush" xml:space="preserve"><value>three to a straight flush</value></data>
+  <data name="Vp.Why.TwoHigh" xml:space="preserve"><value>two high cards (the lowest two) – each can become a paying pair</value></data>
+  <data name="Vp.Why.TwoPair" xml:space="preserve"><value>two pair – hoping for a full house</value></data>
+  <data name="Vp.Why.TwoSuitedHigh" xml:space="preserve"><value>two suited high cards – chances for a pair, flush or royal</value></data>
+  <data name="Vp.YouHave" xml:space="preserve"><value>You have: {0} – hold and draw</value></data>
 </root>

@@ -838,4 +838,44 @@ Passen – aussteigen. Deine Chips im Pot sind dann weg.</value></data>
   <data name="Validation.PasswordCompare" xml:space="preserve"><value>Die Passwörter stimmen nicht überein.</value></data>
   <data name="Validation.PasswordLength" xml:space="preserve"><value>Das Passwort muss mindestens {2} Zeichen lang sein.</value></data>
   <data name="Validation.Required" xml:space="preserve"><value>Bitte {0} angeben.</value></data>
+  <data name="Vp.Deal" xml:space="preserve"><value>Geben</value></data>
+  <data name="Vp.Draw" xml:space="preserve"><value>Ziehen</value></data>
+  <data name="Vp.Hand.Flush" xml:space="preserve"><value>Flush</value></data>
+  <data name="Vp.Hand.FourOfAKind" xml:space="preserve"><value>Vierling</value></data>
+  <data name="Vp.Hand.FullHouse" xml:space="preserve"><value>Full House</value></data>
+  <data name="Vp.Hand.JacksOrBetter" xml:space="preserve"><value>Buben oder besser</value></data>
+  <data name="Vp.Hand.Nothing" xml:space="preserve"><value>Nichts</value></data>
+  <data name="Vp.Hand.RoyalFlush" xml:space="preserve"><value>Royal Flush</value></data>
+  <data name="Vp.Hand.Straight" xml:space="preserve"><value>Straße</value></data>
+  <data name="Vp.Hand.StraightFlush" xml:space="preserve"><value>Straight Flush</value></data>
+  <data name="Vp.Hand.ThreeOfAKind" xml:space="preserve"><value>Drilling</value></data>
+  <data name="Vp.Hand.TwoPair" xml:space="preserve"><value>Zwei Paare</value></data>
+  <data name="Vp.HandNo" xml:space="preserve"><value>Spiel #{0}</value></data>
+  <data name="Vp.Held" xml:space="preserve"><value>GEHALTEN</value></data>
+  <data name="Vp.NoWin" xml:space="preserve"><value>Leider nichts – nächstes Spiel!</value></data>
+  <data name="Vp.PickHold" xml:space="preserve"><value>Karten zum Halten anklicken (oder 1–5), dann ziehen</value></data>
+  <data name="Vp.PlaceBet" xml:space="preserve"><value>Einsatz wählen und geben</value></data>
+  <data name="Vp.Tip.Apply" xml:space="preserve"><value>Tipp übernehmen (H)</value></data>
+  <data name="Vp.Tip.Hold" xml:space="preserve"><value>Halte</value></data>
+  <data name="Vp.Tip.None" xml:space="preserve"><value>nichts – alle tauschen</value></data>
+  <data name="Vp.Tip.RtpText" xml:space="preserve"><value>Wer immer den Tipps folgt, bekommt auf Dauer etwa 99 % zurück – fast ohne Hausvorteil.</value></data>
+  <data name="Vp.Tip.SessionText" xml:space="preserve"><value>{0} Spiele · {1}</value></data>
+  <data name="Vp.Tip.Why" xml:space="preserve"><value>Warum</value></data>
+  <data name="Vp.Tips.Title" xml:space="preserve"><value>Tipps: welche Karten du halten solltest und warum</value></data>
+  <data name="Vp.Why.FourToFlush" xml:space="preserve"><value>vier zum Flush – 9 von 47 Karten treffen</value></data>
+  <data name="Vp.Why.FourToOutsideStraight" xml:space="preserve"><value>vier in Folge, offen an beiden Seiten – 8 Karten machen die Straße</value></data>
+  <data name="Vp.Why.FourToRoyal" xml:space="preserve"><value>vier zum Royal Flush – die Chance auf 800 : 1 lohnt sich sogar mehr als eine fertige Straße oder Flush</value></data>
+  <data name="Vp.Why.FourToStraightFlush" xml:space="preserve"><value>vier zum Straight Flush</value></data>
+  <data name="Vp.Why.HighPair" xml:space="preserve"><value>Paar ab Buben zahlt schon – auf Drilling oder mehr ziehen</value></data>
+  <data name="Vp.Why.LowPair" xml:space="preserve"><value>kleines Paar – besser als alles andere hier</value></data>
+  <data name="Vp.Why.MadeHand" xml:space="preserve"><value>fertige Gewinnhand – behalten</value></data>
+  <data name="Vp.Why.Nothing" xml:space="preserve"><value>nichts Brauchbares – alle fünf tauschen</value></data>
+  <data name="Vp.Why.OneHigh" xml:space="preserve"><value>eine hohe Karte – sie kann zum Paar werden</value></data>
+  <data name="Vp.Why.SuitedTenHigh" xml:space="preserve"><value>Zehn mit hoher Karte gleicher Farbe – kleine Royal-Chance</value></data>
+  <data name="Vp.Why.ThreeToRoyal" xml:space="preserve"><value>drei zum Royal Flush</value></data>
+  <data name="Vp.Why.ThreeToStraightFlush" xml:space="preserve"><value>drei zum Straight Flush</value></data>
+  <data name="Vp.Why.TwoHigh" xml:space="preserve"><value>zwei hohe Karten (die niedrigsten zwei) – jede kann ein Buben-Paar werden</value></data>
+  <data name="Vp.Why.TwoPair" xml:space="preserve"><value>zwei Paare – auf das Full House hoffen</value></data>
+  <data name="Vp.Why.TwoSuitedHigh" xml:space="preserve"><value>zwei hohe Karten gleicher Farbe – Chance auf Paar, Flush oder Royal</value></data>
+  <data name="Vp.YouHave" xml:space="preserve"><value>Du hast: {0} – halten und ziehen</value></data>
 </root>
