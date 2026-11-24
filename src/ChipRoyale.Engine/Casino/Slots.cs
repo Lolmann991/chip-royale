@@ -28,7 +28,7 @@ public sealed record SlotSpin(
     int Stars,
     int ScatterMultiplier,
     int FreeSpinsWon,
-    int Win,
+    long Win,
     bool Jackpot)
 {
     /// <summary>Positions [reel, row] that are part of a win (to light them up).</summary>
@@ -146,7 +146,7 @@ public sealed class SlotMachine
 
         // Line bets are a tenth of the bet: sum all line multipliers first, round once.
         var lineTenths = lines.Sum(w => w.Multiplier);
-        var win = (int)Math.Round(bet * (lineTenths / 10.0 + scatter), MidpointRounding.AwayFromZero);
+        var win = (long)Math.Round(bet * (lineTenths / 10.0 + scatter), MidpointRounding.AwayFromZero);
         if (freeSpin) win *= 2;
         var jackpot = lines.Any(w => w.Symbol == SlotSymbol.Seven && w.Count == 5);
         return new SlotSpin(grid, lines, stars, scatter, stars >= 3 ? FreeSpins : 0, win, jackpot);

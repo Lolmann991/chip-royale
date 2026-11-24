@@ -16,7 +16,7 @@ public sealed class GameStat
     public long Net { get; set; }
 
     /// <summary>Biggest net win of one round.</summary>
-    public int Biggest { get; set; }
+    public long Biggest { get; set; }
 
     /// <summary>Special results, e.g. "jackpot" → 2.</summary>
     public Dictionary<string, int> Highlights { get; set; } = [];
@@ -44,7 +44,7 @@ public sealed class CasinoStats
     public GameStat Get(string game) => Games.TryGetValue(game, out var s) ? s : new GameStat();
 
     /// <param name="highlights">Special results of the round (e.g. "jackpot").</param>
-    public void Record(string game, int bet, int net, IEnumerable<string> highlights)
+    public void Record(string game, long bet, long net, IEnumerable<string> highlights)
     {
         if (!Games.TryGetValue(game, out var s)) Games[game] = s = new GameStat();
         s.Rounds++;

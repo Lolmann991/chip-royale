@@ -211,7 +211,7 @@ public sealed class VideoPokerHand
     public VpHand Hand => JacksOrBetter.Evaluate(_cards);
 
     /// <summary>Chips paid back (bet included) once drawn.</summary>
-    public int Payout => Drawn ? Bet * JacksOrBetter.Pays(Hand) : 0;
+    public long Payout => Drawn ? (long)Bet * JacksOrBetter.Pays(Hand) : 0;
 
     public void Toggle(int i)
     {

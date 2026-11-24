@@ -64,7 +64,7 @@ public sealed record TableRequest(int Stack, HandOutcomeDto? Hand);
 
 /// <summary>A finished blackjack round.</summary>
 /// <param name="Net">Chips won (positive) or lost (negative).</param>
-public sealed record BlackjackRoundDto(int Net, bool Natural, bool DoubleWon, bool SplitWon)
+public sealed record BlackjackRoundDto(long Net, bool Natural, bool DoubleWon, bool SplitWon)
 {
     public GameEvent ToEvent() => new() { BlackjackNatural = Natural, BlackjackDoubleWon = DoubleWon, BlackjackSplitWon = SplitWon };
 }
@@ -73,7 +73,7 @@ public sealed record BlackjackRoundDto(int Net, bool Natural, bool DoubleWon, bo
 /// <param name="Game">"roulette", "slots" or "videopoker".</param>
 /// <param name="Net">Chips won (positive) or lost (negative).</param>
 /// <param name="Highlights">Special results, e.g. "straight", "jackpot", "royal".</param>
-public sealed record CasinoRoundDto(string Game, int Bet, int Net, string[] Highlights);
+public sealed record CasinoRoundDto(string Game, long Bet, long Net, string[] Highlights);
 
 /// <param name="Stack">Chips at the table (machine) after the round.</param>
 public sealed record CasinoRequest(int Stack, CasinoRoundDto Round);

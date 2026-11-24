@@ -122,14 +122,14 @@ public static class European
     public static int Spin(Random random) => random.Next(37);
 
     /// <summary>Chips paid back for these bets (winning stakes included).</summary>
-    public static int Payout(IEnumerable<RouletteBet> bets, int number) =>
-        bets.Where(b => b.Covers(number)).Sum(b => b.Amount * (b.PayoutFactor + 1));
+    public static long Payout(IEnumerable<RouletteBet> bets, int number) =>
+        bets.Where(b => b.Covers(number)).Sum(b => (long)b.Amount * (b.PayoutFactor + 1));
 
     /// <summary>Chance that at least one of the bets wins.</summary>
     public static double WinChance(IEnumerable<RouletteBet> bets) =>
         bets.SelectMany(b => b.Numbers).Distinct().Count() / 37.0;
 
     /// <summary>Highest possible payout of these bets over all numbers.</summary>
-    public static int BestCase(IReadOnlyCollection<RouletteBet> bets) =>
+    public static long BestCase(IReadOnlyCollection<RouletteBet> bets) =>
         bets.Count == 0 ? 0 : Enumerable.Range(0, 37).Max(n => Payout(bets, n));
 }

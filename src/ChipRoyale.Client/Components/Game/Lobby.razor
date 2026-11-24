@@ -129,8 +129,12 @@
                                 disabled="@(!open)" @onclick="() => SelectStake(table)">
                             <span class="choice-icon">@LevelIcon(table)</span>
                             <span class="choice-title">@Roster.StakeName(table)</span>
-                            <span class="choice-text">@L("Bj.Lobby.Bets", table.SmallBlind, table.BigBlind)</span>
-                            <span class="choice-text">@(table.IsPractice ? L("Lobby.NothingLost") : open ? L("Lobby.BuyInRange", table.MinBuyIn, table.MaxBuyIn) : L("Lobby.LockedFrom", table.MinBuyIn))</span>
+                            <span class="choice-text">@(table.NoLimit ? L("Casino.BetsNoLimit", table.SmallBlind) : L("Bj.Lobby.Bets", table.SmallBlind, table.BigBlind))</span>
+                            <span class="choice-text">@(table.IsPractice ? L("Lobby.NothingLost") : !open ? L("Lobby.LockedFrom", table.MinBuyIn) : table.NoLimit ? L("Lobby.BuyInNoLimit", table.MinBuyIn) : L("Lobby.BuyInRange", table.MinBuyIn, table.MaxBuyIn))</span>
+                            @if (table.NoLimit)
+                            {
+                                <span class="nolimit-badge">∞ @L("Casino.NoLimit")</span>
+                            }
                         </button>
                     }
                 </div>
@@ -190,7 +194,11 @@
                         <span class="choice-icon">@StakeIcon(stake)</span>
                         <span class="choice-title">@Roster.StakeName(stake)</span>
                         <span class="choice-text">@(stake.IsPractice ? L("Lobby.Free") : L("Lobby.Blinds", stake.SmallBlind, stake.BigBlind))</span>
-                        <span class="choice-text">@(stake.IsPractice ? L("Lobby.NothingLost") : open ? L("Lobby.BuyInRange", stake.MinBuyIn, stake.MaxBuyIn) : L("Lobby.LockedFrom", stake.MinBuyIn))</span>
+                        <span class="choice-text">@(stake.IsPractice ? L("Lobby.NothingLost") : !open ? L("Lobby.LockedFrom", stake.MinBuyIn) : stake.NoLimit ? L("Lobby.BuyInNoLimit", stake.MinBuyIn) : L("Lobby.BuyInRange", stake.MinBuyIn, stake.MaxBuyIn))</span>
+                        @if (stake.NoLimit)
+                        {
+                            <span class="nolimit-badge">∞ @L("Casino.NoLimit")</span>
+                        }
                     </button>
                 }
             </div>

@@ -42,7 +42,7 @@ public sealed class Bankroll
     /// <summary>Biggest net win of one blackjack round.</summary>
     public int BlackjackBiggestWin { get; private set; }
 
-    public int Total => Chips + TableChips;
+    public int Total => Economy.Chips.Add(Chips, TableChips);
 
     public bool IsSeated => TableChips > 0;
 
@@ -138,7 +138,7 @@ public sealed class Bankroll
     /// <summary>Chips from outside the tables (daily bonus).</summary>
     public void AddChips(int chips)
     {
-        Chips += Math.Max(0, chips);
+        Chips = Economy.Chips.Add(Chips, Math.Max(0, chips));
         TrackPeak();
     }
 
@@ -164,7 +164,7 @@ public sealed class Bankroll
     {
         TournamentsPlayed++;
         if (place == 1) TournamentsWon++;
-        Chips += Math.Max(0, prize);
+        Chips = Economy.Chips.Add(Chips, Math.Max(0, prize));
         TrackPeak();
     }
 
@@ -185,18 +185,18 @@ public sealed class Bankroll
     public void RecordTableCleared() => TablesCleared++;
 
     /// <param name="net">Chips won (positive) or lost (negative) in the round.</param>
-    public void RecordBlackjack(int net, bool natural)
+    public void RecordBlackjack(long net, bool natural)
     {
         BlackjackRounds++;
         if (net > 0) BlackjackWon++;
         if (natural) BlackjackNaturals++;
-        BlackjackBiggestWin = Math.Max(BlackjackBiggestWin, net);
+        BlackjackBiggestWin = (int)Math.Clamp(Math.Max(BlackjackBiggestWin, net), 0, int.MaxValue);
     }
 
     /// <summary>Leaves the table and takes the stack back.</summary>
     public void CashOut()
     {
-        Chips += TableChips;
+        Chips = Economy.Chips.Add(Chips, TableChips);
         TableChips = 0;
         TrackPeak();
     }

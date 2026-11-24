@@ -187,7 +187,10 @@
   <data name="Board.Title2" xml:space="preserve"><value>board</value></data>
   <data name="Board.You" xml:space="preserve"><value> (you)</value></data>
   <data name="Board.YourRank" xml:space="preserve"><value>You: rank {0} with {1:N0}</value></data>
+  <data name="Casino.BetsNoLimit" xml:space="preserve"><value>Bets from {0:N0}</value></data>
   <data name="Casino.Limits" xml:space="preserve"><value>Bets {0:N0}–{1:N0}</value></data>
+  <data name="Casino.LimitsNoLimit" xml:space="preserve"><value>Bets from {0:N0} · no limit</value></data>
+  <data name="Casino.NoLimit" xml:space="preserve"><value>no limit</value></data>
   <data name="Common.Cancel" xml:space="preserve"><value>Cancel</value></data>
   <data name="Common.Close" xml:space="preserve"><value>Close</value></data>
   <data name="Common.Language" xml:space="preserve"><value>Language</value></data>
@@ -519,6 +522,7 @@ Fold – give up. Your chips in the pot are gone.</value></data>
   <data name="Lobby.Account" xml:space="preserve"><value>Account</value></data>
   <data name="Lobby.Blinds" xml:space="preserve"><value>Blinds {0:N0}/{1:N0}</value></data>
   <data name="Lobby.BuyInButton" xml:space="preserve"><value>Buy in for {0:N0}</value></data>
+  <data name="Lobby.BuyInNoLimit" xml:space="preserve"><value>Buy-in from {0:N0}</value></data>
   <data name="Lobby.BuyInNote" xml:space="preserve"><value>{0:N0} big blinds · you keep {1:N0} chips</value></data>
   <data name="Lobby.BuyInRange" xml:space="preserve"><value>Buy-in {0:N0}–{1:N0}</value></data>
   <data name="Lobby.CashedOutEven" xml:space="preserve"><value>Cashed out: {0:N0} chips – exactly your buy-in.</value></data>

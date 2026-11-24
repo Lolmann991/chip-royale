@@ -11,7 +11,7 @@
         <div class="brand">♠ Chip <span>Royale</span></div>
         <div class="meta">
             <span class="pill stake">🂡 Blackjack · @Roster.StakeName(Settings.Stake)@(Settings.IsPractice ? L("Table.PracticeSuffix") : "")</span>
-            <span class="pill">@L("Bj.Limits", MinBet, MaxBet)</span>
+            <span class="pill">@(Settings.Stake.NoLimit ? L("Casino.LimitsNoLimit", MinBet) : L("Bj.Limits", MinBet, MaxBet))</span>
             <span class="pill">@L("Bj.RoundNo", roundNo)</span>
             @if (shuffledNotice)
             {
@@ -170,10 +170,10 @@
                         @foreach (var value in ChipValues)
                         {
                             var v = value;
-                            <button type="button" class="bj-chip-btn c-@ChipColor(v)" disabled="@(bet + v > Limit)" @onclick="() => AddBet(v)">@Short(v)</button>
+                            <button type="button" class="bj-chip-btn c-@ChipColor(v)" disabled="@((long)bet + v > Limit)" @onclick="() => AddBet(v)">@Short(v)</button>
                         }
                         <button type="button" class="preset" disabled="@(bet == 0)" @onclick="() => bet = 0">@L("Bj.Clear")</button>
-                        <button type="button" class="preset" disabled="@(bet == 0 || bet * 2 > Limit)" @onclick="() => bet *= 2">×2</button>
+                        <button type="button" class="preset" disabled="@(bet == 0 || bet * 2L > Limit)" @onclick="() => bet *= 2">×2</button>
                         <button type="button" class="preset" @onclick="() => bet = Limit">Max</button>
                     </div>
                     <div class="buttons">
@@ -255,7 +255,7 @@
     private Banner? banner;
 
     private int MinBet => Settings.Stake.SmallBlind;
-    private int MaxBet => Settings.Stake.BigBlind;
+    private int MaxBet => Settings.Stake.MaxBet;
 
     /// <summary>Highest bet possible right now.</summary>
     private int Limit => Math.Min(MaxBet, round.Stack);
@@ -286,12 +286,11 @@
 
     // ------------------------------------------------------------------ betting
 
-    private IEnumerable<int> ChipValues => new[] { 1, 5, 10, 25, 50, 100, 250, 500, 1000, 2500, 5000 }
-        .Where(v => v >= MinBet && v <= MaxBet).Take(5);
+    private IEnumerable<int> ChipValues => BetSizes.Chips(MinBet, Limit, 5);
 
     private void AddBet(int value)
     {
-        bet = Math.Min(Limit, bet + value);
+        bet = (int)Math.Min(Limit, (long)bet + value);
         Sfx("chip");
     }
 
@@ -461,19 +460,10 @@
     };
 
     private static string Pct(double p) => $"{Math.Round(p * 100):0} %";
-    private static string Signed(int n) => n > 0 ? $"+{n:N0}" : n < 0 ? $"−{-n:N0}" : "±0";
-    private static string Short(int v) => v >= 1000 ? $"{v / 1000.0:0.#}k" : v.ToString();
+    private static string Signed(long n) => n > 0 ? $"+{n:N0}" : n < 0 ? $"−{-n:N0}" : "±0";
+    private static string Short(long v) => BetSizes.Short(v);
 
-    private static string ChipColor(int v) => v switch
-    {
-        >= 5000 => "orange",
-        >= 1000 => "gold",
-        >= 500 => "purple",
-        >= 100 => "black",
-        >= 25 => "green",
-        >= 5 => "red",
-        _ => "white",
-    };
+    private static string ChipColor(long v) => BetSizes.Color(v);
 
     private Task Delay(int ms) => Task.Delay(ms, cts.Token).ContinueWith(_ => { }, TaskScheduler.Default);
 
