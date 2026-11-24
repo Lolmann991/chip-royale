@@ -1,6 +1,6 @@
 # Chip Royale
 
-Pokerspiel im Browser (Blazor WebAssembly + ASP.NET-Core-Server, .NET 10): Spiele gegen KI-Gegner, verdiene Chips und schalte Pixel-Art-Styles frei.
+Casino im Browser (Blazor WebAssembly + ASP.NET-Core-Server, .NET 10): Poker, Blackjack, Roulette, Slots und Video Poker: Spiele gegen KI-Gegner, verdiene Chips und schalte Pixel-Art-Styles frei.
 
 Das vollständige Konzept steht in [SPIELKONZEPT.md](SPIELKONZEPT.md).
 
@@ -18,6 +18,13 @@ tests/ChipRoyale.Client.Tests  Tests für Texte (DE/EN), Tutorial und Konto-Rege
 ## Spielen
 
 - Lobby: Tisch (Übungstisch, Kneipe, Casino, High Roller, VIP-Salon), Buy-in, Schwierigkeit und 1–5 Gegner wählen.
+- Spielauswahl oben in der Lobby: Poker, Blackjack, Roulette, Slots, Video Poker – alle mit denselben Chips, Tische von „Übung“ (kostenlos) bis „VIP-Salon“.
+- Roulette (europäisch, eine Null): Kessel mit Kugel, Tableau mit Zahl, Split, Straße, Ecke, Sechser, Dutzend, Kolonne und einfachen Chancen; Rückgängig/Nochmal/×2; Leertaste dreht mit den letzten Wetten.
+- Slots „Royal Sevens“: 5 Walzen, 10 Linien, Wild, Stern-Freispiele (Gewinne ×2), Jackpot; Auszahlungsquote ~95 %; Auto-Spin, Gewinntabelle.
+- Video Poker „Jacks or Better“ (9/6): Halten per Klick oder 1–5, Tipp zeigt die beste Wahl (H), ~99 % Auszahlung mit den Tipps.
+- Tagesbonus: Glücksrad einmal am Tag, +10 % pro Tag in Folge (bis doppelt).
+- Statistik unter `/statistik`: alle Spiele, Bilanz, Highlights, Erfolge.
+- Poker-Tempo in der Lobby: Normal, Schnell, Turbo.
 - Blackjack: eigener Reiter in der Lobby – 6 Decks, Dealer steht auf Soft 17, Blackjack zahlt 3 : 2, Verdoppeln und Teilen; Tipps mit Basisstrategie und Kartenzählen; Tasten H/S/D/P.
 - Sit & Go: Turnier zu sechst (Bronze 200, Silber 1.000, Gold 5.000 Buy-in), Blinds steigen alle 8 Hände, Platz 1 und 2 bekommen 65 % bzw. 35 % des Preisgelds.
 - Konto: Angemeldete Spieler behalten ihren Chip-Stand (Start 1.000). Buy-in geht vom Konto an den Tisch, „Auszahlen“ bringt den Stapel zurück. Wer pleite ist, startet einen neuen Run mit 1.000 Chips; der Rekord bleibt.
