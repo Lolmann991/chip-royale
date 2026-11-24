@@ -75,7 +75,7 @@ public sealed class CasinoStats
 
     // ------------------------------------------------------------------ storage
 
-    public string Serialize() => Games.Count == 0 && LastDaily is null ? "" : JsonSerializer.Serialize(this, Json);
+    public string Serialize() => Games.Count == 0 && LastDaily is null && DailyStreak == 0 ? "" : JsonSerializer.Serialize(this, Json);
 
     public static CasinoStats Parse(string? json)
     {

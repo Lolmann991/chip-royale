@@ -18,6 +18,7 @@
             <a class="tool" href="lernen">@L("Lobby.Learn")</a>
             <a class="tool" href="shop">@L("Lobby.Shop")</a>
             <a class="tool" href="rangliste">@L("Lobby.Leaderboard")</a>
+            <a class="tool" href="statistik">@L("Lobby.Stats")</a>
             <button type="button" class="tool" @onclick="() => showRankings = true">@L("Lobby.HandRankings")</button>
             <LanguageSwitch />
         </div>
@@ -66,6 +67,18 @@
             </div>
         </div>
         <ConnectionStatus />
+        @if (Player.DailyAvailable)
+        {
+            <button type="button" class="daily-banner" @onclick="() => showDaily = true">
+                <span class="daily-gift">🎁</span>
+                <span><b>@L("Daily.Ready")</b><small>@L("Daily.ReadyText", Player.Casino.StreakFor(DateOnly.FromDateTime(DateTime.Now)))</small></span>
+                <span class="daily-go">@L("Daily.Spin") →</span>
+            </button>
+        }
+        else if (Player.Casino.DailyStreak > 0)
+        {
+            <p class="daily-done">🎁 @L("Daily.Done", Player.Casino.DailyStreak == 1 ? L("Daily.OneDay") : L("Daily.Days", Player.Casino.DailyStreak))</p>
+        }
         @foreach (var notice in Notices)
         {
             <p class="note highlight">@notice</p>
@@ -246,6 +259,11 @@
     <HandRankings OnClose="() => showRankings = false" />
 }
 
+@if (showDaily)
+{
+    <DailyBonusWheel OnClose="() => showDaily = false" />
+}
+
 @code {
     [Parameter] public EventCallback<GameSettings> OnStart { get; set; }
 
@@ -257,6 +275,7 @@
     private TableStake stake = TableStakes.Find("pub")!;
     private int buyIn;
     private bool showRankings;
+    private bool showDaily;
     private bool editingName;
     private string nameDraft = "";
     private string? nameError;

@@ -203,6 +203,17 @@
   <data name="Conn.Retry" xml:space="preserve"><value>Reconnect</value></data>
   <data name="Conn.Server" xml:space="preserve"><value>Server address</value></data>
   <data name="Conn.ServerHint" xml:space="preserve"><value>Leave empty if the game comes from the server itself. For the server from the ZIP: http://localhost:5132</value></data>
+  <data name="Daily.Collect" xml:space="preserve"><value>Collect</value></data>
+  <data name="Daily.Days" xml:space="preserve"><value>{0} days</value></data>
+  <data name="Daily.Done" xml:space="preserve"><value>Daily bonus collected · streak: {0} · come back tomorrow</value></data>
+  <data name="Daily.OneDay" xml:space="preserve"><value>1 day</value></data>
+  <data name="Daily.Ready" xml:space="preserve"><value>Your daily bonus is waiting!</value></data>
+  <data name="Daily.ReadyText" xml:space="preserve"><value>Free chips – today is day {0} of your streak.</value></data>
+  <data name="Daily.Spin" xml:space="preserve"><value>Spin the wheel</value></data>
+  <data name="Daily.Streak" xml:space="preserve"><value>Day {0} in a row · streak bonus {1}</value></data>
+  <data name="Daily.Taken" xml:space="preserve"><value>You already collected today's daily bonus.</value></data>
+  <data name="Daily.Title" xml:space="preserve"><value>Daily bonus</value></data>
+  <data name="Daily.WithBonus" xml:space="preserve"><value>including a streak bonus of {0}</value></data>
   <data name="DefaultName" xml:space="preserve"><value>Player{0}</value></data>
   <data name="Dev.Close" xml:space="preserve"><value>Close (^ / F2 / Esc)</value></data>
   <data name="Dev.Cmd.Clear" xml:space="preserve"><value>Clear the output</value></data>
@@ -541,8 +552,9 @@ Fold – give up. Your chips in the pot are gone.</value></data>
   <data name="Lobby.Run" xml:space="preserve"><value>Run #{0}</value></data>
   <data name="Lobby.Shop" xml:space="preserve"><value>🛍️ Shop</value></data>
   <data name="Lobby.StartPractice" xml:space="preserve"><value>Start practice table</value></data>
+  <data name="Lobby.Stats" xml:space="preserve"><value>📊 Statistics</value></data>
   <data name="Lobby.Table" xml:space="preserve"><value>Table</value></data>
-  <data name="Lobby.Tagline" xml:space="preserve"><value>Texas Hold'em · No-Limit · against AI opponents</value></data>
+  <data name="Lobby.Tagline" xml:space="preserve"><value>Poker · Blackjack · Roulette · Slots · Video poker</value></data>
   <data name="Manage.Nav.Email" xml:space="preserve"><value>Email</value></data>
   <data name="Manage.Nav.External" xml:space="preserve"><value>External logins</value></data>
   <data name="Manage.Nav.Passkeys" xml:space="preserve"><value>Passkeys</value></data>
@@ -794,6 +806,36 @@ Fold – give up. Your chips in the pot are gone.</value></data>
   <data name="Stats.VsOne" xml:space="preserve"><value>vs. {0} opponent</value></data>
   <data name="Stats.Win" xml:space="preserve"><value>Win {0}</value></data>
   <data name="Stats.Worth" xml:space="preserve"><value>✓ worth it</value></data>
+  <data name="StatsPage.Achievements" xml:space="preserve"><value>Achievements</value></data>
+  <data name="StatsPage.BiggestPot" xml:space="preserve"><value>Biggest pot</value></data>
+  <data name="StatsPage.BiggestWin" xml:space="preserve"><value>Biggest win</value></data>
+  <data name="StatsPage.Chips" xml:space="preserve"><value>Chips</value></data>
+  <data name="StatsPage.Crowns" xml:space="preserve"><value>Crowns</value></data>
+  <data name="StatsPage.Games" xml:space="preserve"><value>{0} of 5 games tried</value></data>
+  <data name="StatsPage.Hands" xml:space="preserve"><value>Hands</value></data>
+  <data name="StatsPage.HandsWon" xml:space="preserve"><value>Won</value></data>
+  <data name="StatsPage.Hl.bigwin" xml:space="preserve"><value>Big win</value></data>
+  <data name="StatsPage.Hl.freespins" xml:space="preserve"><value>Free spins</value></data>
+  <data name="StatsPage.Hl.jackpot" xml:space="preserve"><value>Jackpot</value></data>
+  <data name="StatsPage.Hl.quads" xml:space="preserve"><value>Four of a kind</value></data>
+  <data name="StatsPage.Hl.royal" xml:space="preserve"><value>Royal flush</value></data>
+  <data name="StatsPage.Hl.straight" xml:space="preserve"><value>Straight up</value></data>
+  <data name="StatsPage.Hl.straightflush" xml:space="preserve"><value>Straight flush</value></data>
+  <data name="StatsPage.Hl.zero" xml:space="preserve"><value>Zero</value></data>
+  <data name="StatsPage.Net" xml:space="preserve"><value>Net</value></data>
+  <data name="StatsPage.NotPlayed" xml:space="preserve"><value>Not played yet – try it in the lobby!</value></data>
+  <data name="StatsPage.PageTitle" xml:space="preserve"><value>Statistics – Chip Royale</value></data>
+  <data name="StatsPage.Peak" xml:space="preserve"><value>Record</value></data>
+  <data name="StatsPage.Rounds" xml:space="preserve"><value>Rounds</value></data>
+  <data name="StatsPage.Runs" xml:space="preserve"><value>Runs</value></data>
+  <data name="StatsPage.RunsText" xml:space="preserve"><value>run #{0} · {1} busts</value></data>
+  <data name="StatsPage.SngText" xml:space="preserve"><value>{0} wins of {1}</value></data>
+  <data name="StatsPage.Streak" xml:space="preserve"><value>Days in a row</value></data>
+  <data name="StatsPage.TablesCleared" xml:space="preserve"><value>Tables cleared</value></data>
+  <data name="StatsPage.Title1" xml:space="preserve"><value>Your </value></data>
+  <data name="StatsPage.Title2" xml:space="preserve"><value>statistics</value></data>
+  <data name="StatsPage.Wagered" xml:space="preserve"><value>Wagered</value></data>
+  <data name="StatsPage.Won" xml:space="preserve"><value>Won</value></data>
   <data name="Table.And" xml:space="preserve"><value> &amp; </value></data>
   <data name="Table.AutoPaused" xml:space="preserve"><value>⏸ Paused – continue with space or the button.</value></data>
   <data name="Table.Bet" xml:space="preserve"><value>Bet {0:N0}</value></data>

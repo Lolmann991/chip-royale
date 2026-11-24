@@ -1,0 +1,112 @@
+@using System.Globalization
+@using ChipRoyale.Engine.Economy
+@inject PlayerService Player
+
+@* Daily bonus: a wheel of chip amounts, once per day; days in a row give up to double. *@
+
+<div class="overlay soft" @onclick="CloseAsync">
+    <div class="overlay-card dw-card" @onclick:stopPropagation="true">
+        <h2>🎁 @L("Daily.Title")</h2>
+        <p>@L("Daily.Streak", Streak, Percent(DailyWheel.StreakBonus(Streak)))</p>
+
+        <div class="dw-wrap">
+            <div class="dw-pointer">▼</div>
+            <svg class="dw-wheel" viewBox="0 0 300 300" style="transform: rotate(@(F(angle))deg); transition-duration: @(spinning ? SpinMs : 0)ms">
+                @for (var i = 0; i < Count; i++)
+                {
+                    <path d="@Slice(i)" class="dw-slice s@(i % 4) @(result == i && !spinning ? "hit" : "")" />
+                }
+                @Labels
+                <circle cx="150" cy="150" r="30" class="dw-hub" />
+            </svg>
+            <div class="dw-center">@(done ? "★" : "?")</div>
+        </div>
+
+        @if (done)
+        {
+            <div class="dw-result">
+                <b>+@won.ToString("N0") Chips</b>
+                @if (DailyWheel.StreakBonus(Streak) > 0)
+                {
+                    <span>@L("Daily.WithBonus", Percent(DailyWheel.StreakBonus(Streak)))</span>
+                }
+            </div>
+            <button type="button" class="act next" @onclick="CloseAsync">@L("Daily.Collect")</button>
+        }
+        else if (error is not null)
+        {
+            <p class="form-error">@error</p>
+            <button type="button" class="act fold" @onclick="CloseAsync">@L("Common.Close")</button>
+        }
+        else
+        {
+            <button type="button" class="act raise dw-spin" disabled="@spinning" @onclick="SpinAsync">@(spinning ? "…" : L("Daily.Spin"))</button>
+        }
+    </div>
+</div>
+
+@code {
+    [Parameter] public EventCallback OnClose { get; set; }
+
+    private const int SpinMs = 4200;
+    private static int Count => DailyWheel.Segments.Count;
+    private static double Step => 360.0 / Count;
+
+    private double angle;
+    private bool spinning;
+    private bool done;
+    private int? result;
+    private int won;
+    private string? error;
+    private int streakShown;
+
+    /// <summary>Streak the player gets with this spin (or got, once spun).</summary>
+    private int Streak => done ? streakShown : Player.Casino.StreakFor(DateOnly.FromDateTime(DateTime.Now));
+
+    private async Task SpinAsync()
+    {
+        if (spinning || done) return;
+        spinning = true;
+        var streak = Player.Casino.StreakFor(DateOnly.FromDateTime(DateTime.Now));
+        var (segment, chips, err) = await Player.DailyBonusAsync();
+        if (err is not null)
+        {
+            error = err;
+            spinning = false;
+            return;
+        }
+        // Spin 5 turns plus the way to bring the segment under the pointer.
+        var target = -segment * Step;
+        var delta = ((target - angle) % 360 + 360) % 360;
+        angle += 360 * 5 + delta;
+        StateHasChanged();
+        await Task.Delay(SpinMs + 100);
+        spinning = false;
+        result = segment;
+        won = chips;
+        streakShown = streak;
+        done = true;
+    }
+
+    private async Task CloseAsync()
+    {
+        if (spinning) return;
+        await OnClose.InvokeAsync();
+    }
+
+    private static string Slice(int i)
+    {
+        double a0 = (i - 0.5) * Step, a1 = (i + 0.5) * Step;
+        static (double X, double Y) P(double r, double deg) =>
+            (150 + r * Math.Sin(deg * Math.PI / 180), 150 - r * Math.Cos(deg * Math.PI / 180));
+        var (x0, y0) = P(146, a0);
+        var (x1, y1) = P(146, a1);
+        return $"M150 150 L{F(x0)} {F(y0)} A146 146 0 0 1 {F(x1)} {F(y1)} Z";
+    }
+
+    private static readonly MarkupString Labels = new(string.Concat(Enumerable.Range(0, DailyWheel.Segments.Count).Select(i =>
+        $"<text x=\"150\" y=\"48\" class=\"dw-label\" transform=\"rotate({F(i * 360.0 / DailyWheel.Segments.Count)} 150 150)\">{DailyWheel.Segments[i].Chips}</text>")));
+
+    private static string F(double v) => v.ToString("0.###", CultureInfo.InvariantCulture);
+    private static string Percent(double p) => $"+{Math.Round(p * 100):0} %";
+}
