@@ -36,6 +36,7 @@ public static class DevCommands
         ("unachieve", "<all | Erfolg-Id …>", "Erfolge wieder sperren", "Lock achievements again"),
         ("achievements", "", "Alle Erfolge mit Status anzeigen", "List all achievements with status"),
         ("stats", "", "Alle Werte des Profils anzeigen", "Show all profile values"),
+        ("daily", "reset", "Tagesbonus heute nochmal freigeben", "Make today's daily bonus available again"),
         ("reset", "confirm", "Profil komplett zurücksetzen (Chips, Kronen, Items, Erfolge)", "Reset the whole profile (chips, crowns, items, achievements)"),
     ];
 
@@ -63,6 +64,7 @@ public static class DevCommands
         "items" => Enum.GetNames<ItemCategory>().Select(n => n.ToLowerInvariant()),
         "achieve" or "unachieve" => ["all", .. Achievements.All.Select(a => a.Id)],
         "reset" => ["confirm"],
+        "daily" => ["reset"],
         _ => [],
     };
 
@@ -192,8 +194,17 @@ public static class DevCommands
                 b.Restore(Bankroll.New().ToState());
                 foreach (var item in ShopCatalog.All) c.Revoke(item);
                 foreach (var a in Achievements.All) c.Relock(a.Id);
+                s.Casino.Games.Clear();
+                s.Casino.LastDaily = null;
+                s.Casino.DailyStreak = 0;
                 return Changed(T($"Profil zurückgesetzt: {N(b.Chips)} Chips, 0 Kronen, keine Items.", $"Profile reset: {N(b.Chips)} chips, 0 crowns, no items."));
             }
+
+            case "daily":
+                if (args.Length != 1 || !args[0].Equals("reset", StringComparison.OrdinalIgnoreCase))
+                    return Fail(T("Benutzung: daily reset", "Usage: daily reset"));
+                s.Casino.LastDaily = null;
+                return Changed(T("Tagesbonus ist wieder verfügbar (Serie bleibt).", "Daily bonus is available again (streak kept)."));
 
             default:
                 return Fail(T($"Unbekannter Befehl: {name} – „help“ zeigt alle Befehle.", $"Unknown command: {name} – \"help\" lists all commands."));

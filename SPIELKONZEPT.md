@@ -136,6 +136,17 @@ Reihenfolge = Umsetzungsreihenfolge.
 - [x] Windows-ZIP mit Server + Datenbank (Datenbank neben dem Server, übersteht Updates)
 - [ ] Server ins Internet stellen (dann auch für Freunde ohne eigenen Server) – Ergebnisse vom Server prüfen lassen
 
+### Casino-Ausbau (umgesetzt)
+- [x] Spielauswahl in der Lobby: Poker, Blackjack, Roulette, Slots, Video Poker (gemeinsame Chips, Tische Übung/Kneipe/Casino/VIP)
+- [x] Roulette europäisch: alle Wettarten inkl. Split, Straße, Ecke, Sechser; Kessel- und Kugelanimation; Verlauf, Tipps
+- [x] Slots „Royal Sevens“: 5×3, 10 Linien, Wild, Stern-Scatter mit Freispielen, Jackpot; RTP ~95 % per Simulation abgestimmt
+- [x] Video Poker Jacks or Better 9/6 mit Halte-Tipps (vereinfachte Strategie, ~99 %)
+- [x] Casino-Statistik pro Spiel (JSON-Spalte, auch offline), Statistik-Seite, 13 neue Erfolge
+- [x] Tagesbonus-Glücksrad mit Serie
+- [x] Poker-Tempo Normal/Schnell/Turbo
+- [x] Konto-Operationen laufen nacheinander (keine verlorenen Updates bei schnellem Spielen)
+- [ ] Ideen: Baccarat, Craps/Würfel, Keno, Rubbellose, Wochen-Aufgaben, Saison-Rangliste, Turnierserien, Mehrspieler (siehe Plan)
+
 ### Blackjack (umgesetzt)
 - [x] Eigener Modus in der Lobby (Reiter „Blackjack“), online und offline – gleiche Chips wie beim Poker
 - [x] Tische: Übungstisch (kostenlos), Kneipe (Einsatz 5–100), Casino (25–500), VIP-Salon (100–2.000); Buy-in wie beim Poker

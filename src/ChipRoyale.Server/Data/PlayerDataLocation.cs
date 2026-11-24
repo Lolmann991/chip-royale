@@ -50,4 +50,32 @@ public static class PlayerDataLocation
         builder.DataSource = target;
         return (builder.ToString(), directory);
     }
+
+    /// <summary>
+    /// Copies the database into "Sicherungen" next to it before the server opens it (one copy per
+    /// start, the newest <paramref name="keep"/> are kept). Protects accounts against a database file
+    /// that gets overwritten or broken.
+    /// </summary>
+    /// <returns>The backup file, or null if there was nothing to back up.</returns>
+    public static string? Backup(string connectionString, int keep = 10)
+    {
+        var source = new SqliteConnectionStringBuilder(connectionString).DataSource;
+        if (string.IsNullOrEmpty(source) || source == ":memory:" || !File.Exists(source) || new FileInfo(source).Length == 0) return null;
+
+        var folder = Path.Combine(Path.GetDirectoryName(source)!, "Sicherungen");
+        Directory.CreateDirectory(folder);
+        var name = Path.GetFileNameWithoutExtension(source);
+        var target = Path.Combine(folder, $"{name}-{DateTime.Now:yyyy-MM-dd-HHmmss}.db");
+        // The server has not opened the database yet, so the files are consistent; a -wal file holds
+        // changes not yet written into the main file and is copied along.
+        File.Copy(source, target, overwrite: true);
+        if (File.Exists(source + "-wal")) File.Copy(source + "-wal", target + "-wal", overwrite: true);
+
+        foreach (var old in Directory.GetFiles(folder, $"{name}-*.db").OrderDescending().Skip(keep))
+        {
+            File.Delete(old);
+            if (File.Exists(old + "-wal")) File.Delete(old + "-wal");
+        }
+        return target;
+    }
 }

@@ -408,7 +408,7 @@ public partial class PokerTable
                 StateHasChanged();
                 return;
             }
-            autoContinueMs = heroWon > 0 ? 13000 : 9000;
+            autoContinueMs = ResultTime(heroWon > 0 ? 13000 : 9000);
             ScheduleAutoContinue(table.HandNumber, autoContinueMs);
         }
         else if (Hero.Chips == 0)
@@ -424,7 +424,7 @@ public partial class PokerTable
         }
         else
         {
-            autoContinueMs = heroWon > 0 ? 14000 : 10000;
+            autoContinueMs = ResultTime(heroWon > 0 ? 14000 : 10000);
             ScheduleAutoContinue(table.HandNumber, autoContinueMs);
         }
         StateHasChanged();
@@ -674,7 +674,11 @@ public partial class PokerTable
 
     // ------------------------------------------------------------------ JS & misc
 
-    private Task Delay(int ms) => Task.Delay(ms, cts.Token);
+    /// <summary>How long the result stays before the next hand (shorter when fast, at least 3 s).</summary>
+    private int ResultTime(int ms) => Settings.Speed >= 1 ? ms : Math.Max(3000, (int)(ms * Settings.Speed));
+
+    /// <summary>Waits (shorter with the "fast" and "turbo" speed from the lobby).</summary>
+    private Task Delay(int ms) => Task.Delay((int)(ms * Math.Clamp(Settings.Speed, 0.1, 1.5)), cts.Token);
 
     private void Sfx(string name)
     {

@@ -1,0 +1,370 @@
+@using ChipRoyale.Engine.Cards
+@using ChipRoyale.Engine.Casino
+@using ChipRoyale.Shared
+@implements IAsyncDisposable
+@inject IJSRuntime JS
+
+@* Video poker "Jacks or Better" (9/6): deal five cards, hold, draw once. *@
+
+<div class="game vp-game">
+    <header class="topbar">
+        <div class="brand">♠ Chip <span>Royale</span></div>
+        <div class="meta">
+            <span class="pill stake">🃏 Video Poker · @Roster.StakeName(Settings.Stake)@(Settings.IsPractice ? L("Table.PracticeSuffix") : "")</span>
+            <span class="pill">@L("Casino.Limits", MinBet, MaxBet)</span>
+            <span class="pill">@L("Vp.HandNo", handNo)</span>
+        </div>
+        <div class="tools">
+            <button type="button" class="tool @(hints ? "on" : "")" title="@L("Vp.Tips.Title")" @onclick="() => hints = !hints">@L("Table.Tips")</button>
+            <button type="button" class="tool @(sound ? "on" : "")" title="@L("Table.Sound")" @onclick="ToggleSound">@(sound ? "🔊" : "🔇")</button>
+            <button type="button" class="tool" disabled="@InHand" @onclick="ExitAsync">@(Settings.IsPractice ? L("Table.Lobby") : L("Table.CashOut"))</button>
+        </div>
+    </header>
+
+    <main class="vp-stage">
+        <div class="vp-machine">
+            <table class="vp-pays">
+                <tbody>
+                    @foreach (var (vpHand, pays) in JacksOrBetter.PayTable)
+                    {
+                        <tr class="@(ShownHand == vpHand ? "on" : "")">
+                            <td>@L($"Vp.Hand.{vpHand}")</td>
+                            <td>@((bet * pays).ToString("N0"))</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+
+            <div class="vp-cards">
+                @for (var i = 0; i < 5; i++)
+                {
+                    var idx = i;
+                    var held = hand?.Held[idx] == true;
+                    var suggested = InHand && hints && advice?.Hold[idx] == true;
+                    <button type="button" class="vp-card @(held ? "held" : "") @(suggested ? "suggest" : "") @(Winning(idx) ? "win" : "")"
+                            disabled="@(!InHand)" @onclick="() => Toggle(idx)">
+                        <PlayingCard @key="(handNo, idx, CardAt(idx))" Card="CardAt(idx)" FaceUp="hand is not null" Size="lg"
+                                     DelayMs="@(dealt ? idx * 90 : 0)" />
+                        <span class="vp-held">@(held ? L("Vp.Held") : InHand ? $"{idx + 1}" : "")</span>
+                    </button>
+                }
+            </div>
+
+            <div class="vp-status">
+                @if (hand is { Drawn: true } h)
+                {
+                    <b class="@(h.Payout > 0 ? "win" : "")">@(h.Payout > 0 ? $"{L($"Vp.Hand.{h.Hand}")} · +{h.Payout:N0}" : L("Vp.NoWin"))</b>
+                }
+                else if (InHand)
+                {
+                    <span>@(ShownHand is { } sh && sh != VpHand.Nothing ? L("Vp.YouHave", L($"Vp.Hand.{sh}")) : L("Vp.PickHold"))</span>
+                }
+                else
+                {
+                    <span>@L("Vp.PlaceBet")</span>
+                }
+            </div>
+            <div class="sl-display vp-display">
+                <div class="sl-lcd"><small>@L("Sl.Credit")</small><b>@stack.ToString("N0")</b></div>
+                <div class="sl-lcd win @(lastWin > 0 ? "on" : "")"><small>@L("Sl.Win")</small><b>@lastWin.ToString("N0")</b></div>
+                <div class="sl-lcd"><small>@L("Sl.Bet")</small><b>@bet.ToString("N0")</b></div>
+            </div>
+        </div>
+        @if (banner is { } b)
+        {
+            <div class="bj-banner @b.Kind vp-banner" @key="handNo">
+                <b>@b.Title</b>
+                <span>@b.Text</span>
+            </div>
+        }
+    </main>
+
+    <footer class="actionbar">
+        <div class="hand-info">
+            @if (hints)
+            {
+                <div class="hero-stats">
+                    @if (InHand && advice is { } a)
+                    {
+                        <div class="stat-row rank">
+                            <span class="stat-label">@L("Vp.Tip.Hold")</span>
+                            <b>@(a.Hold.Any(x => x) ? string.Join(" ", Enumerable.Range(0, 5).Where(i => a.Hold[i]).Select(i => HandText.RankSymbol(hand!.Cards[i].Rank) + HandText.SuitSymbol(hand.Cards[i].Suit))) : L("Vp.Tip.None"))</b>
+                        </div>
+                        <div class="stat-row">
+                            <span class="stat-label">@L("Vp.Tip.Why")</span>
+                            <span>@L($"Vp.Why.{a.Reason}")</span>
+                        </div>
+                        <div class="stat-row small">
+                            <button type="button" class="preset" @onclick="ApplyHint">@L("Vp.Tip.Apply")</button>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="stat-row rank">
+                            <span class="stat-label">@L("Sl.Tip.Session")</span>
+                            <b>@L("Vp.Tip.SessionText", sessionHands, Signed(sessionNet))</b>
+                        </div>
+                        <div class="stat-row small">
+                            <span class="stat-label">@L("Sl.Tip.Rtp")</span>
+                            <span class="stat-note">@L("Vp.Tip.RtpText")</span>
+                        </div>
+                    }
+                </div>
+            }
+        </div>
+        <div class="controls">
+            @if (InHand)
+            {
+                <div class="buttons">
+                    <button type="button" class="act raise" disabled="@busy" @onclick="DrawAsync">@L("Vp.Draw") <kbd>@L("Table.Key.Space")</kbd></button>
+                </div>
+            }
+            else
+            {
+                <div class="raise-panel sl-bet-panel">
+                    <span class="sl-bet-label">@L("Sl.Bet")</span>
+                    <button type="button" class="step" disabled="@(BetIndex <= 0 || busy)" @onclick="() => StepBet(-1)">−</button>
+                    <b class="sl-bet-value">● @bet.ToString("N0")</b>
+                    <button type="button" class="step" disabled="@(BetIndex >= BetSteps.Count - 1 || NextBet > stack || busy)" @onclick="() => StepBet(1)">+</button>
+                    <button type="button" class="preset" disabled="@busy" @onclick="MaxBetClick">Max</button>
+                </div>
+                <div class="buttons">
+                    <button type="button" class="act raise" disabled="@(bet > stack || busy)" @onclick="DealAsync">@L("Vp.Deal") <kbd>@L("Table.Key.Space")</kbd></button>
+                </div>
+            }
+        </div>
+    </footer>
+
+    @if (!InHand && !busy && stack < MinBet)
+    {
+        <div class="overlay">
+            <div class="overlay-card lost">
+                <div class="trophy">💸</div>
+                <h2>@L("Bj.Broke.Title")</h2>
+                <p>@(Settings.IsPractice ? L("Bj.Broke.Practice") : L("Bj.Broke.Text", MinBet))</p>
+                <div class="overlay-actions">
+                    @if (Settings.IsPractice)
+                    {
+                        <button type="button" class="act next" @onclick="() => stack = Settings.BuyIn">@L("Bj.Refill")</button>
+                    }
+                    <button type="button" class="act fold" @onclick="ExitAsync">@L("Table.Lobby")</button>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+@code {
+    [Parameter, EditorRequired] public GameSettings Settings { get; set; } = default!;
+    [Parameter] public EventCallback<int> OnExit { get; set; }
+    [Parameter] public EventCallback<int> OnStack { get; set; }
+    [Parameter] public EventCallback<CasinoReport> OnRound { get; set; }
+
+    private sealed record Banner(string Title, string Text, string Kind);
+
+    private readonly CancellationTokenSource cts = new();
+    private IJSObjectReference? js;
+    private DotNetObjectReference<VideoPokerTable>? selfRef;
+    private VideoPokerHand? hand;
+    private VpAdvice? advice;
+    private Banner? banner;
+    private int stack;
+    private int bet;
+    private int handNo = 1;
+    private int lastWin;
+    private int sessionHands;
+    private int sessionNet;
+    private bool busy;
+    private bool dealt;
+    private bool hints = true;
+    private bool sound = true;
+
+    private int MinBet => Settings.Stake.SmallBlind;
+    private int MaxBet => Settings.Stake.BigBlind;
+    private bool InHand => hand is { Drawn: false };
+
+    private IReadOnlyList<int> BetSteps => [.. new[] { 1, 2, 5, 10, 20, 25, 50, 100, 200, 250, 500, 1000 }.Where(v => v >= MinBet && v <= MaxBet)];
+    private int BetIndex => BetSteps.ToList().IndexOf(bet);
+    private int NextBet => BetIndex + 1 < BetSteps.Count ? BetSteps[BetIndex + 1] : int.MaxValue;
+
+    /// <summary>Hand shown in the pay table: the current one while holding, the final one after the draw.</summary>
+    private VpHand? ShownHand => hand?.Hand;
+
+    protected override void OnInitialized()
+    {
+        stack = Settings.BuyIn;
+        bet = BetSteps.LastOrDefault(v => v * 40 <= stack, BetSteps[0]);
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender) return;
+        try
+        {
+            js = await JS.InvokeAsync<IJSObjectReference>("import", "./js/table.js");
+            selfRef = DotNetObjectReference.Create(this);
+            await js.InvokeVoidAsync("init", selfRef);
+            sound = await js.InvokeAsync<bool>("getSound");
+            StateHasChanged();
+        }
+        catch (Exception ex) when (ex is JSDisconnectedException or TaskCanceledException or JSException) { }
+    }
+
+    private Card? CardAt(int i) => hand?.Cards[i];
+
+    private bool Winning(int i)
+    {
+        if (hand is not { Drawn: true } h || h.Payout == 0) return false;
+        // Light up the cards that make the hand (all five for straights, flushes, full house, …).
+        return h.Hand switch
+        {
+            VpHand.JacksOrBetter or VpHand.TwoPair or VpHand.ThreeOfAKind or VpHand.FourOfAKind =>
+                h.Cards.Count(c => c.Rank == h.Cards[i].Rank) >= 2,
+            _ => true,
+        };
+    }
+
+    private void StepBet(int dir)
+    {
+        var i = Math.Clamp(BetIndex + dir, 0, BetSteps.Count - 1);
+        if (BetSteps[i] <= stack || dir < 0) bet = BetSteps[i];
+        Sfx("chip");
+    }
+
+    private void MaxBetClick()
+    {
+        bet = BetSteps.LastOrDefault(v => v <= stack, BetSteps[0]);
+        Sfx("chip");
+    }
+
+    private async Task DealAsync()
+    {
+        if (busy || InHand || bet > stack) return;
+        busy = true;
+        banner = null;
+        lastWin = 0;
+        stack -= bet;
+        hand = new VideoPokerHand(bet, Random.Shared);
+        advice = JacksOrBetter.Advise(hand.Cards);
+        dealt = true;
+        Sfx("card");
+        StateHasChanged();
+        await OnStack.InvokeAsync(stack);
+        await Delay(550);
+        dealt = false;
+        busy = false;
+    }
+
+    private void Toggle(int i)
+    {
+        if (!InHand) return;
+        hand!.Toggle(i);
+        Sfx("chip");
+    }
+
+    private void ApplyHint()
+    {
+        if (!InHand || advice is null) return;
+        for (var i = 0; i < 5; i++)
+            if (hand!.Held[i] != advice.Hold[i]) hand.Toggle(i);
+        Sfx("chip");
+    }
+
+    private async Task DrawAsync()
+    {
+        if (busy || !InHand) return;
+        busy = true;
+        hand!.Draw();
+        dealt = true;
+        Sfx("card");
+        StateHasChanged();
+        await Delay(500);
+        dealt = false;
+
+        var payout = hand.Payout;
+        stack += payout;
+        lastWin = payout;
+        var net = payout - bet;
+        sessionHands++;
+        sessionNet += net;
+        var highlights = new List<string>();
+        if (hand.Hand == VpHand.RoyalFlush) highlights.Add("royal");
+        if (hand.Hand == VpHand.FourOfAKind) highlights.Add("quads");
+        if (hand.Hand == VpHand.StraightFlush) highlights.Add("straightflush");
+
+        if (payout > 0)
+        {
+            var big = hand.Hand >= VpHand.FourOfAKind;
+            banner = new Banner(L($"Vp.Hand.{hand.Hand}"), $"+{payout:N0}", big ? "win big" : "win");
+            Sfx(big ? "bigwin" : "win");
+            if (hand.Hand >= VpHand.Straight) _ = JsAsync("celebrate", big ? 3 : 1);
+        }
+        else Sfx("lose");
+        handNo++;
+        // The next hand may start right away: the account saves the rounds one after another.
+        busy = false;
+        StateHasChanged();
+        await OnRound.InvokeAsync(new CasinoReport(stack, new CasinoRoundDto("videopoker", bet, net, [.. highlights])));
+    }
+
+    private async Task ExitAsync()
+    {
+        if (InHand || busy) return;
+        cts.Cancel();
+        await OnExit.InvokeAsync(stack);
+    }
+
+    [JSInvokable]
+    public async Task Hotkey(string key)
+    {
+        switch (key)
+        {
+            case " " or "Enter" when InHand: await DrawAsync(); break;
+            case " " or "Enter": await DealAsync(); break;
+            case "1" or "2" or "3" or "4" or "5" when InHand: Toggle(key[0] - '1'); break;
+            case "h" when InHand: ApplyHint(); break;
+            case "ArrowUp" when !InHand: StepBet(1); break;
+            case "ArrowDown" when !InHand: StepBet(-1); break;
+            default: return;
+        }
+        StateHasChanged();
+    }
+
+    private static string Signed(int n) => n > 0 ? $"+{n:N0}" : n < 0 ? $"−{-n:N0}" : "±0";
+
+    private Task Delay(int ms) => Task.Delay(ms, cts.Token).ContinueWith(_ => { }, TaskScheduler.Default);
+
+    private void Sfx(string name)
+    {
+        if (sound) _ = JsAsync("sfx", name);
+    }
+
+    private async Task ToggleSound()
+    {
+        sound = !sound;
+        await JsAsync("setSound", sound);
+    }
+
+    private async Task JsAsync(string fn, params object?[] args)
+    {
+        if (js is null) return;
+        try { await js.InvokeVoidAsync(fn, args); }
+        catch (Exception ex) when (ex is JSDisconnectedException or TaskCanceledException or JSException or ObjectDisposedException) { }
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        cts.Cancel();
+        if (js is not null)
+        {
+            try
+            {
+                await js.InvokeVoidAsync("dispose");
+                await js.DisposeAsync();
+            }
+            catch (Exception ex) when (ex is JSDisconnectedException or TaskCanceledException or JSException) { }
+        }
+        selfRef?.Dispose();
+        cts.Dispose();
+    }
+}

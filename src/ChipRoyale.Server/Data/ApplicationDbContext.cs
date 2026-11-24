@@ -47,6 +47,7 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
             e.Navigation(p => p.Bankroll).IsRequired();
             e.Property(p => p.OwnedItems).HasMaxLength(2000);
             e.Property(p => p.EquippedItems).HasMaxLength(500);
+            e.Property(p => p.CasinoStats).HasMaxLength(8000);
             e.Property(p => p.UnlockedAchievements).HasMaxLength(2000);
         });
     }

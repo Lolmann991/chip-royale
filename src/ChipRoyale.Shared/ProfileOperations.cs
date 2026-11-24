@@ -4,25 +4,33 @@ using ChipRoyale.Engine.Tournament;
 namespace ChipRoyale.Shared;
 
 /// <summary>A player's game data while an operation runs on it.</summary>
-public sealed class PlayerState(string displayName, Bankroll bankroll, PlayerCollection collection)
+public sealed class PlayerState(string displayName, Bankroll bankroll, PlayerCollection collection, CasinoStats? casino = null)
 {
     public string DisplayName { get; set; } = displayName;
     public Bankroll Bankroll { get; } = bankroll;
     public PlayerCollection Collection { get; } = collection;
+    public CasinoStats Casino { get; } = casino ?? new CasinoStats();
 
-    public ProfileDto ToDto() => ProfileDto.From(DisplayName, Bankroll, Collection);
+    public ProfileDto ToDto() => ProfileDto.From(DisplayName, Bankroll, Collection, Casino);
 
     public static PlayerState New(string displayName) => new(displayName, Bankroll.New(), new PlayerCollection());
 
     public static PlayerState FromDto(ProfileDto dto) =>
-        new(dto.DisplayName, Bankroll.FromState(dto.Bankroll), dto.ToCollection());
+        new(dto.DisplayName, Bankroll.FromState(dto.Bankroll), dto.ToCollection(), CasinoStats.Parse(dto.CasinoStats));
+
+    /// <summary>Different games played so far (poker, blackjack and every casino game).</summary>
+    public int GamesPlayed =>
+        (Bankroll.HandsPlayed > 0 || Bankroll.TournamentsPlayed > 0 ? 1 : 0)
+        + (Bankroll.BlackjackRounds > 0 ? 1 : 0)
+        + Casino.Games.Count(g => g.Value.Rounds > 0);
 }
 
 /// <param name="Unlocked">Achievement ids unlocked by the operation.</param>
 /// <param name="Error">Resource key of an error (the operation did nothing).</param>
-public sealed record OperationResult(string[] Unlocked, bool StartedNewRun = false, int ReturnedFromTable = 0, string? Error = null)
+/// <param name="Value">Extra result of the operation (daily bonus: the wheel segment).</param>
+public sealed record OperationResult(string[] Unlocked, bool StartedNewRun = false, int ReturnedFromTable = 0, string? Error = null, int? Value = null)
 {
-    public ProfileResponse ToResponse(PlayerState state) => new(state.ToDto(), Unlocked, StartedNewRun, ReturnedFromTable, Error);
+    public ProfileResponse ToResponse(PlayerState state) => new(state.ToDto(), Unlocked, StartedNewRun, ReturnedFromTable, Error, Value);
 
     public static OperationResult Fail(string errorKey) => new([], Error: errorKey);
 }
@@ -70,6 +78,35 @@ public static class ProfileOperations
         b.SetTableStack(stack);
         b.RecordBlackjack(round.Net, round.Natural);
     }, round.ToEvent());
+
+    /// <summary>A round of roulette, slots or video poker is over: stack at the table and statistics.</summary>
+    public static OperationResult CasinoRound(PlayerState s, int stack, CasinoRoundDto round)
+    {
+        if (!CasinoTables.Games.Contains(round.Game)) return OperationResult.Fail("Error.Request");
+        var highlights = (round.Highlights ?? []).Where(h => h.Length is > 0 and <= 20).Take(5).ToArray();
+        return Run(s, (b, _) =>
+        {
+            b.SetTableStack(stack);
+            s.Casino.Record(round.Game, round.Bet, round.Net, highlights);
+        }, () => new GameEvent { CasinoGame = round.Game, CasinoHighlights = highlights, GamesPlayed = s.GamesPlayed });
+    }
+
+    /// <summary>
+    /// The daily bonus wheel (once per day): chips by the wheel segment, more for days in a row.
+    /// <see cref="OperationResult.Value"/> is the segment, so the wheel can stop there.
+    /// </summary>
+    public static OperationResult DailyBonus(PlayerState s, DateOnly today, Random random)
+    {
+        if (!s.Casino.DailyAvailable(today)) return OperationResult.Fail("Daily.Taken");
+        var segment = DailyWheel.Spin(random);
+        var streak = s.Casino.StreakFor(today);
+        var result = Run(s, (b, _) =>
+        {
+            s.Casino.CollectDaily(today);
+            b.AddChips(DailyWheel.Payout(segment, streak));
+        }, () => new GameEvent { DailyStreak = streak });
+        return result with { Value = segment };
+    }
 
     public static OperationResult CashOut(PlayerState s, int stack)
     {
@@ -140,11 +177,15 @@ public static class ProfileOperations
     }
 
     /// <summary>Applies a change and checks achievements before and after (pays their crowns).</summary>
-    private static OperationResult Run(PlayerState s, Action<Bankroll, PlayerCollection> change, GameEvent? e = null)
+    private static OperationResult Run(PlayerState s, Action<Bankroll, PlayerCollection> change, GameEvent? e = null) =>
+        Run(s, change, () => e ?? GameEvent.None);
+
+    /// <param name="eventAfter">Built after the change (when it depends on the new values).</param>
+    private static OperationResult Run(PlayerState s, Action<Bankroll, PlayerCollection> change, Func<GameEvent> eventAfter)
     {
         var before = Achievements.Check(s.Collection, s.Bankroll, GameEvent.None);
         change(s.Bankroll, s.Collection);
-        var after = Achievements.Check(s.Collection, s.Bankroll, e ?? GameEvent.None);
+        var after = Achievements.Check(s.Collection, s.Bankroll, eventAfter());
         return new OperationResult([.. before.Concat(after).Select(a => a.Id)]);
     }
 }

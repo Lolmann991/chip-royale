@@ -87,6 +87,11 @@ namespace ChipRoyale.Server.Migrations
                     b.Property<string>("UserId")
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("CasinoStats")
+                        .IsRequired()
+                        .HasMaxLength(8000)
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("DisplayName")
                         .IsRequired()
                         .HasMaxLength(20)

@@ -135,6 +135,13 @@ public sealed class Bankroll
 
     public void AddCrowns(int crowns) => Crowns += Math.Max(0, crowns);
 
+    /// <summary>Chips from outside the tables (daily bonus).</summary>
+    public void AddChips(int chips)
+    {
+        Chips += Math.Max(0, chips);
+        TrackPeak();
+    }
+
     public void SpendCrowns(int crowns)
     {
         if (crowns < 0 || crowns > Crowns)

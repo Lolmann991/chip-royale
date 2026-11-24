@@ -71,4 +71,47 @@ public class ProfileOperationsTests
         ProfileOperations.CashOut(state, 575);
         Assert.Equal(1075 + 3, state.Bankroll.Chips + state.Bankroll.Crowns); // 1075 chips, 3 crowns reward
     }
+
+    [Fact]
+    public void Casino_rounds_count_per_game_and_unlock_achievements()
+    {
+        var state = PlayerState.New("Test");
+        Assert.Null(ProfileOperations.BuyIn(state, "roulette-pub", 200).Error);
+        var r = ProfileOperations.CasinoRound(state, 550, new CasinoRoundDto("roulette", 10, 350, ["straight"]));
+        Assert.Contains("roulette-straight", r.Unlocked);
+        Assert.Equal(550, state.Bankroll.TableChips);
+        Assert.Equal(1, state.Casino.Get("roulette").Rounds);
+        Assert.Equal(350, state.Casino.Get("roulette").Biggest);
+        Assert.NotNull(ProfileOperations.CasinoRound(state, 1, new CasinoRoundDto("craps", 1, 1, [])).Error); // unknown game
+
+        // all five games → all-rounder
+        state.Bankroll.RecordHand(true, 10);
+        state.Bankroll.RecordBlackjack(10, false);
+        ProfileOperations.CasinoRound(state, 550, new CasinoRoundDto("slots", 10, -10, []));
+        var last = ProfileOperations.CasinoRound(state, 550, new CasinoRoundDto("videopoker", 10, -10, []));
+        Assert.Contains("allrounder", last.Unlocked);
+        Assert.Equal(5, state.GamesPlayed);
+    }
+
+    [Fact]
+    public void Daily_bonus_once_per_day_with_streak()
+    {
+        var state = PlayerState.New("Test");
+        var day = new DateOnly(2026, 11, 24);
+        var first = ProfileOperations.DailyBonus(state, day, new Random(3));
+        Assert.Null(first.Error);
+        Assert.NotNull(first.Value);
+        var chips = state.Bankroll.Chips;
+        Assert.True(chips > 1000);
+        Assert.Equal("Daily.Taken", ProfileOperations.DailyBonus(state, day, new Random(3)).Error);
+        Assert.Equal(chips, state.Bankroll.Chips);
+
+        for (var d = 1; d < 7; d++) ProfileOperations.DailyBonus(state, day.AddDays(d), new Random(d));
+        Assert.Equal(7, state.Casino.DailyStreak);
+        Assert.Contains("daily-7", state.Collection.Achievements);
+
+        // the casino data survives the JSON round trip (server and browser)
+        var copy = PlayerState.FromDto(System.Text.Json.JsonSerializer.Deserialize<ProfileDto>(System.Text.Json.JsonSerializer.Serialize(state.ToDto()))!);
+        Assert.Equal(7, copy.Casino.DailyStreak);
+    }
 }

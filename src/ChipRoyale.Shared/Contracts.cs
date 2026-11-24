@@ -23,6 +23,8 @@ public static class ApiRoutes
     public const string Leaderboard = "api/leaderboard";
     public const string Dev = "api/dev";
     public const string Blackjack = "api/blackjack/round";
+    public const string CasinoRound = "api/casino/round";
+    public const string DailyBonus = "api/casino/daily";
 }
 
 /// <summary>Everything the client needs to know about a player.</summary>
@@ -31,12 +33,14 @@ public sealed record ProfileDto(
     BankrollState Bankroll,
     string OwnedItems,
     string EquippedItems,
-    string Achievements)
+    string Achievements,
+    string CasinoStats = "")
 {
     public PlayerCollection ToCollection() => PlayerCollection.Parse(OwnedItems, EquippedItems, Achievements);
 
-    public static ProfileDto From(string name, Bankroll bankroll, PlayerCollection collection) => new(
-        name, bankroll.ToState(), collection.SerializeOwned(), collection.SerializeEquipped(), collection.SerializeAchievements());
+    public static ProfileDto From(string name, Bankroll bankroll, PlayerCollection collection, CasinoStats casino) => new(
+        name, bankroll.ToState(), collection.SerializeOwned(), collection.SerializeEquipped(), collection.SerializeAchievements(),
+        casino.Serialize());
 }
 
 /// <summary>Answer to every profile call: the new state plus what just happened.</summary>
@@ -47,7 +51,8 @@ public sealed record ProfileResponse(
     string[] Unlocked,
     bool StartedNewRun = false,
     int ReturnedFromTable = 0,
-    string? Error = null);
+    string? Error = null,
+    int? Value = null);
 
 public sealed record HandOutcomeDto(bool Won, int Pot, bool TableCleared, HandCategory? WinningHand)
 {
@@ -63,6 +68,15 @@ public sealed record BlackjackRoundDto(int Net, bool Natural, bool DoubleWon, bo
 {
     public GameEvent ToEvent() => new() { BlackjackNatural = Natural, BlackjackDoubleWon = DoubleWon, BlackjackSplitWon = SplitWon };
 }
+
+/// <summary>A finished round of roulette, slots or video poker.</summary>
+/// <param name="Game">"roulette", "slots" or "videopoker".</param>
+/// <param name="Net">Chips won (positive) or lost (negative).</param>
+/// <param name="Highlights">Special results, e.g. "straight", "jackpot", "royal".</param>
+public sealed record CasinoRoundDto(string Game, int Bet, int Net, string[] Highlights);
+
+/// <param name="Stack">Chips at the table (machine) after the round.</param>
+public sealed record CasinoRequest(int Stack, CasinoRoundDto Round);
 
 /// <param name="Stack">Chips at the blackjack table after the round.</param>
 public sealed record BlackjackRequest(int Stack, BlackjackRoundDto Round);

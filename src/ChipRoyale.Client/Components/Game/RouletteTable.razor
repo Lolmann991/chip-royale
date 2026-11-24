@@ -1,0 +1,546 @@
+@using System.Globalization
+@using ChipRoyale.Engine.Casino
+@using ChipRoyale.Shared
+@implements IAsyncDisposable
+@inject IJSRuntime JS
+
+@* European roulette: wheel with a single zero, the classic layout with inside bets (number, split,
+   street, corner, six line) and outside bets (dozens, columns, red/black, odd/even, low/high). *@
+
+<div class="game rl-game">
+    <header class="topbar">
+        <div class="brand">♠ Chip <span>Royale</span></div>
+        <div class="meta">
+            <span class="pill stake">🎡 Roulette · @Roster.StakeName(Settings.Stake)@(Settings.IsPractice ? L("Table.PracticeSuffix") : "")</span>
+            <span class="pill">@L("Casino.Limits", MinBet, MaxBet)</span>
+            <span class="pill">@L("Rl.SpinNo", spinNo)</span>
+        </div>
+        <div class="tools">
+            <button type="button" class="tool @(hints ? "on" : "")" title="@L("Rl.Tips.Title")" @onclick="() => hints = !hints">@L("Table.Tips")</button>
+            <button type="button" class="tool @(sound ? "on" : "")" title="@L("Table.Sound")" @onclick="ToggleSound">@(sound ? "🔊" : "🔇")</button>
+            <button type="button" class="tool" disabled="@spinning" @onclick="ExitAsync">@(Settings.IsPractice ? L("Table.Lobby") : L("Table.CashOut"))</button>
+        </div>
+    </header>
+
+    <main class="rl-stage">
+        <section class="rl-left">
+            <div class="rl-wheel-wrap">
+                <svg class="rl-wheel" viewBox="0 0 300 300" style="transform: rotate(@(F(wheelAngle))deg); transition-duration: @(spinning ? SpinMs : 0)ms">
+                    <circle cx="150" cy="150" r="148" class="rl-rim" />
+                    @for (var i = 0; i < 37; i++)
+                    {
+                        var n = European.WheelOrder[i];
+                        <path d="@Pocket(i)" class="rl-pocket @ColorClass(n) @(result == n && !spinning ? "hit" : "")" />
+                    }
+                    @NumberLabels
+                    <circle cx="150" cy="150" r="92" class="rl-bowl" />
+                    <circle cx="150" cy="150" r="56" class="rl-cone" />
+                    @for (var k = 0; k < 8; k++)
+                    {
+                        <rect x="146" y="98" width="8" height="40" rx="4" class="rl-spoke" transform="rotate(@(k * 45) 150 150)" />
+                    }
+                    <circle cx="150" cy="150" r="14" class="rl-hub" />
+                </svg>
+                <div class="rl-ball-track @(spinning ? "spinning" : "")" style="animation-duration: @(SpinMs)ms">
+                    <div class="rl-ball @(result is null && !spinning ? "hidden" : "")"></div>
+                </div>
+                <div class="rl-pointer">▼</div>
+            </div>
+
+            @if (result is { } r && !spinning)
+            {
+                <div class="rl-result @ColorClass(r)" @key="spinNo">
+                    <b>@r</b>
+                    <span>@(r == 0 ? L("Rl.Zero") : $"{L(European.IsRed(r) ? "Rl.Red" : "Rl.Black")} · {L(r % 2 == 0 ? "Rl.Even" : "Rl.Odd")} · {(r <= 18 ? "1–18" : "19–36")}")</span>
+                </div>
+            }
+            <div class="rl-history" title="@L("Rl.History")">
+                @foreach (var n in history.Take(14))
+                {
+                    <span class="rl-hist @ColorClass(n)">@n</span>
+                }
+            </div>
+        </section>
+
+        <section class="rl-right">
+            <div class="rl-board @(spinning ? "locked" : "")">
+                <button type="button" class="rl-cell zero green" style="grid-row: 1 / span 3; grid-column: 1" @onclick="() => Place(European.Straight(0, Chip))">
+                    0 @BetChip(European.Straight(0, 0).Key)
+                </button>
+                @for (var col = 1; col <= 12; col++)
+                {
+                    for (var row = 0; row < 3; row++)
+                    {
+                        var n = 3 * col - row;
+                        var c = col;
+                        var rr = row;
+                        <div class="rl-cell num @ColorClass(n) @(result == n && !spinning ? "hit" : "")" style="grid-row: @(row + 1); grid-column: @(col + 1)">
+                            <button type="button" class="rl-spot" @onclick="() => Place(European.Straight(n, Chip))">@n</button>
+                            @BetChip(European.Straight(n, 0).Key)
+                            @* split with the next row up (n+1) and with the next column (n+3) *@
+                            @if (rr > 0)
+                            {
+                                <button type="button" class="hs hs-top" title="@L("Rl.Bet.Split")" @onclick="() => Place(European.Split(n, n + 1, Chip))">@BetChip(European.Split(n, n + 1, 0).Key)</button>
+                            }
+                            @if (c < 12)
+                            {
+                                <button type="button" class="hs hs-right" title="@L("Rl.Bet.Split")" @onclick="() => Place(European.Split(n, n + 3, Chip))">@BetChip(European.Split(n, n + 3, 0).Key)</button>
+                            }
+                            @if (rr > 0 && c < 12)
+                            {
+                                <button type="button" class="hs hs-corner" title="@L("Rl.Bet.Corner")" @onclick="() => Place(European.Corner(n, Chip))">@BetChip(European.Corner(n, 0).Key)</button>
+                            }
+                            @if (rr == 2)
+                            {
+                                <button type="button" class="hs hs-street" title="@L("Rl.Bet.Street")" @onclick="() => Place(European.Street(c, Chip))">@BetChip(European.Street(c, 0).Key)</button>
+                                @if (c < 12)
+                                {
+                                    <button type="button" class="hs hs-six" title="@L("Rl.Bet.SixLine")" @onclick="() => Place(European.SixLine(c, Chip))">@BetChip(European.SixLine(c, 0).Key)</button>
+                                }
+                            }
+                            @if (c == 1)
+                            {
+                                <button type="button" class="hs hs-left" title="@L("Rl.Bet.Split")" @onclick="() => Place(European.Split(0, n, Chip))">@BetChip(European.Split(0, n, 0).Key)</button>
+                            }
+                        </div>
+                    }
+                }
+                @for (var colBet = 1; colBet <= 3; colBet++)
+                {
+                    var cb = colBet;
+                    <button type="button" class="rl-cell outside" style="grid-row: @(4 - cb); grid-column: 14" @onclick="() => Place(European.Column(cb, Chip))">
+                        2:1 @BetChip(European.Column(cb, 0).Key)
+                    </button>
+                }
+                @for (var d = 1; d <= 3; d++)
+                {
+                    var dz = d;
+                    <button type="button" class="rl-cell outside" style="grid-row: 4; grid-column: @(4 * dz - 2) / span 4" @onclick="() => Place(European.Dozen(dz, Chip))">
+                        @L($"Rl.Dozen{dz}") @BetChip(European.Dozen(dz, 0).Key)
+                    </button>
+                }
+                @foreach (var (kind, label, cls, start) in Outside)
+                {
+                    var k = kind;
+                    <button type="button" class="rl-cell outside @cls" style="grid-row: 5; grid-column: @start / span 2" @onclick="() => Place(European.Outside(k, Chip))">
+                        @if (cls is "red" or "black")
+                        {
+                            <span class="rl-diamond"></span>
+                        }
+                        else
+                        {
+                            @L(label)
+                        }
+                        @BetChip(European.Outside(k, 0).Key)
+                    </button>
+                }
+            </div>
+        </section>
+
+        @if (banner is { } b)
+        {
+            <div class="bj-banner @b.Kind" @key="spinNo">
+                <b>@b.Title</b>
+                <span>@b.Text</span>
+            </div>
+        }
+    </main>
+
+    <footer class="actionbar">
+        <div class="hand-info">
+            @if (hints)
+            {
+                <div class="hero-stats">
+                    <div class="stat-row rank">
+                        <span class="stat-label">@L("Rl.Tip.Bets")</span>
+                        <b>● @TotalBet.ToString("N0")</b>
+                        <span class="stat-note">@L("Rl.Tip.Spots", bets.Count)</span>
+                    </div>
+                    <div class="stat-row @(bets.Count == 0 ? "" : WinChance >= 0.5 ? "good" : "")">
+                        <span class="stat-label">@L("Rl.Tip.Chance")</span>
+                        <span>@L("Rl.Tip.ChanceText", Covered, Pct(WinChance))</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-label">@L("Rl.Tip.Best")</span>
+                        <span>@(bets.Count == 0 ? "–" : $"+{(European.BestCase(bets.Values) - TotalBet):N0}")</span>
+                    </div>
+                    <div class="stat-row small">
+                        <span class="stat-label">@L("Rl.Tip.Hot")</span>
+                        <span>@HotCold</span>
+                    </div>
+                    <div class="stat-row small">
+                        <span class="stat-label">@L("Rl.Tip.Edge")</span>
+                        <span class="stat-note">@L("Rl.Tip.EdgeText")</span>
+                    </div>
+                </div>
+            }
+        </div>
+
+        <div class="controls">
+            @if (spinning)
+            {
+                <div class="status">🎡 @L("Rl.NoMoreBets")</div>
+            }
+            else
+            {
+                <div class="raise-panel bj-chip-panel">
+                    @foreach (var value in ChipValues)
+                    {
+                        var v = value;
+                        <button type="button" class="bj-chip-btn c-@ChipColor(v) @(Chip == v ? "selected" : "")" @onclick="() => chip = v">@Short(v)</button>
+                    }
+                    <button type="button" class="preset" disabled="@(undo.Count == 0)" @onclick="Undo">↶ @L("Rl.Undo")</button>
+                    <button type="button" class="preset" disabled="@(bets.Count == 0)" @onclick="Clear">@L("Bj.Clear")</button>
+                    <button type="button" class="preset" disabled="@(lastBets.Count == 0 || bets.Count > 0)" @onclick="Repeat">⟲ @L("Rl.Repeat")</button>
+                    <button type="button" class="preset" disabled="@(bets.Count == 0)" @onclick="Double">×2</button>
+                </div>
+                <div class="buttons">
+                    <button type="button" class="act raise" disabled="@(TotalBet == 0 || TotalBet > stack)" @onclick="SpinAsync">
+                        @L("Rl.Spin", TotalBet) <kbd>@L("Table.Key.Space")</kbd>
+                    </button>
+                </div>
+            }
+            @if (message is not null)
+            {
+                <div class="rl-message">@message</div>
+            }
+        </div>
+    </footer>
+
+    <div class="bj-stack rl-stack" title="@L("Bj.StackTitle")">
+        <b>● @stack.ToString("N0")</b>
+        <small>@L("Rl.Stack")</small>
+    </div>
+
+    @if (!spinning && stack < MinBet && bets.Count == 0)
+    {
+        <div class="overlay">
+            <div class="overlay-card lost">
+                <div class="trophy">💸</div>
+                <h2>@L("Bj.Broke.Title")</h2>
+                <p>@(Settings.IsPractice ? L("Bj.Broke.Practice") : L("Bj.Broke.Text", MinBet))</p>
+                <div class="overlay-actions">
+                    @if (Settings.IsPractice)
+                    {
+                        <button type="button" class="act next" @onclick="() => stack = Settings.BuyIn">@L("Bj.Refill")</button>
+                    }
+                    <button type="button" class="act fold" @onclick="ExitAsync">@L("Table.Lobby")</button>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+@code {
+    [Parameter, EditorRequired] public GameSettings Settings { get; set; } = default!;
+    [Parameter] public EventCallback<int> OnExit { get; set; }
+    [Parameter] public EventCallback<int> OnStack { get; set; }
+    [Parameter] public EventCallback<CasinoReport> OnRound { get; set; }
+
+    private const int SpinMs = 5200;
+    private static readonly double Step = 360.0 / 37;
+    private sealed record Banner(string Title, string Text, string Kind);
+
+    private static readonly (RouletteBetKind Kind, string Label, string Cls, int Start)[] Outside =
+    [
+        (RouletteBetKind.Low, "Rl.Low", "", 2),
+        (RouletteBetKind.Even, "Rl.Even", "", 4),
+        (RouletteBetKind.Red, "", "red", 6),
+        (RouletteBetKind.Black, "", "black", 8),
+        (RouletteBetKind.Odd, "Rl.Odd", "", 10),
+        (RouletteBetKind.High, "Rl.High", "", 12),
+    ];
+
+    private readonly Dictionary<string, RouletteBet> bets = [];
+    private readonly List<(string Key, int Amount)> undo = [];
+    private List<RouletteBet> lastBets = [];
+    private readonly List<int> history = [];
+    private readonly CancellationTokenSource cts = new();
+    private IJSObjectReference? js;
+    private DotNetObjectReference<RouletteTable>? selfRef;
+    private int stack;
+    private int chip;
+    private int spinNo = 1;
+    private int? result;
+    private bool spinning;
+    private bool hints = true;
+    private bool sound = true;
+    private double wheelAngle;
+    private string? message;
+    private Banner? banner;
+
+    private int MinBet => Settings.Stake.SmallBlind;
+    private int MaxBet => Settings.Stake.BigBlind;
+    private int TotalBet => bets.Values.Sum(b => b.Amount);
+    private int Chip => chip > 0 ? chip : ChipValues.First();
+    private int Covered => bets.Values.SelectMany(b => b.Numbers).Distinct().Count();
+    private double WinChance => European.WinChance(bets.Values);
+
+    private IEnumerable<int> ChipValues => new[] { 1, 5, 10, 25, 50, 100, 250, 500, 1000 }
+        .Where(v => v >= MinBet && v <= MaxBet).Take(6);
+
+    protected override void OnInitialized()
+    {
+        stack = Settings.BuyIn;
+        chip = ChipValues.Skip(1).FirstOrDefault(ChipValues.First());
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender) return;
+        try
+        {
+            js = await JS.InvokeAsync<IJSObjectReference>("import", "./js/table.js");
+            selfRef = DotNetObjectReference.Create(this);
+            await js.InvokeVoidAsync("init", selfRef);
+            sound = await js.InvokeAsync<bool>("getSound");
+            StateHasChanged();
+        }
+        catch (Exception ex) when (ex is JSDisconnectedException or TaskCanceledException or JSException) { }
+    }
+
+    // ------------------------------------------------------------------ betting
+
+    private void Place(RouletteBet bet)
+    {
+        if (spinning) return;
+        message = null;
+        var current = bets.TryGetValue(bet.Key, out var b) ? b.Amount : 0;
+        var add = Math.Min(bet.Amount, MaxBet - current);
+        if (add <= 0)
+        {
+            message = L("Rl.SpotMax", MaxBet);
+            return;
+        }
+        if (TotalBet + add > stack)
+        {
+            message = L("Rl.NotEnough");
+            return;
+        }
+        if (banner is not null) banner = null;
+        bets[bet.Key] = bet with { Amount = current + add };
+        undo.Add((bet.Key, add));
+        Sfx("chip");
+    }
+
+    private void Undo()
+    {
+        if (undo.Count == 0) return;
+        var (key, amount) = undo[^1];
+        undo.RemoveAt(undo.Count - 1);
+        if (!bets.TryGetValue(key, out var b)) return;
+        if (b.Amount <= amount) bets.Remove(key); else bets[key] = b with { Amount = b.Amount - amount };
+    }
+
+    private void Clear()
+    {
+        bets.Clear();
+        undo.Clear();
+        message = null;
+    }
+
+    private void Repeat()
+    {
+        if (lastBets.Sum(b => b.Amount) > stack)
+        {
+            message = L("Rl.NotEnough");
+            return;
+        }
+        Clear();
+        foreach (var b in lastBets)
+        {
+            bets[b.Key] = b;
+            undo.Add((b.Key, b.Amount));
+        }
+        Sfx("chip");
+    }
+
+    private void Double()
+    {
+        if (bets.Values.Any(b => b.Amount * 2 > MaxBet) || TotalBet * 2 > stack)
+        {
+            message = L("Rl.NotEnough");
+            return;
+        }
+        foreach (var key in bets.Keys.ToList())
+        {
+            undo.Add((key, bets[key].Amount));
+            bets[key] = bets[key] with { Amount = bets[key].Amount * 2 };
+        }
+        Sfx("chip");
+    }
+
+    // ------------------------------------------------------------------ spinning
+
+    private async Task SpinAsync()
+    {
+        if (spinning || TotalBet == 0 || TotalBet > stack) return;
+        var placed = bets.Values.ToList();
+        var total = TotalBet;
+        stack -= total;
+        await OnStack.InvokeAsync(stack);
+
+        var number = European.Spin(Random.Shared);
+        var index = European.WheelOrder.ToList().IndexOf(number);
+        // Turn the wheel 6 times plus the way to bring the pocket under the pointer (top).
+        var target = -index * Step;
+        var delta = ((target - wheelAngle) % 360 + 360) % 360;
+        wheelAngle += 360 * 6 + delta;
+        result = null;
+        banner = null;
+        message = null;
+        spinning = true;
+        Sfx("turn");
+        StateHasChanged();
+        await Delay(SpinMs + 150);
+        spinning = false;
+        result = number;
+
+        var payout = European.Payout(placed, number);
+        stack += payout;
+        var net = payout - total;
+        history.Insert(0, number);
+        lastBets = placed;
+        bets.Clear();
+        undo.Clear();
+
+        var highlights = new List<string>();
+        if (placed.Any(b => b.Kind == RouletteBetKind.Straight && b.Covers(number))) highlights.Add("straight");
+        if (number == 0 && payout > 0) highlights.Add("zero");
+
+        var colorName = number == 0 ? L("Rl.Zero") : L(European.IsRed(number) ? "Rl.Red" : "Rl.Black");
+        banner = net switch
+        {
+            > 0 => new Banner(L("Rl.Result.Win", number), $"+{net:N0}", highlights.Contains("straight") ? "win big" : "win"),
+            0 when payout > 0 => new Banner(L("Rl.Result.Even", number), L("Bj.Result.PushText"), "push"),
+            _ => new Banner(L("Rl.Result.Lose", number, colorName), $"−{-net:N0}", "lose"),
+        };
+        if (net > 0)
+        {
+            Sfx(net >= total * 10 ? "bigwin" : "win");
+            _ = JsAsync("celebrate", net >= total * 10 ? 3 : net >= total * 2 ? 2 : 1);
+        }
+        else Sfx("lose");
+        spinNo++;
+        StateHasChanged();
+        await OnRound.InvokeAsync(new CasinoReport(stack, new CasinoRoundDto("roulette", total, net, [.. highlights])));
+    }
+
+    private async Task ExitAsync()
+    {
+        if (spinning) return;
+        cts.Cancel();
+        await OnExit.InvokeAsync(stack);
+    }
+
+    [JSInvokable]
+    public async Task Hotkey(string key)
+    {
+        if (spinning) return;
+        switch (key)
+        {
+            case " " or "Enter":
+                // Nothing on the layout yet: same bets as last time.
+                if (bets.Count == 0 && lastBets.Count > 0) Repeat();
+                await SpinAsync();
+                break;
+            case "c": Clear(); break;
+            case "r" when lastBets.Count > 0 && bets.Count == 0: Repeat(); break;
+            case "d" when bets.Count > 0: Double(); break;
+            default: return;
+        }
+        StateHasChanged();
+    }
+
+    // ------------------------------------------------------------------ display helpers
+
+    private RenderFragment BetChip(string key) => __builder =>
+    {
+        if (bets.TryGetValue(key, out var b))
+        {
+            <span class="rl-chip c-@ChipColor(b.Amount)">@Short(b.Amount)</span>
+        }
+    };
+
+    /// <summary>SVG path of pocket i (counted clockwise from the top).</summary>
+    private static string Pocket(int i)
+    {
+        double a0 = (i - 0.5) * Step, a1 = (i + 0.5) * Step;
+        static (double X, double Y) P(double r, double deg) =>
+            (150 + r * Math.Sin(deg * Math.PI / 180), 150 - r * Math.Cos(deg * Math.PI / 180));
+        var (x0, y0) = P(140, a0);
+        var (x1, y1) = P(140, a1);
+        var (x2, y2) = P(92, a1);
+        var (x3, y3) = P(92, a0);
+        return $"M{F(x0)} {F(y0)} A140 140 0 0 1 {F(x1)} {F(y1)} L{F(x2)} {F(y2)} A92 92 0 0 0 {F(x3)} {F(y3)} Z";
+    }
+
+    /// <summary>The numbers around the wheel (as markup: Razor reserves the &lt;text&gt; tag).</summary>
+    private static readonly MarkupString NumberLabels = new(string.Concat(Enumerable.Range(0, 37).Select(i =>
+        $"<text x=\"150\" y=\"27\" class=\"rl-num\" transform=\"rotate({F(i * Step)} 150 150)\">{European.WheelOrder[i]}</text>")));
+
+    private static string F(double v) => v.ToString("0.###", CultureInfo.InvariantCulture);
+
+    private static string ColorClass(int n) => n == 0 ? "green" : European.IsRed(n) ? "red" : "black";
+
+    private string HotCold
+    {
+        get
+        {
+            if (history.Count < 8) return L("Rl.Tip.HotWait", 8 - history.Count);
+            var counts = history.Take(50).GroupBy(n => n).OrderByDescending(g => g.Count()).Take(3).Select(g => $"{g.Key}×{g.Count()}");
+            var reds = history.Take(50).Count(European.IsRed);
+            return L("Rl.Tip.HotText", string.Join(" ", counts), reds, history.Take(50).Count(European.IsBlack));
+        }
+    }
+
+    private static string Pct(double p) => $"{Math.Round(p * 100):0} %";
+    private static string Short(int v) => v >= 1000 ? $"{v / 1000.0:0.#}k" : v.ToString();
+
+    private static string ChipColor(int v) => v switch
+    {
+        >= 5000 => "orange",
+        >= 1000 => "gold",
+        >= 500 => "purple",
+        >= 100 => "black",
+        >= 25 => "green",
+        >= 5 => "red",
+        _ => "white",
+    };
+
+    private Task Delay(int ms) => Task.Delay(ms, cts.Token).ContinueWith(_ => { }, TaskScheduler.Default);
+
+    private void Sfx(string name)
+    {
+        if (sound) _ = JsAsync("sfx", name);
+    }
+
+    private async Task ToggleSound()
+    {
+        sound = !sound;
+        await JsAsync("setSound", sound);
+    }
+
+    private async Task JsAsync(string fn, params object?[] args)
+    {
+        if (js is null) return;
+        try { await js.InvokeVoidAsync(fn, args); }
+        catch (Exception ex) when (ex is JSDisconnectedException or TaskCanceledException or JSException or ObjectDisposedException) { }
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        cts.Cancel();
+        if (js is not null)
+        {
+            try
+            {
+                await js.InvokeVoidAsync("dispose");
+                await js.DisposeAsync();
+            }
+            catch (Exception ex) when (ex is JSDisconnectedException or TaskCanceledException or JSException) { }
+        }
+        selfRef?.Dispose();
+        cts.Dispose();
+    }
+}

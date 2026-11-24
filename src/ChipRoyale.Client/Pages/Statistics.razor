@@ -1,0 +1,127 @@
+@page "/statistik"
+@using ChipRoyale.Engine.Economy
+@implements IDisposable
+@inject PlayerService Player
+
+<PageTitle>@L("StatsPage.PageTitle")</PageTitle>
+
+<div class="game-root @Player.ThemeClasses">
+    <div class="board-page stats-page">
+        <header class="board-head">
+            <a class="brand" href="">♠ Chip <span>Royale</span></a>
+            <span class="head-tools">
+                <LanguageSwitch />
+                <a class="tool" href="">@L("Board.Back")</a>
+            </span>
+        </header>
+
+        <h1 class="logo small">@L("StatsPage.Title1")<span>@L("StatsPage.Title2")</span></h1>
+        <p class="note center">@Player.DisplayName · @L("StatsPage.Games", Player.GamesPlayed)</p>
+
+        @if (!loaded)
+        {
+            <p class="note center">…</p>
+        }
+        else
+        {
+            var b = Player.Bankroll;
+            var achieved = Achievements.All.Count(a => Player.Collection.Achievements.Contains(a.Id));
+            <section class="st-overview">
+                <div class="st-big"><span>●</span><b>@b.Total.ToString("N0")</b><small>@L("StatsPage.Chips")</small></div>
+                <div class="st-big"><span>🏆</span><b>@b.BestPeak.ToString("N0")</b><small>@L("StatsPage.Peak")</small></div>
+                <div class="st-big"><span>👑</span><b>@b.Crowns.ToString("N0")</b><small>@L("StatsPage.Crowns")</small></div>
+                <div class="st-big"><span>🎖️</span><b>@achieved / @Achievements.All.Count</b><small>@L("StatsPage.Achievements")</small></div>
+                <div class="st-big"><span>🎁</span><b>@Player.Casino.DailyStreak</b><small>@L("StatsPage.Streak")</small></div>
+            </section>
+            <div class="st-progress"><span style="width:@(achieved * 100 / Math.Max(1, Achievements.All.Count))%"></span></div>
+
+            <div class="st-grid">
+                <section class="st-card">
+                    <h2>♠️ Poker</h2>
+                    @Row(L("StatsPage.Hands"), $"{b.HandsPlayed:N0}")
+                    @Row(L("StatsPage.HandsWon"), $"{b.HandsWon:N0} ({Pct(b.HandsWon, b.HandsPlayed)})")
+                    @Row(L("StatsPage.BiggestPot"), $"{b.BiggestPot:N0}")
+                    @Row(L("StatsPage.TablesCleared"), $"{b.TablesCleared:N0}")
+                    @Row("Sit & Go", L("StatsPage.SngText", b.TournamentsWon, b.TournamentsPlayed))
+                    @Row(L("StatsPage.Runs"), L("StatsPage.RunsText", b.Run, b.Busts))
+                </section>
+                <section class="st-card">
+                    <h2>🂡 Blackjack</h2>
+                    @Row(L("StatsPage.Rounds"), $"{b.BlackjackRounds:N0}")
+                    @Row(L("StatsPage.Won"), $"{b.BlackjackWon:N0} ({Pct(b.BlackjackWon, b.BlackjackRounds)})")
+                    @Row("Blackjacks", $"{b.BlackjackNaturals:N0}")
+                    @Row(L("StatsPage.BiggestWin"), $"{b.BlackjackBiggestWin:N0}")
+                </section>
+                @foreach (var (game, icon, name) in CasinoGames)
+                {
+                    var s = Player.Casino.Get(game);
+                    <section class="st-card @(s.Rounds == 0 ? "empty" : "")">
+                        <h2>@icon @name</h2>
+                        @Row(L("StatsPage.Rounds"), $"{s.Rounds:N0}")
+                        @Row(L("StatsPage.Won"), $"{s.Won:N0} ({Pct(s.Won, s.Rounds)})")
+                        @Row(L("StatsPage.Wagered"), $"{s.Wagered:N0}")
+                        @Row(L("StatsPage.Net"), Signed(s.Net), s.Net > 0 ? "good" : s.Net < 0 ? "bad" : "")
+                        @Row(L("StatsPage.BiggestWin"), $"{s.Biggest:N0}")
+                        @if (s.Highlights.Count > 0)
+                        {
+                            <div class="st-tags">
+                                @foreach (var (h, n) in s.Highlights.OrderByDescending(x => x.Value))
+                                {
+                                    <span class="st-tag">@L($"StatsPage.Hl.{h}") × @n</span>
+                                }
+                            </div>
+                        }
+                        @if (s.Rounds == 0)
+                        {
+                            <p class="note">@L("StatsPage.NotPlayed")</p>
+                        }
+                    </section>
+                }
+            </div>
+
+            <h2 class="st-heading">🎖️ @L("StatsPage.Achievements")</h2>
+            <div class="st-achievements">
+                @foreach (var a in Achievements.All)
+                {
+                    var done = Player.Collection.Achievements.Contains(a.Id);
+                    <div class="st-ach @(done ? "done" : "")" title="@L($"Ach.{a.Id}.Text")">
+                        <span class="st-ach-icon">@(done ? a.Icon : "🔒")</span>
+                        <span class="st-ach-name">@L($"Ach.{a.Id}.Title")</span>
+                        <small>@L($"Ach.{a.Id}.Text")</small>
+                        <b>+@a.Reward 👑</b>
+                    </div>
+                }
+            </div>
+        }
+    </div>
+</div>
+
+@code {
+    private bool loaded;
+
+    private static readonly (string Game, string Icon, string Name)[] CasinoGames =
+    [
+        (CasinoTables.Roulette, "🎡", "Roulette"),
+        (CasinoTables.Slots, "🎰", "Slots"),
+        (CasinoTables.VideoPoker, "🃏", "Video Poker"),
+    ];
+
+    protected override async Task OnInitializedAsync()
+    {
+        await Player.LoadAsync();
+        Player.Changed += OnChanged;
+        loaded = true;
+    }
+
+    private void OnChanged() => InvokeAsync(StateHasChanged);
+
+    public void Dispose() => Player.Changed -= OnChanged;
+
+    private static RenderFragment Row(string label, string value, string cls = "") => __builder =>
+    {
+        <div class="st-row @cls"><span>@label</span><b>@value</b></div>
+    };
+
+    private static string Pct(long part, long all) => all == 0 ? "–" : $"{part * 100.0 / all:0} %";
+    private static string Signed(long n) => n > 0 ? $"+{n:N0}" : n < 0 ? $"−{-n:N0}" : "±0";
+}

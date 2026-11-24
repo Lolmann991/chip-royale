@@ -10,12 +10,16 @@ public enum GameKind
 {
     Poker,
     Blackjack,
+    Roulette,
+    Slots,
+    VideoPoker,
 }
 
 /// <param name="BuyIn">Chips the player brings to the table.</param>
 /// <param name="Tournament">Set for a Sit &amp; Go; then <see cref="BuyIn"/> is the tournament buy-in.</param>
+/// <param name="Speed">Poker: factor for all waiting times (1 = normal, smaller = faster bots).</param>
 public sealed record GameSettings(Difficulty Difficulty, int Opponents, TableStake Stake, int BuyIn, SitAndGoConfig? Tournament = null,
-    GameKind Game = GameKind.Poker)
+    GameKind Game = GameKind.Poker, double Speed = 1.0)
 {
     public bool IsBlackjack => Game == GameKind.Blackjack;
 
@@ -41,6 +45,9 @@ public readonly record struct TableReport(int Stack, HandOutcome? Hand);
 
 /// <param name="Stack">Chips at the blackjack table after the round.</param>
 public readonly record struct BlackjackReport(int Stack, Engine.Blackjack.BjRoundResult Round);
+
+/// <param name="Stack">Chips at the table (machine) after the round.</param>
+public readonly record struct CasinoReport(int Stack, Shared.CasinoRoundDto Round);
 
 /// <summary>Look and personality of a seat at the table.</summary>
 /// <param name="AvatarClass">CSS class for avatars drawn without an emoji (pixel art).</param>

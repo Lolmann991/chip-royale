@@ -27,6 +27,9 @@ public class PlayerProfile
     /// <summary>Unlocked achievement ids (comma-separated).</summary>
     public string UnlockedAchievements { get; set; } = "";
 
+    /// <summary>Roulette, slots, video poker statistics and the daily bonus (JSON, see <see cref="Engine.Economy.CasinoStats"/>).</summary>
+    public string CasinoStats { get; set; } = "";
+
     public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
 
     public PlayerCollection LoadCollection() => PlayerCollection.Parse(OwnedItems, EquippedItems, UnlockedAchievements);
