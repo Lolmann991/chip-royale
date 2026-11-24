@@ -96,6 +96,10 @@ api.MapPost(ApiRoutes.Table, (TableRequest r, ClaimsPrincipal user, ApplicationD
     Mutate(user, db, s => ProfileOperations.Table(s, r.Stack, r.Hand)));
 api.MapPost(ApiRoutes.Blackjack, (BlackjackRequest r, ClaimsPrincipal user, ApplicationDbContext db) =>
     Mutate(user, db, s => ProfileOperations.Blackjack(s, r.Stack, r.Round)));
+api.MapPost(ApiRoutes.CasinoRound, (CasinoRequest r, ClaimsPrincipal user, ApplicationDbContext db) =>
+    Mutate(user, db, s => ProfileOperations.CasinoRound(s, r.Stack, r.Round)));
+api.MapPost(ApiRoutes.DailyBonus, (ClaimsPrincipal user, ApplicationDbContext db) =>
+    Mutate(user, db, s => ProfileOperations.DailyBonus(s, DateOnly.FromDateTime(DateTime.Now), Random.Shared)));
 api.MapPost(ApiRoutes.CashOut, (CashOutRequest r, ClaimsPrincipal user, ApplicationDbContext db) =>
     Mutate(user, db, s => ProfileOperations.CashOut(s, r.Stack)));
 api.MapPost(ApiRoutes.TournamentEnter, (TournamentEnterRequest r, ClaimsPrincipal user, ApplicationDbContext db) =>
@@ -185,13 +189,14 @@ static async Task<(PlayerProfile Profile, PlayerState State)> LoadAsync(ClaimsPr
         profile = new PlayerProfile { UserId = id, DisplayName = $"Spieler{Random.Shared.Next(1000, 10000)}" };
         db.Profiles.Add(profile);
     }
-    return (profile, new PlayerState(profile.DisplayName, profile.Bankroll, profile.LoadCollection()));
+    return (profile, new PlayerState(profile.DisplayName, profile.Bankroll, profile.LoadCollection(), CasinoStats.Parse(profile.CasinoStats)));
 }
 
 static async Task SaveAsync(PlayerProfile profile, PlayerState state, ApplicationDbContext db)
 {
     profile.DisplayName = state.DisplayName;
     profile.StoreCollection(state.Collection);
+    profile.CasinoStats = state.Casino.Serialize();
     profile.UpdatedAt = DateTime.UtcNow;
     await db.SaveChangesAsync();
 }

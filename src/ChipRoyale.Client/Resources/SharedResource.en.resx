@@ -47,6 +47,8 @@
   <data name="Account.SessionExpired" xml:space="preserve"><value>Your login has expired. Please log in again.</value></data>
   <data name="Account.WouldBeEmailed" xml:space="preserve"><value>Normally this would be emailed:</value></data>
   <data name="Ach.Unlocked" xml:space="preserve"><value>Achievement unlocked</value></data>
+  <data name="Ach.allrounder.Text" xml:space="preserve"><value>Play all five casino games.</value></data>
+  <data name="Ach.allrounder.Title" xml:space="preserve"><value>All-rounder</value></data>
   <data name="Ach.big-pot.Text" xml:space="preserve"><value>Win a pot of at least 5,000 chips.</value></data>
   <data name="Ach.big-pot.Title" xml:space="preserve"><value>Big fish</value></data>
   <data name="Ach.bj-double.Text" xml:space="preserve"><value>Win a doubled blackjack hand.</value></data>
@@ -61,6 +63,8 @@
   <data name="Ach.busted.Title" xml:space="preserve"><value>Lesson learned</value></data>
   <data name="Ach.collector.Text" xml:space="preserve"><value>Own 10 shop items.</value></data>
   <data name="Ach.collector.Title" xml:space="preserve"><value>Collector</value></data>
+  <data name="Ach.daily-7.Text" xml:space="preserve"><value>Collect the daily bonus seven days in a row.</value></data>
+  <data name="Ach.daily-7.Title" xml:space="preserve"><value>Regular</value></data>
   <data name="Ach.first-win.Text" xml:space="preserve"><value>Win your first pot.</value></data>
   <data name="Ach.first-win.Title" xml:space="preserve"><value>First pot</value></data>
   <data name="Ach.full-house.Text" xml:space="preserve"><value>Win a pot with a full house or better.</value></data>
@@ -73,6 +77,16 @@
   <data name="Ach.quads.Title" xml:space="preserve"><value>Four-leaf clover</value></data>
   <data name="Ach.rich.Text" xml:space="preserve"><value>Own 10,000 chips in total.</value></data>
   <data name="Ach.rich.Title" xml:space="preserve"><value>High earner</value></data>
+  <data name="Ach.roulette-straight.Text" xml:space="preserve"><value>Hit a single number in roulette (35 : 1).</value></data>
+  <data name="Ach.roulette-straight.Title" xml:space="preserve"><value>Bullseye</value></data>
+  <data name="Ach.roulette-zero.Text" xml:space="preserve"><value>Win in roulette when the zero comes up.</value></data>
+  <data name="Ach.roulette-zero.Title" xml:space="preserve"><value>Zero hero</value></data>
+  <data name="Ach.slots-bigwin.Text" xml:space="preserve"><value>Win 50 times your bet in one slot spin.</value></data>
+  <data name="Ach.slots-bigwin.Title" xml:space="preserve"><value>Big win</value></data>
+  <data name="Ach.slots-freespins.Text" xml:space="preserve"><value>Trigger free spins on the slot machine.</value></data>
+  <data name="Ach.slots-freespins.Title" xml:space="preserve"><value>Shooting stars</value></data>
+  <data name="Ach.slots-jackpot.Text" xml:space="preserve"><value>Five sevens on a line.</value></data>
+  <data name="Ach.slots-jackpot.Title" xml:space="preserve"><value>Jackpot!</value></data>
   <data name="Ach.sng-cash.Text" xml:space="preserve"><value>Finish 1st or 2nd in a Sit &amp; Go.</value></data>
   <data name="Ach.sng-cash.Title" xml:space="preserve"><value>In the money</value></data>
   <data name="Ach.sng-win.Text" xml:space="preserve"><value>Win a Sit &amp; Go.</value></data>
@@ -85,6 +99,10 @@
   <data name="Ach.table-cleared.Title" xml:space="preserve"><value>Table swept</value></data>
   <data name="Ach.trendsetter.Text" xml:space="preserve"><value>Wear a bought item in every shop category.</value></data>
   <data name="Ach.trendsetter.Title" xml:space="preserve"><value>Trendsetter</value></data>
+  <data name="Ach.vp-quads.Text" xml:space="preserve"><value>Draw four of a kind in video poker.</value></data>
+  <data name="Ach.vp-quads.Title" xml:space="preserve"><value>Four of a kind</value></data>
+  <data name="Ach.vp-royal.Text" xml:space="preserve"><value>A royal flush in video poker – 800 : 1!</value></data>
+  <data name="Ach.vp-royal.Title" xml:space="preserve"><value>Royal</value></data>
   <data name="Action.AllIn" xml:space="preserve"><value>All-in!</value></data>
   <data name="Action.Call" xml:space="preserve"><value>Calls {0:N0}</value></data>
   <data name="Action.Check" xml:space="preserve"><value>Checks</value></data>
@@ -169,6 +187,7 @@
   <data name="Board.Title2" xml:space="preserve"><value>board</value></data>
   <data name="Board.You" xml:space="preserve"><value> (you)</value></data>
   <data name="Board.YourRank" xml:space="preserve"><value>You: rank {0} with {1:N0}</value></data>
+  <data name="Casino.Limits" xml:space="preserve"><value>Bets {0:N0}–{1:N0}</value></data>
   <data name="Common.Cancel" xml:space="preserve"><value>Cancel</value></data>
   <data name="Common.Close" xml:space="preserve"><value>Close</value></data>
   <data name="Common.Language" xml:space="preserve"><value>Language</value></data>
@@ -213,6 +232,28 @@
   <data name="Error.Reload" xml:space="preserve"><value>Reload</value></data>
   <data name="Error.Request" xml:space="preserve"><value>That didn't work. Please try again.</value></data>
   <data name="Error.Text" xml:space="preserve"><value>An error has occurred.</value></data>
+  <data name="Game.Blackjack" xml:space="preserve"><value>Blackjack</value></data>
+  <data name="Game.Blackjack.Intro" xml:space="preserve"><value>Beat the dealer: closer to 21 than him without going over. Blackjack pays 3 : 2.</value></data>
+  <data name="Game.Blackjack.Practice" xml:space="preserve"><value>Practice blackjack – free</value></data>
+  <data name="Game.Blackjack.Rules" xml:space="preserve"><value>6 decks · dealer stands on soft 17 · blackjack pays 3 : 2 · double on any two cards, also after splitting · up to 4 hands</value></data>
+  <data name="Game.Blackjack.Tables" xml:space="preserve"><value>Blackjack table</value></data>
+  <data name="Game.Pick" xml:space="preserve"><value>Choose a game</value></data>
+  <data name="Game.Poker" xml:space="preserve"><value>Poker</value></data>
+  <data name="Game.Roulette" xml:space="preserve"><value>Roulette</value></data>
+  <data name="Game.Roulette.Intro" xml:space="preserve"><value>European roulette with a single zero: bet on numbers, colours or dozens and let the ball roll.</value></data>
+  <data name="Game.Roulette.Practice" xml:space="preserve"><value>Practice roulette – free</value></data>
+  <data name="Game.Roulette.Rules" xml:space="preserve"><value>Single zero (house edge 2.7 %) · number 35 : 1 · split 17 : 1 · street 11 : 1 · corner 8 : 1 · six line 5 : 1 · dozen/column 2 : 1 · even money 1 : 1</value></data>
+  <data name="Game.Roulette.Tables" xml:space="preserve"><value>Roulette table</value></data>
+  <data name="Game.Slots" xml:space="preserve"><value>Slots</value></data>
+  <data name="Game.Slots.Intro" xml:space="preserve"><value>Five reels, ten paylines, wilds, free spins – and a jackpot for five sevens.</value></data>
+  <data name="Game.Slots.Practice" xml:space="preserve"><value>Practice slots – free</value></data>
+  <data name="Game.Slots.Rules" xml:space="preserve"><value>Bet per spin · 10 paylines · 🃏 wild replaces all but ⭐ · 3+ ⭐ anywhere = 10 free spins with double wins · 5 × 7️⃣ = jackpot</value></data>
+  <data name="Game.Slots.Tables" xml:space="preserve"><value>Machine</value></data>
+  <data name="Game.VideoPoker" xml:space="preserve"><value>Video poker</value></data>
+  <data name="Game.VideoPoker.Intro" xml:space="preserve"><value>Jacks or Better: five cards, keep the good ones, swap the rest. A pair of jacks or better wins.</value></data>
+  <data name="Game.VideoPoker.Practice" xml:space="preserve"><value>Practice video poker – free</value></data>
+  <data name="Game.VideoPoker.Rules" xml:space="preserve"><value>9/6 Jacks or Better (99.5 % return with best play) · royal flush 800 : 1 · tips show the best cards to hold</value></data>
+  <data name="Game.VideoPoker.Tables" xml:space="preserve"><value>Machine</value></data>
   <data name="Guest" xml:space="preserve"><value>Guest</value></data>
   <data name="Hand.Describe.Flush" xml:space="preserve"><value>Flush, {0} high</value></data>
   <data name="Hand.Describe.FourOfAKind" xml:space="preserve"><value>Four {0}</value></data>
@@ -572,6 +613,9 @@ Fold – give up. Your chips in the pot are gone.</value></data>
   <data name="Rank.Two.Plural" xml:space="preserve"><value>Twos</value></data>
   <data name="Records.BestPeak" xml:space="preserve"><value>Best chip count</value></data>
   <data name="Records.BiggestPot" xml:space="preserve"><value>Biggest pot</value></data>
+  <data name="Records.Blackjack" xml:space="preserve"><value>Blackjack</value></data>
+  <data name="Records.BlackjackBest" xml:space="preserve"><value>Biggest blackjack win</value></data>
+  <data name="Records.BlackjackText" xml:space="preserve"><value>{0:N0} rounds · {1:N0} won · {2}× blackjack</value></data>
   <data name="Records.Busts" xml:space="preserve"><value>Busts</value></data>
   <data name="Records.Crowns" xml:space="preserve"><value>Crowns</value></data>
   <data name="Records.Hands" xml:space="preserve"><value>Hands</value></data>
@@ -585,6 +629,43 @@ Fold – give up. Your chips in the pot are gone.</value></data>
   <data name="Records.Total" xml:space="preserve"><value>Chips now</value></data>
   <data name="Records.Tournaments" xml:space="preserve"><value>Sit &amp; Go</value></data>
   <data name="Records.TournamentsText" xml:space="preserve"><value>{0} won of {1}</value></data>
+  <data name="Rl.Bet.Corner" xml:space="preserve"><value>Corner (4 numbers, 8 : 1)</value></data>
+  <data name="Rl.Bet.SixLine" xml:space="preserve"><value>Six line (6 numbers, 5 : 1)</value></data>
+  <data name="Rl.Bet.Split" xml:space="preserve"><value>Split (2 numbers, 17 : 1)</value></data>
+  <data name="Rl.Bet.Street" xml:space="preserve"><value>Street (3 numbers, 11 : 1)</value></data>
+  <data name="Rl.Black" xml:space="preserve"><value>Black</value></data>
+  <data name="Rl.Dozen1" xml:space="preserve"><value>1st 12</value></data>
+  <data name="Rl.Dozen2" xml:space="preserve"><value>2nd 12</value></data>
+  <data name="Rl.Dozen3" xml:space="preserve"><value>3rd 12</value></data>
+  <data name="Rl.Even" xml:space="preserve"><value>Even</value></data>
+  <data name="Rl.High" xml:space="preserve"><value>19–36</value></data>
+  <data name="Rl.History" xml:space="preserve"><value>Last numbers</value></data>
+  <data name="Rl.Low" xml:space="preserve"><value>1–18</value></data>
+  <data name="Rl.NoMoreBets" xml:space="preserve"><value>Rien ne va plus – no more bets …</value></data>
+  <data name="Rl.NotEnough" xml:space="preserve"><value>Not enough chips at the table for that.</value></data>
+  <data name="Rl.Odd" xml:space="preserve"><value>Odd</value></data>
+  <data name="Rl.Red" xml:space="preserve"><value>Red</value></data>
+  <data name="Rl.Repeat" xml:space="preserve"><value>Rebet</value></data>
+  <data name="Rl.Result.Even" xml:space="preserve"><value>{0} – break even</value></data>
+  <data name="Rl.Result.Lose" xml:space="preserve"><value>{0} {1}</value></data>
+  <data name="Rl.Result.Win" xml:space="preserve"><value>{0} – you win!</value></data>
+  <data name="Rl.Spin" xml:space="preserve"><value>Spin · {0:N0}</value></data>
+  <data name="Rl.SpinNo" xml:space="preserve"><value>Spin #{0}</value></data>
+  <data name="Rl.SpotMax" xml:space="preserve"><value>At most {0:N0} per spot.</value></data>
+  <data name="Rl.Stack" xml:space="preserve"><value>at the table</value></data>
+  <data name="Rl.Tip.Best" xml:space="preserve"><value>Best case</value></data>
+  <data name="Rl.Tip.Bets" xml:space="preserve"><value>Bet</value></data>
+  <data name="Rl.Tip.Chance" xml:space="preserve"><value>Win chance</value></data>
+  <data name="Rl.Tip.ChanceText" xml:space="preserve"><value>{0} of 37 numbers ({1})</value></data>
+  <data name="Rl.Tip.Edge" xml:space="preserve"><value>Good to know</value></data>
+  <data name="Rl.Tip.EdgeText" xml:space="preserve"><value>Every bet has the same house edge (2.7 %) – the ball has no memory.</value></data>
+  <data name="Rl.Tip.Hot" xml:space="preserve"><value>History</value></data>
+  <data name="Rl.Tip.HotText" xml:space="preserve"><value>often: {0} · red {1} / black {2}</value></data>
+  <data name="Rl.Tip.HotWait" xml:space="preserve"><value>{0} more spins for a summary</value></data>
+  <data name="Rl.Tip.Spots" xml:space="preserve"><value>on {0} spots</value></data>
+  <data name="Rl.Tips.Title" xml:space="preserve"><value>Tips: win chance of your bets, best case and number history</value></data>
+  <data name="Rl.Undo" xml:space="preserve"><value>Undo</value></data>
+  <data name="Rl.Zero" xml:space="preserve"><value>Zero</value></data>
   <data name="Save.Export" xml:space="preserve"><value>Save</value></data>
   <data name="Save.ExportHint" xml:space="preserve"><value>Download your progress as a file (backup or another device)</value></data>
   <data name="Save.Exported" xml:space="preserve"><value>Saved as {0}.</value></data>
@@ -653,7 +734,19 @@ Fold – give up. Your chips in the pot are gone.</value></data>
   <data name="Stake.highroller" xml:space="preserve"><value>High roller</value></data>
   <data name="Stake.practice" xml:space="preserve"><value>Practice table</value></data>
   <data name="Stake.pub" xml:space="preserve"><value>Pub</value></data>
+  <data name="Stake.roulette-casino" xml:space="preserve"><value>Casino</value></data>
+  <data name="Stake.roulette-practice" xml:space="preserve"><value>Practice table</value></data>
+  <data name="Stake.roulette-pub" xml:space="preserve"><value>Pub</value></data>
+  <data name="Stake.roulette-vip" xml:space="preserve"><value>VIP lounge</value></data>
+  <data name="Stake.slots-casino" xml:space="preserve"><value>Casino</value></data>
+  <data name="Stake.slots-practice" xml:space="preserve"><value>Practice machine</value></data>
+  <data name="Stake.slots-pub" xml:space="preserve"><value>Pub</value></data>
+  <data name="Stake.slots-vip" xml:space="preserve"><value>VIP lounge</value></data>
   <data name="Stake.sng" xml:space="preserve"><value>Sit &amp; Go</value></data>
+  <data name="Stake.videopoker-casino" xml:space="preserve"><value>Casino</value></data>
+  <data name="Stake.videopoker-practice" xml:space="preserve"><value>Practice machine</value></data>
+  <data name="Stake.videopoker-pub" xml:space="preserve"><value>Pub</value></data>
+  <data name="Stake.videopoker-vip" xml:space="preserve"><value>VIP lounge</value></data>
   <data name="Stake.vip" xml:space="preserve"><value>VIP lounge</value></data>
   <data name="Stats.ByRiver" xml:space="preserve"><value>Chance by the river for …</value></data>
   <data name="Stats.HandRank" xml:space="preserve"><value>Hand</value></data>

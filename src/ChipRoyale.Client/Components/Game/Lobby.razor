@@ -71,24 +71,40 @@
             <p class="note highlight">@notice</p>
         }
 
-        <div class="mode-switch">
-            <button type="button" class="tab @(!sitAndGo && !blackjack ? "on" : "")" @onclick="ShowCash">@L("Lobby.Mode.Cash")</button>
-            <button type="button" class="tab @(sitAndGo ? "on" : "")" @onclick="ShowSitAndGo">@L("Lobby.Mode.Sng")</button>
-            <button type="button" class="tab @(blackjack ? "on" : "")" @onclick="ShowBlackjack">@L("Lobby.Mode.Blackjack")</button>
+        <div class="game-picker" role="tablist" aria-label="@L("Game.Pick")">
+            @foreach (var (kind, icon) in Games)
+            {
+                var g = kind;
+                <button type="button" role="tab" aria-selected="@(game == g)" class="game-tile @(game == g ? "on" : "")" @onclick="() => SelectGame(g)">
+                    <span class="gt-icon">@icon</span>
+                    <span class="gt-name">@L($"Game.{g}")</span>
+                </button>
+            }
         </div>
+        @if (game == GameKind.Poker)
+        {
+            <div class="mode-switch">
+                <button type="button" class="tab @(!sitAndGo ? "on" : "")" @onclick="() => sitAndGo = false">@L("Lobby.Mode.Cash")</button>
+                <button type="button" class="tab @(sitAndGo ? "on" : "")" @onclick="() => sitAndGo = true">@L("Lobby.Mode.Sng")</button>
+            </div>
+        }
+        else
+        {
+            <p class="game-intro">@L($"Game.{game}.Intro")</p>
+        }
 
-        @if (blackjack)
+        @if (IsCasino)
         {
             <section>
-                <h2>@L("Bj.Lobby.Table")</h2>
+                <h2>@L($"Game.{game}.Tables")</h2>
                 <div class="stake-grid bj-grid">
-                    @foreach (var s in BlackjackTables.All)
+                    @foreach (var s in CasinoList)
                     {
                         var table = s;
                         var open = Player.Bankroll.CanSit(table);
                         <button type="button" class="choice compact stake-choice @(stake == table ? "selected" : "") @(open ? "" : "locked")"
                                 disabled="@(!open)" @onclick="() => SelectStake(table)">
-                            <span class="choice-icon">@BjIcon(table)</span>
+                            <span class="choice-icon">@LevelIcon(table)</span>
                             <span class="choice-title">@Roster.StakeName(table)</span>
                             <span class="choice-text">@L("Bj.Lobby.Bets", table.SmallBlind, table.BigBlind)</span>
                             <span class="choice-text">@(table.IsPractice ? L("Lobby.NothingLost") : open ? L("Lobby.BuyInRange", table.MinBuyIn, table.MaxBuyIn) : L("Lobby.LockedFrom", table.MinBuyIn))</span>
@@ -113,7 +129,7 @@
                     </div>
                     <p class="note">@L("Bj.Lobby.BuyInNote", buyIn / stake.SmallBlind, Player.Bankroll.Chips - buyIn)</p>
                 }
-                <p class="note">@L("Bj.Lobby.Rules")</p>
+                <p class="note">@L($"Game.{game}.Rules")</p>
             </section>
         }
         else if (sitAndGo)
@@ -178,7 +194,7 @@
 
         }
 
-        @if (!blackjack)
+        @if (!IsCasino)
         {
         <section>
             <h2>@L("Lobby.Difficulty")</h2>
@@ -198,7 +214,7 @@
 
         }
 
-        @if (!sitAndGo && !blackjack)
+        @if (!sitAndGo && !IsCasino)
         {
         <section>
             <h2>@L("Lobby.Opponents")</h2>
@@ -220,7 +236,7 @@
             <p class="form-error">@error</p>
         }
         <button type="button" class="play-btn" @onclick="Start">
-            <span>@(sitAndGo ? L("Sng.Start", tier.BuyIn) : stake.IsPractice ? L(blackjack ? "Bj.Lobby.StartPractice" : "Lobby.StartPractice") : L("Lobby.BuyInButton", buyIn))</span>
+            <span>@(sitAndGo ? L("Sng.Start", tier.BuyIn) : stake.IsPractice ? (IsCasino ? L($"Game.{game}.Practice") : L("Lobby.StartPractice")) : L("Lobby.BuyInButton", buyIn))</span>
         </button>
     </div>
 </div>
@@ -259,34 +275,53 @@
     private Difficulty EffectiveDifficulty => !sitAndGo && stake.IsPractice ? Difficulty.Easy : difficulty;
 
     private bool sitAndGo;
-    private bool blackjack;
+    /// <summary>Selected game; the last one is remembered for the next visit of the lobby.</summary>
+    private GameKind game = lastGame;
+    private static GameKind lastGame = GameKind.Poker;
 
-    /// <summary>Last chosen poker table (the blackjack tab selects its own tables).</summary>
+    private bool IsCasino => game != GameKind.Poker;
+
+    private static readonly (GameKind Kind, string Icon)[] Games =
+    [
+        (GameKind.Poker, "♠️"),
+        (GameKind.Blackjack, "🂡"),
+        (GameKind.Roulette, "🎡"),
+        (GameKind.Slots, "🎰"),
+        (GameKind.VideoPoker, "🃏"),
+    ];
+
+    /// <summary>Last chosen poker table (the other games select their own tables).</summary>
     private TableStake? pokerStake;
 
-    private void ShowCash()
+    private IReadOnlyList<TableStake> CasinoList => game switch
     {
+        GameKind.Blackjack => BlackjackTables.All,
+        GameKind.Roulette => [.. CasinoTables.For(CasinoTables.Roulette)],
+        GameKind.Slots => [.. CasinoTables.For(CasinoTables.Slots)],
+        GameKind.VideoPoker => [.. CasinoTables.For(CasinoTables.VideoPoker)],
+        _ => [],
+    };
+
+    private void SelectGame(GameKind g)
+    {
+        if (g == game) return;
+        if (game == GameKind.Poker) pokerStake = stake;
+        game = lastGame = g;
         sitAndGo = false;
-        if (blackjack) SelectStake(pokerStake ?? DefaultPokerStake());
-        blackjack = false;
+        error = null;
+        if (g == GameKind.Poker)
+        {
+            SelectStake(pokerStake ?? DefaultPokerStake());
+            return;
+        }
+        SelectStake(DefaultCasinoTable());
     }
 
-    private void ShowSitAndGo()
-    {
-        ShowCash();
-        sitAndGo = true;
-    }
-
-    private void ShowBlackjack()
-    {
-        if (blackjack) return;
-        pokerStake = stake;
-        sitAndGo = false;
-        blackjack = true;
-        // The most expensive table with at least 5 minimum buy-ins, else practice.
-        SelectStake(BlackjackTables.All.LastOrDefault(t => !t.IsPractice && Player.Bankroll.Chips >= t.MinBuyIn * 5)
-            ?? BlackjackTables.All.FirstOrDefault(t => !t.IsPractice && Player.Bankroll.CanSit(t)) ?? BlackjackTables.Practice);
-    }
+    /// <summary>The most expensive table with at least 5 minimum buy-ins, else the cheapest open one, else practice.</summary>
+    private TableStake DefaultCasinoTable() =>
+        CasinoList.LastOrDefault(t => !t.IsPractice && Player.Bankroll.Chips >= t.MinBuyIn * 5)
+        ?? CasinoList.FirstOrDefault(t => !t.IsPractice && Player.Bankroll.CanSit(t))
+        ?? CasinoList.First(t => t.IsPractice);
 
     private TableStake DefaultPokerStake()
     {
@@ -294,11 +329,11 @@
         return affordable.Count > 0 ? affordable[^1] : TableStakes.Real.FirstOrDefault(Player.Bankroll.CanSit) ?? TableStakes.Practice;
     }
 
-    private static string BjIcon(TableStake s) => s.Id switch
+    private static string LevelIcon(TableStake s) => s.Id[(s.Id.LastIndexOf('-') + 1)..] switch
     {
-        "bj-practice" => "🎓",
-        "bj-pub" => "🍺",
-        "bj-casino" => "🎰",
+        "practice" => "🎓",
+        "pub" => "🍺",
+        "casino" => "🎰",
         _ => "👑",
     };
     private SitAndGoConfig tier = SitAndGoTiers.All[0];
@@ -334,9 +369,18 @@
         var affordable = TableStakes.Real.Where(s => Player.Bankroll.Chips >= s.MinBuyIn * 5).ToList();
         stake = affordable.Count > 0 ? affordable[^1]
             : TableStakes.Real.FirstOrDefault(Player.Bankroll.CanSit) ?? TableStakes.Practice;
-        if (Practice) stake = TableStakes.Practice;
+        if (Practice)
+        {
+            stake = TableStakes.Practice;
+            game = lastGame = GameKind.Poker;
+        }
         // Default tournament: the most expensive one that costs at most a fifth of the chips.
         tier = SitAndGoTiers.All.LastOrDefault(t => t.BuyIn * 5 <= Player.Bankroll.Chips) ?? SitAndGoTiers.All[0];
+        if (IsCasino)
+        {
+            pokerStake = stake;
+            stake = DefaultCasinoTable();
+        }
         SelectStake(stake);
     }
 
@@ -349,7 +393,7 @@
             buyIn = s.MinBuyIn;
             return;
         }
-        var unit = BlackjackTables.Find(s.Id) is not null ? s.SmallBlind : s.BigBlind;
+        var unit = TableStakes.Find(s.Id) is null ? s.SmallBlind : s.BigBlind;
         var half = Player.Bankroll.Chips / 2 / unit * unit;
         buyIn = Math.Clamp(half, s.MinBuyIn, MaxBuyIn);
     }
@@ -405,9 +449,9 @@
             error = L("Lobby.NotEnough");
             return;
         }
-        if (blackjack)
+        if (IsCasino)
         {
-            await OnStart.InvokeAsync(new GameSettings(Difficulty.Easy, 0, stake, stake.IsPractice ? stake.MinBuyIn : buyIn, Game: GameKind.Blackjack));
+            await OnStart.InvokeAsync(new GameSettings(Difficulty.Easy, 0, stake, stake.IsPractice ? stake.MinBuyIn : buyIn, Game: game));
             return;
         }
         await OnStart.InvokeAsync(new GameSettings(EffectiveDifficulty, opponents, stake, buyIn));

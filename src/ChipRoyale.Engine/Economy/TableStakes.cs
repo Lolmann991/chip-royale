@@ -33,7 +33,7 @@ public static class TableStakes
     public static TableStake? Find(string id) => All.FirstOrDefault(s => s.Id == id);
 
     /// <summary>Poker or blackjack table.</summary>
-    public static TableStake? FindAny(string id) => Find(id) ?? BlackjackTables.Find(id);
+    public static TableStake? FindAny(string id) => Find(id) ?? BlackjackTables.Find(id) ?? CasinoTables.Find(id);
 }
 
 /// <summary>
@@ -53,4 +53,37 @@ public static class BlackjackTables
     ];
 
     public static TableStake? Find(string id) => All.FirstOrDefault(s => s.Id == id);
+}
+
+/// <summary>
+/// Tables (machines) of the other casino games: roulette, slots, video poker. Id "&lt;game&gt;-&lt;level&gt;";
+/// <see cref="TableStake.SmallBlind"/> is the smallest bet, <see cref="TableStake.BigBlind"/> the biggest.
+/// </summary>
+public static class CasinoTables
+{
+    public const string Roulette = "roulette";
+    public const string Slots = "slots";
+    public const string VideoPoker = "videopoker";
+
+    public static readonly IReadOnlyList<string> Games = [Roulette, Slots, VideoPoker];
+
+    private static readonly (string Level, int MinBet, int MaxBet, int MinBuyIn, bool Practice)[] Levels =
+    [
+        ("practice", 1, 100, 1000, true),
+        ("pub", 1, 50, 50, false),
+        ("casino", 5, 250, 250, false),
+        ("vip", 25, 1000, 1000, false),
+    ];
+
+    public static readonly IReadOnlyList<TableStake> All =
+    [
+        .. Games.SelectMany(g => Levels.Select(l => new TableStake($"{g}-{l.Level}", l.Level, l.MinBet, l.MaxBet, l.MinBuyIn, l.Practice))),
+    ];
+
+    public static IEnumerable<TableStake> For(string game) => All.Where(t => t.Id.StartsWith(game + "-", StringComparison.Ordinal));
+
+    public static TableStake? Find(string id) => All.FirstOrDefault(s => s.Id == id);
+
+    /// <summary>"pub", "casino", … of a table.</summary>
+    public static string Level(TableStake t) => t.Name;
 }

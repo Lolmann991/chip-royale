@@ -17,6 +17,10 @@
     {
         <Lobby @key="lobbyKey" OnStart="StartAsync" Notice="@notice" Practice="@(Practice == "1")" />
     }
+    else if (settings.Game == GameKind.Roulette)
+    {
+        <RouletteTable @key="tableKey" Settings="settings" OnExit="ExitAsync" OnStack="StackAsync" OnRound="CasinoRoundAsync" />
+    }
     else if (settings.IsBlackjack)
     {
         <BlackjackTable @key="tableKey" Settings="settings" OnExit="ExitAsync" OnStack="StackAsync" OnRound="BlackjackRoundAsync" />
@@ -95,6 +99,10 @@
     private Task BlackjackRoundAsync(BlackjackReport report) => settings?.IsPractice == true
         ? Task.CompletedTask
         : Player.BlackjackRoundAsync(report.Stack, report.Round);
+
+    private Task CasinoRoundAsync(CasinoReport report) => settings?.IsPractice == true
+        ? Task.CompletedTask
+        : Player.CasinoRoundAsync(report.Stack, report.Round);
 
     private async Task TournamentFinishedAsync(TournamentResult result)
     {

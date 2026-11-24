@@ -23,6 +23,17 @@ public sealed record GameEvent
     public bool BlackjackDoubleWon { get; init; }
     public bool BlackjackSplitWon { get; init; }
 
+    /// <summary>A casino round (roulette, slots, video poker) and its special results.</summary>
+    public string? CasinoGame { get; init; }
+    public IReadOnlyList<string> CasinoHighlights { get; init; } = [];
+    public bool Has(string highlight) => CasinoHighlights.Contains(highlight);
+
+    /// <summary>Days in a row the daily bonus was collected (when it was just collected).</summary>
+    public int DailyStreak { get; init; }
+
+    /// <summary>Different games the player has played (poker, blackjack, roulette, …).</summary>
+    public int GamesPlayed { get; init; }
+
     public static readonly GameEvent None = new();
 }
 
@@ -51,7 +62,16 @@ public static class Achievements
         new("bj-natural", "🂡", 3, (e, b, _) => e.BlackjackNatural || b.BlackjackNaturals > 0),
         new("bj-double", "✌️", 3, (e, _, _) => e.BlackjackDoubleWon),
         new("bj-split", "🪓", 5, (e, _, _) => e.BlackjackSplitWon),
-        new("bj-rounds-100", "🎰", 8, (_, b, _) => b.BlackjackRounds >= 100),
+        new("bj-rounds-100", "🃁", 8, (_, b, _) => b.BlackjackRounds >= 100),
+        new("roulette-straight", "🎯", 5, (e, _, _) => e.CasinoGame == CasinoTables.Roulette && e.Has("straight")),
+        new("roulette-zero", "🟢", 5, (e, _, _) => e.CasinoGame == CasinoTables.Roulette && e.Has("zero")),
+        new("slots-freespins", "🌟", 3, (e, _, _) => e.CasinoGame == CasinoTables.Slots && e.Has("freespins")),
+        new("slots-bigwin", "💥", 5, (e, _, _) => e.CasinoGame == CasinoTables.Slots && e.Has("bigwin")),
+        new("slots-jackpot", "🎰", 20, (e, _, _) => e.CasinoGame == CasinoTables.Slots && e.Has("jackpot")),
+        new("vp-quads", "🎲", 5, (e, _, _) => e.CasinoGame == CasinoTables.VideoPoker && e.Has("quads")),
+        new("vp-royal", "👑", 25, (e, _, _) => e.CasinoGame == CasinoTables.VideoPoker && e.Has("royal")),
+        new("daily-7", "📅", 10, (e, _, _) => e.DailyStreak >= 7),
+        new("allrounder", "🎪", 10, (e, _, _) => e.GamesPlayed >= 5),
     ];
 
     public static Achievement? Find(string id) => All.FirstOrDefault(a => a.Id == id);

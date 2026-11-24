@@ -51,6 +51,10 @@ public sealed class PlayerService(GameServer server, BrowserStorage storage)
     public string DisplayName => state.DisplayName;
     public Bankroll Bankroll => state.Bankroll;
     public PlayerCollection Collection => state.Collection;
+    public CasinoStats Casino => state.Casino;
+
+    /// <summary>Different games played (for the statistics).</summary>
+    public int GamesPlayed => state.GamesPlayed;
 
     /// <summary>Set when loading found the player broke and started a new run.</summary>
     public bool StartedNewRun { get; private set; }
@@ -220,6 +224,54 @@ public sealed class PlayerService(GameServer server, BrowserStorage storage)
     {
         var dto = new BlackjackRoundDto(round.Net, round.Natural, round.DoubleWon, round.SplitWon);
         return RunAsync(s => ProfileOperations.Blackjack(s, stack, dto), ApiRoutes.Blackjack, new BlackjackRequest(stack, dto));
+    }
+
+    /// <summary>A round of roulette, slots or video poker is over.</summary>
+    public Task CasinoRoundAsync(int stack, CasinoRoundDto round) => RunAsync(
+        s => ProfileOperations.CasinoRound(s, stack, round), ApiRoutes.CasinoRound, new CasinoRequest(stack, round));
+
+    public bool DailyAvailable => state.Casino.DailyAvailable(DateOnly.FromDateTime(DateTime.Now));
+
+    /// <summary>Spins the daily bonus wheel (once per day).</summary>
+    /// <returns>The wheel segment and the chips won, or an error.</returns>
+    public async Task<(int Segment, int Chips, string? Error)> DailyBonusAsync()
+    {
+        var chipsBefore = state.Bankroll.Chips;
+        pending++;
+        try
+        {
+            if (UsesServer)
+            {
+                try
+                {
+                    var response = await server.PostAsync<ProfileResponse>(ApiRoutes.DailyBonus, new { });
+                    if (response is null) return (0, 0, L("Error.Request"));
+                    Apply(response, keepNotices: true);
+                    return response.Error is { } e ? (0, 0, L(e)) : (response.Value ?? 0, state.Bankroll.Chips - chipsBefore, null);
+                }
+                catch (UnauthorizedAccessException)
+                {
+                    await ReloadAsync();
+                    return (0, 0, L("Account.SessionExpired"));
+                }
+                catch (Exception ex) when (ex is HttpRequestException or TaskCanceledException)
+                {
+                    connectionLost = true;
+                    Changed?.Invoke();
+                    return (0, 0, L("Conn.Lost"));
+                }
+            }
+
+            var result = ProfileOperations.DailyBonus(state, DateOnly.FromDateTime(DateTime.Now), Random.Shared);
+            if (result.Error is { } error) return (0, 0, L(error));
+            Raise(result.Unlocked);
+            if (!connectionLost) await SaveLocalAsync();
+            return (result.Value ?? 0, state.Bankroll.Chips - chipsBefore, null);
+        }
+        finally
+        {
+            pending--;
+        }
     }
 
     public Task EnterTournamentAsync(string tierId) => RunAsync(
